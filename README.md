@@ -1,6 +1,6 @@
 # Spumcake Agent
 
-A versatile, open-source repository of skills from [Spumcake](https://spumcake.tv), an AI-native entertainment and technology company. Spumcake Studio uses them, and so can any agent with access to its own execution stack.
+An agnostic, open-source collection of pre-made skills from [Spumcake](https://spumcake.tv), an AI-native entertainment and technology company. Spumcake Studio imports them when it is installed, and any agent with access to its own execution stack can use them. The skills are about creative tasks, not about any one product: how Spumcake Studio or the platform works is described in their own documents, never here.
 
 General skills for an agent that makes generative media with a person directing it: rendering a prompt, writing one, cleaning up or redrawing artwork, building a character's reference, and captioning, training, and testing a character LoRA.
 
