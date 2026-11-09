@@ -10,7 +10,7 @@ From the shot list approved on {{shot_list_date}} and its approved board. {{shot
 
 ## Cue list
 
-Temp-audio cues, one per spoken line, in order. A cue starts half a second into its shot, or half a second after the cue before it in the same shot, and takes about two and a half words a second.
+Line cues, one per spoken line, in order, each with its recording. A cue starts half a second into its shot, or half a second after the cue before it in the same shot, and lasts its recording's measured length; a line with no recording yet is estimated at about two and a half words a second and marked *estimated*.
 
 | Cue | Shot | Speaker | Line | Words | Starts | Takes |
 |---|---|---|---|---|---|---|

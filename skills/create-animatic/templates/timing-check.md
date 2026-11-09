@@ -1,10 +1,10 @@
 ## Prompt
 
-You are checking the timing of the animatic for "{{title}}", an animated film of {{length}}, against its approved script. The timing sheet below holds each shot's board for the shot's length, in order, and cues each spoken line as temp audio. Check it; do not rewrite it.
+You are checking the timing of the animatic for "{{title}}", an animated film of {{length}}, against its approved script. The timing sheet below holds each shot's board for the shot's length, in order, and cues each spoken line at its recorded length. Check it; do not rewrite it.
 
 For each shot, in order:
 
-- count the words of each line it covers, and the time they take at about two and a half words a second, with half a second before and after each line;
+- take each line's recorded length from the cue list, or, for a line marked *estimated*, count its words at about two and a half words a second, with half a second before and after each line;
 - say whether the shot gives its lines that time, and by how much it is short;
 - say where a silence runs longer than about two seconds with no action in the shot to fill it;
 - say whether each line is the script's line, word for word, and in the right shot and order.

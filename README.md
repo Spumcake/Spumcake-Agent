@@ -21,6 +21,9 @@ Skills for general AI animated filmmaking, with the user directing every step: p
 | [create-model-sheet](skills/create-model-sheet/SKILL.md) | makes a subject's expression sheet, pose sheet, mouth chart, and colour model |
 | [create-line-up](skills/create-line-up/SKILL.md) | sets several subjects side by side at true relative scale, as a line-up or a height chart |
 | [create-location-reference](skills/create-location-reference/SKILL.md) | builds a place's reference: its plan, views from several angles, its props, and lighting keys |
+| [create-keyframe](skills/create-keyframe/SKILL.md) | makes an on-model keyframe for each shot of an approved shot list, for the animatic |
+| [create-background](skills/create-background/SKILL.md) | makes the background plates for each shot or camera setup, with no characters |
+| [review-continuity](skills/review-continuity/SKILL.md) | reviews an image, clip, lip-sync, final shot, or sound against its references and the shots around it, and reports every difference |
 | [create-board](skills/create-board/SKILL.md) | draws a rough layout frame for each shot of an approved shot list, or from the user's sketch |
 | [create-animatic](skills/create-animatic/SKILL.md) | times the boards to the shot list as an editable timing sheet, and checks it against the lines |
 

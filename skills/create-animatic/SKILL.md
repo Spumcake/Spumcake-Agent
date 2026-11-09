@@ -1,9 +1,11 @@
 ---
 name: create-animatic
-description: Build an animatic from an approved shot list and its approved boards - each board held for its shot's length, in order, with its camera move and the transition into it marked and the script's lines as temp-audio cues - written as a plain, editable timing sheet (shot, board file, in, out, length, camera move, transition, lines) that any editor or timeline can play, and, where the setup offers a language model, the prompt it runs to check each shot's timing against its lines, then take it to the user for approval. Use when the user asks for an animatic, a story reel, a timed board, or to time the boards to the shot list. Not for drawing the boards or writing the shot list.
+description: Build an animatic from an approved shot list and its approved keyframes, or rough boards for shots that have no keyframe yet - each board held for its shot's length, in order, with its camera move and the transition into it marked and the script's lines cued at their recorded lengths - written as a plain, editable timing sheet (shot, board file, in, out, length, camera move, transition, lines) that any editor or timeline can play, and, where the setup offers a language model, the prompt it runs to check each shot's timing against its lines, then take it to the user for approval. Use when the user asks for an animatic, a story reel, a timed board, or to time the boards to the shot list. Not for drawing the boards or writing the shot list.
 ---
 
 # Animatic
+
+An animatic is made of each shot's on-model keyframe, generated and approved; a rough board stands in for a shot whose keyframe is not made yet. Below, "board" means the shot's keyframe, or its rough board when it has none. The clip assembled from them is not generated.
 
 An animatic is the board played in time: each frame held for as long as its shot lasts, in order, with the camera's moves, the transitions, and the lines where they fall. It is the first time the user sees the film's rhythm, and the camera tests and the shots that follow are cut to it. This skill writes it as a timing sheet, a plain list that any editor or timeline can lay out and play, and that the user can change by hand, then has it assembled into one clip the user can watch, which the camera tests, restyling, and sound are cut to.
 
@@ -27,6 +29,7 @@ From the caller:
 - an approved shot list, with each shot's number, length, camera, and lines; with none, one is planned and approved first;
 - the approved board for it: one frame per shot, named by its shot number, and an end frame, named by the number and `-end`, for each camera move that has one; with none, the board is made and approved first;
 - the approved script, for its lines and any transitions it writes, such as a fade in;
+- the approved voice recording of every spoken line, each with its measured length, since voices are made before the animatic, so it is timed to the real lines; a line with no recording yet is marked *estimated*;
 - the film's length and frame rate;
 - a folder for the timing sheet, the check's prompt, and its answer.
 
@@ -46,7 +49,7 @@ Fill [the timing sheet template](templates/timing-sheet.md). It has one row per 
 - **Transition:** how the shot begins: a cut, unless the script writes another, such as a fade in, a dissolve, or a fade to black, or the user asks for one. A dissolve or a fade has its length in frames, centred on the cut, so no shot's in or out moves.
 - **Lines:** each spoken line it covers, by speaker, marked on or off screen, quoted word for word from the script, with its cue number.
 
-Below the rows, the **cue list** gives each line as a temp-audio cue: its number, its shot, its speaker, the line word for word, where it starts, and how long it takes to say. A line starts half a second into its shot, or half a second after the line before it in the same shot, unless the shot's action says otherwise. It takes about two and a half words a second.
+Below the rows, the **cue list** gives each line: its number, its shot, its speaker, the line word for word, its recording, where it starts, and how long it takes. A line starts half a second into its shot, or half a second after the line before it in the same shot, unless the shot's action says otherwise. Its length is its recording's measured length. Only a line with no recording yet is estimated, at about two and a half words a second, and marked *estimated*.
 
 Use the names and numbers of the shot list and the script, never new ones.
 
@@ -69,7 +72,7 @@ Fill the timing sheet from the shot list, the boards, and the script, in shot or
 - the total is the shot list's total, and how far it is from the film's length;
 - every line is cued once, in order, word for word.
 
-Note each shot whose lines, at two and a half words a second with half a second before and after, need more than its length.
+Note each shot whose lines, at their recorded lengths with half a second before and after, need more than its length. A recorded line is never squeezed or moved to fit: the shot's length changes, and the change goes back to the shot list.
 
 ## 3. Check the timing
 
@@ -83,9 +86,12 @@ The check proposes; it never changes a length. A shot too short for its lines, o
 
 ## 4. Assemble the clip
 
-Have the timing sheet assembled into one video, with the setup's renderer or editor: each board held for its length, in order; a camera move shown as a slow move across its board, from its start frame to its end frame when there is one; the transitions as marked; and the lines as cue cards, or as a read track when the setup makes one. Plan it, with the cost when it bills, and assemble it on the user's yes. Watch it against the sheet: every shot, in order, for its length. The clip is named for the film and the sheet's version, and is remade whenever the sheet changes.
+Have the timing sheet assembled into one video, with the setup's renderer or editor: each board held for its length, in order; a camera move shown as a slow move across its board, from its start frame to its end frame when there is one; the transitions as marked; and the recorded lines on their own track, at their cues; a cue card stands in only for a line marked *estimated*. Plan it, with the cost when it bills, and assemble it on the user's yes. Watch it against the sheet: every shot, in order, for its length. The clip is named for the film and the sheet's version, and is remade whenever the sheet changes.
 
 ## 5. The user's review
+
+An animatic with any line marked *estimated* is shown with those lines listed first. The user approves it only by accepting each estimated line by name, or after its recording replaces the estimate and the shot is timed again.
+
 
 Show the timing sheet with its total, the counted notes, and the check's findings, with the shots most at risk first. The user's corrections win. A correction the user writes, such as a length, a transition, or a cue, is made in the sheet directly, and every in and out after it is counted again.
 
