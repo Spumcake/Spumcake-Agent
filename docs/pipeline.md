@@ -29,7 +29,7 @@ Each through `make-canonical`:
 
 1. **The mood brief** (`research-references`, mood investigation): genre, literary, film, and animation references, directors, painting, time of day, light, palette, camera, and presentation, in two or three directions; the user chooses.
 2. **The character study** (`create-concept-art`): the main character restyled into the concept style, alone on white, from its coloured form front A-pose; it becomes the style reference.
-3. **The places, restyled to match** the character study, each from its canonical angle (`create-concept-art`).
+3. **The places, restyled to match** the character study, each from its canonical angle's texture pass, never its coloured form (`create-concept-art`).
 4. **The concept art,** combining them (`create-concept-art`).
 
 ## 5. Staging and the shots

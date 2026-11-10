@@ -1,6 +1,6 @@
 ---
 name: canonical-cleanup
-description: Audit a generated image against its canonical prompt - the text-to-image prompt the image descends from - list what the image has that the prompt rules out, and what the prompt asked for that came out wrong, and fix them itself: the pre-vis first when the fault is in it, then the generation. Use after any image is generated from a request, before it is approved or used to make anything else. Not for judging style, adding what was never asked for, or checking one image against another's continuity.
+description: Audit a generated image against its canonical prompt - the text-to-image prompt the image descends from - list what the image has that the prompt rules out, and what the prompt asked for that came out wrong, and fix them itself: the pre-vis first when the fault is in it, then the generation. Run after any image is generated from a request, as part of that step, before it is approved or used to make anything else. Not for judging style, adding what was never asked for, or checking one image against another's continuity.
 ---
 
 # Canonical cleanup
@@ -29,7 +29,7 @@ From the caller:
 - its canonical prompt: the text-to-image prompt the image descends from, as sent, however many image edits came after it;
 - a folder for the audit, the prompt, and the images.
 
-The audit and the fixes are the agent's own work, made without asking the user. Every paid request still waits for the user's yes to its plan: the model, the number of requests, and the cost.
+The audit and the fixes are the agent's own work, made without asking the user. Cleanup is part of every step that makes an image: once the user has approved a step, run its cleanup edits as part of it, without asking again, and report what was found, what was fixed, the prompts, the images sent, and the cost afterwards. Ask only when a fix would change something the user chose, or would cost more than the step itself.
 
 ## 1. The audit
 
