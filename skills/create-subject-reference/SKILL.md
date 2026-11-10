@@ -66,6 +66,8 @@ Each sheet is a separate 3:2 page with a header and one job, so no sheet is crow
   - Fill [the prop template](templates/reference-prop.md).
   - Send it with the input images that show it, and the base sheet.
 
+**A-pose views,** for a character, once its base sheet is approved: the cleanest reference of the character, as a 3D model would show it. Four separate images, front, back, left side, and right side, each the whole character standing in an A-pose, arms angled down and away from the body, at one scale, on a transparent background, or a plain one cut away afterwards. Make each view three times, as a viewport shows a 3D model: in plain grey, with each part in its own flat colour, and with its colours and textures under neutral, even light. Send the base sheet, with the research photographs of the character's clothing and carried things. Say what each image is and how it was made, and only what no image gives: the pose, the view, and the shading. These views feed the height chart and every later image of the character.
+
 Expressions, head angles, poses, and gestures belong in the gallery, not on a sheet.
 
 Make one sheet per request. Inspect each for drift from the base sheet, wrong colours, and broken anatomy or structure, and report honestly. A new version is a new paid request, and needs the user's yes.

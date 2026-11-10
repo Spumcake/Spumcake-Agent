@@ -86,6 +86,11 @@ Never drop a subject's sheet to make room and describe the subject in words inst
 
 ## 3. Make it
 
+When every subject has A-pose front views on transparent backgrounds, the height chart is not generated: composite it. Scale each subject's front view so its height matches the plan, stand every one on one ground line in the planned order, and draw the labelled grid of heights behind them. Nothing is redrawn, so nothing drifts off model, and it costs nothing. Make one chart for each kind of view the subjects have, such as the grey and the textured.
+
+Otherwise, generate it:
+
+
 Fill [the line-up template](templates/line-up.md), or [the height chart template](templates/height-chart.md), once per request. Plan it, render it on the user's yes, and report each output's path.
 
 Inspect it against the plan: each subject against its base sheet, every foot on the ground line, and each height against its landmark and, on a chart, its grid. Report honestly what is off, such as "Tom reads at Mira's chin, not her shoulder". Do not correct it by eye: a new version is a new paid request, and needs the user's yes.

@@ -46,6 +46,8 @@ Then look at every visible object, one by one:
 - **Malformed:** an object that does not read clearly as any one thing, or a thing formed wrongly, such as a partition that could be a door, a window, or a cabinet. Do not repaint it in place. Record it, and let the square-on views of its wall, made from the pre-vis, show what it is.
 - **New and needed:** an object the pre-vis does not hold that clearly reads as a thing, and that the place needs, such as a door the place must have. Do not remove it. File it as a fix for the pre-vis: add it to the pre-vis, with its shape, size, and place taken from the image, and to the pre-vis key, so every later image of the place has its geometry. No new image is made for it.
 
+On a form pass, a viewport view of the element with no textures, texture that shows through is a fix for the generation: lettering, and patterns on floors, walls, or upholstery, which are surfaces rather than objects. Remove them with the cleanup template, leaving each surface one plain colour.
+
 These are not findings:
 
 - the world seen through the windows;

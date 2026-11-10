@@ -1,6 +1,6 @@
 ---
 name: refine-concept-art
-description: Make a recurring place canonical, one step at a time, so every later image of it holds together - research, then a pre-vis, then the primary canonical location painted from it, then canonical cleanup, then the views of the place - each step made only from the latest approved result of the one before. Use when the film's breakdown names a recurring place, before any character or prop is staged in it, and whenever a place's images stop agreeing with each other. Not for exploring a film's look, or for a character or a prop.
+description: Make a recurring place canonical, one step at a time, so every later image of it holds together - research, then a pre-vis, then the primary canonical location painted from it, then canonical cleanup, then the views of the place, then neutral grey form, coloured form, and texture passes of each - each step made only from the latest approved result of the one before. Use when the film's breakdown names a recurring place, before any character or prop is staged in it, and whenever a place's images stop agreeing with each other. Not for exploring a film's look, or for a character or a prop.
 ---
 
 # Refine concept art
@@ -45,11 +45,15 @@ Run `canonical-cleanup` on the chosen image, against its canonical prompt and th
 
 Run `create-previs` for the views: a camera square-on to each wall, and each shot the concept art needs. Make each view from the primary canonical location with `create-concept-art`'s new camera template. Then run `canonical-cleanup` across the views, fixing only major inconsistencies. The user chooses each view.
 
+## 6. The neutral passes
+
+Run `create-concept-art`'s neutral passes on the primary canonical location and on each chosen view: a grey form pass, a coloured form pass, and a texture pass under neutral light, then `canonical-cleanup` on the form passes. The user chooses one of each. Surface changes, such as less gloss, are made on the texture passes; mood and lighting come later, on their own.
+
 ## Hand back
 
 - the approved research board and its photographs;
 - the pre-vis: its layout, key, good shot, and views;
-- the primary canonical location, and each view of the place, named by its camera;
+- the primary canonical location, and each view of the place, named by its camera, each with its grey form, coloured form, and texture passes;
 - every audit, prompt, and image sent, and what the user chose at each step.
 
 The place is then ready for its characters and props to be staged into the views its shots use.
