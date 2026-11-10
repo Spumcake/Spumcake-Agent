@@ -16,7 +16,7 @@ Every recurring character, place, and prop the script needs, what each must be i
 
 ## 3. Canonical elements
 
-Each recurring element is made canonical, one at a time, before any concept art with characters.
+Each recurring element is made canonical, one at a time, before any concept art with characters. A place's primary canonical location is its canonical angle: every later step that returns to the place starts from it and its passes.
 
 Each through `make-canonical`:
 
@@ -28,8 +28,9 @@ Each through `make-canonical`:
 ## 4. Concept art
 
 1. **The mood brief** (`research-references`, mood investigation): genre, literary, film, and animation references, directors, painting, time of day, light, palette, camera, and presentation, in two or three directions; the user chooses.
-2. **Mood references,** each place and character on its own, from its neutral references (`create-concept-art`).
-3. **The concept art,** combining them (`create-concept-art`).
+2. **The character study** (`create-concept-art`): the main character restyled into the concept style, alone on white, from its coloured form front A-pose; it becomes the style reference.
+3. **The places, restyled to match** the character study, each from its canonical angle (`create-concept-art`).
+4. **The concept art,** combining them (`create-concept-art`).
 
 ## 5. Staging and the shots
 

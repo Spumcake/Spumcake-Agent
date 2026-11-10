@@ -11,6 +11,8 @@ A good result reads as that kind of thing in every view, holds everything the st
 
 ## The rules of the sequence
 
+- **The canonical angle:** A place's primary canonical location, seen from the pre-vis's one good shot, is its canonical angle. Every later step that returns to the place, its mood reference, its concept art, and any other image of it, starts from the canonical angle and its passes, never from another view. A new angle is made only when the user asks for it and approves its camera, and never becomes the place's reference.
+
 - One element at a time, one step at a time. Each step is made only from the latest approved results of the steps before it; a rejected round is never an input to anything.
 - When a step fails, the skill that made it is fixed, and the step is run again. A lesson goes into the skill, not around it.
 - A place is made canonical before any character is staged in it. No characters appear in a place's images.
@@ -46,7 +48,7 @@ Run `research-references` for the element: a photograph of every item the story 
 2. **Pre-vis:** run `create-previs` from the approved research: the layout, the mock-up with its key, and one good shot. The user approves the shot.
 3. **The primary canonical location:** run `create-concept-art` for it: the grey shot, the research photographs, the names from the key, and the concept context template for the place. The user chooses one.
 4. **Canonical cleanup:** run `canonical-cleanup` on the chosen image, against its canonical prompt and the pre-vis. Fixes for the pre-vis go back to step 2, and the image is made again from the corrected shot. The user approves the cleaned image.
-5. **The views:** run `create-previs` for a camera square-on to each wall and each shot the concept art needs, and make each view from the primary canonical location with `create-concept-art`'s new camera template. Run `canonical-cleanup` across the views, fixing only major inconsistencies. The user chooses each view.
+5. **The views:** run `create-previs` for a camera square-on to each wall, and any other camera the user asks for and approves, and make each view from the primary canonical location with `create-concept-art`'s new camera template. Run `canonical-cleanup` across the views, fixing only major inconsistencies. The user chooses each view.
 6. **The neutral passes:** run `create-concept-art`'s grey form, coloured form, and texture passes on the primary canonical location and each view, then `canonical-cleanup` on the form passes. Surface changes, such as less gloss, are made on the texture passes; mood and light come in the concept art phase.
 
 ## A character
@@ -65,7 +67,7 @@ Run `research-references` for the element: a photograph of every item the story 
 
 - the story check's list, with each item's place in the canonical images;
 - the approved research board and its photographs;
-- for a place, the pre-vis, its layout, key, good shot, and views, and the primary canonical location and each view with its grey form, coloured form, and texture passes;
+- for a place, the pre-vis, its layout, key, good shot, and views, and the primary canonical location, its canonical angle, and each view with its grey form, coloured form, and texture passes; name the canonical angle's files plainly, so every later step finds them;
 - for a character, the primary canonical image and the A-pose set with its form passes;
 - for a prop, its sheet or its views;
 - every audit, prompt, and image sent, and what the user chose at each step.

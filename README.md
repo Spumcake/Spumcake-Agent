@@ -16,7 +16,7 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | [write-script-prompt](skills/write-script-prompt/SKILL.md) | plans a script from the approved beats and builds the prompt a language model writes it from |
 | [write-shot-list-prompt](skills/write-shot-list-prompt/SKILL.md) | plans a timed shot list from the script and builds the prompt a language model writes it from |
 | [create-style-guide](skills/create-style-guide/SKILL.md) | builds a concept's style rules, and the prompts for style frames to choose from and a style sheet |
-| [create-concept-art](skills/create-concept-art/SKILL.md) | explores a design with text-to-image candidates, makes a place's or character's primary canonical image, new views, neutral passes, mood references, the concept art, and staging |
+| [create-concept-art](skills/create-concept-art/SKILL.md) | explores a design with text-to-image candidates, makes a place's or character's primary canonical image, new views, neutral passes, a character study that sets the concept style, each place restyled to match, the concept art, and staging |
 | [create-colour-script](skills/create-colour-script/SKILL.md) | plans the colour and light of each beat, then a keyframe for each, in story order |
 | [research-references](skills/research-references/SKILL.md) | researches real places and character archetypes on the web, into a sourced reference board, and a film's mood into a mood brief |
 | [create-previs](skills/create-previs/SKILL.md) | builds a place's simple 3D mock-up, each piece a recognisable shape from the research with a key naming it, and renders its shot and its views |

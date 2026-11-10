@@ -20,6 +20,7 @@ Two or three distinct directions, each one a whole answer.
 - **Camera and presentation:** {{framing, angle, lens, movement or stillness, aspect ratio, symmetry}}
 - **Sound and pace:** {{what is heard, and how long things are held}}
 - **What to avoid:** {{the clichés this direction falls into}}
+- **Reference images:** {{contact sheet, and the images kept, each with what it shows and its source page}}
 
 ## The user's choice
 

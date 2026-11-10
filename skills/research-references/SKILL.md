@@ -59,7 +59,9 @@ Before concept art, once a film's places, characters, and props are canonical, i
 - **paintings and photographs** whose light, colour, or composition fit;
 - **time of day, light, palette, camera, presentation, sound, and pace,** as consequences of the references, not defaults: a scene at "closing time" may be mid-afternoon, dusk, or night.
 
-Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Show the brief. The user chooses a direction or a blend; record the choice in the brief, and list what in the style guide must change to agree with it. Mood images, later, come from these references, never from more photographs of the place.
+Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then collect the images. For each direction, find stills of the named film scenes, frames of the animation, the paintings, and the photographs, with short, plain searches, such as "Mulholland Drive Winkie's" or "Eggleston diner": several images for each reference, showing its light, palette, and framing. Preview them on a contact sheet, numbered, with each image's source page; keep only those the user chooses, as internal reference, out of version control. A brief with no images is not finished.
+
+Show the brief with its contact sheets. The user chooses a direction or a blend; record the choice in the brief, and list what in the style guide must change to agree with it. Mood images come from these references, never from more photographs of the place.
 
 ## Hand back
 
@@ -67,4 +69,4 @@ Fill [the mood brief template](templates/mood-brief.md) with two or three distin
 - the downloaded references, each named for what it shows, with its source and licence beside it;
 - the conclusions a pre-vis, concept art, or a character's design should follow;
 - for each element of a place, the photograph a pre-vis builds it from;
-- the mood brief, with the user's chosen direction, when the mood was investigated.
+- the mood brief, with the user's chosen direction and the reference images kept for it, when the mood was investigated.

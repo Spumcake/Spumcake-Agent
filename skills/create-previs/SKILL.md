@@ -42,7 +42,7 @@ Place one camera where the research says this kind of place is best shown, so th
 
 ## 4. The views of the place
 
-Once the place's primary canonical location is approved, place a camera square-on to each wall, facing it straight, framed so every object along that wall reads clearly, and a camera for each shot the concept art needs. Render each in grey and show them all, marked on the layout, with how each camera sits relative to the original one. Each becomes a view of the place, made from the primary canonical location.
+Once the place's primary canonical location is approved, place a camera square-on to each wall, facing it straight, framed so every object along that wall reads clearly. Place no other camera unless the user asks for it and approves it: the one good shot stays the place's canonical angle. Render each in grey and show them all, marked on the layout, with how each camera sits relative to the original one. Each becomes a view of the place, made from the primary canonical location.
 
 ## 5. A new camera, when asked
 
