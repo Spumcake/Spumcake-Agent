@@ -1,11 +1,11 @@
 ---
 name: create-colour-script
-description: Make a film's colour script - the written colour and light logic of every beat or sequence, drafted by a language model from a prompt this skill builds, then one small keyframe per beat painted in that logic with an image-edit model sent the concept's style sheet, or a text-to-image model when there is none, laid out in story order so the arc of colour and light across the whole film can be judged at a glance - from the approved beat sheet or shot list and the concept's style guide. Use when the user asks for a colour script, a colour plan, colour keys for a film, or the mood or lighting arc of a story. Not for a concept's overall look, one place's lighting under a recurring mood, or the boards.
+description: Make a film's colour script - the written colour and light logic of every beat or sequence, drafted by a language model from a prompt this skill builds, then one small keyframe per beat painted in that logic with an image-edit model sent the concept's style sheet, or a text-to-image model when there is none, laid out in story order so the arc of colour and light across the whole film can be judged at a glance - from the approved beat sheet or shot list and the concept's style guide. Use when the user asks for a colour script, a colour plan, colour keys for a film, or the mood or lighting arc of a story. Not for a concept's overall look, a place's or a character's mood reference, or the boards.
 ---
 
 # Colour script
 
-A colour script plans the mood of a whole film in colour and light, before anything is boarded or shot. It is a row of small keyframes, one per beat or sequence, in story order, so the user can see at a glance where the film is warm or cold, bright or dark, calm or tense, and where it turns. Every later image of a beat, a board, a lighting key, or a shot, takes its colour and light from its line here.
+A colour script plans the mood of a whole film in colour and light, before anything is boarded or shot. It is a row of small keyframes, one per beat or sequence, in story order, so the user can see at a glance where the film is warm or cold, bright or dark, calm or tense, and where it turns. Every later image of a beat, a board, a background plate, or a shot, takes its colour and light from its line here.
 
 It has two halves that must agree: the **colour logic**, a line per beat that a prompt can quote, saying what colours and light the beat has and why; and the **keyframes**, which show it. A good colour script has an arc you can read from across the room: neighbouring beats differ where the story turns and hold where it holds, and every colour comes from the style guide's palette or is marked as a departure. A failed one has every keyframe in the same palette, keyframes so detailed the colour is lost, or keyframes that ignore their own logic.
 
@@ -28,7 +28,7 @@ From the caller:
 - the approved beat sheet, or the approved shot list; with neither, one is planned and approved first;
 - the concept's style guide, when it has one: its written rules and its style sheet;
 - the film's aspect ratio, from the shot list or the style guide; 16:9 when neither says;
-- the places' references and the subjects' base sheets, when the user wants a keyframe to show them recognisably;
+- each place's primary canonical location and its views, with their neutral passes, and each character's A-pose views or another subject's reference sheet, when the user wants a keyframe to show them recognisably;
 - a folder for the prompts, the colour script, and the keyframes, each keyframe saved beside its prompt.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a new model is a short test before the rest.
@@ -46,7 +46,7 @@ A keyframe prompt says what the picture is for, then the moment, then its colour
 3. **The composition:** one simple arrangement of a few big shapes and values, as the shot list frames it when there is one.
 4. **The colour and light:** the beat's line of colour logic, quoted: the dominant colours, the accent, the light's source, direction, and quality, the time of day, and the contrast.
 5. **The look:** the style guide's shapes and texture, quoted, painted loosely. Detail is left out so the colour reads.
-6. **The references,** when there are any, in the order sent: a subject's base sheet first, for its shape and colours only; a place's establishing view next, for its layout; the style sheet last, for its line, colour, and light. Say that the beat's own colour and light win over the colours of every reference.
+6. **The references,** when there are any, in the order sent: a character's front A-pose view, or another subject's reference sheet, first, for its shape and colours only; the grey form pass of the place's primary canonical location, or of its view nearest the composition, next, for its layout; the style sheet last, for its line, colour, and light. Say that the beat's own colour and light win over the colours of every reference.
 7. **What to leave out:** text, labels, borders, faces in detail, and fine texture, as a plain sentence.
 
 Keep the colour-and-light part in the same form in every keyframe, and change only its words, so the differences the user sees are the logic's differences. Keep each part short; long prompts make models drop parts. Leave out what the model ignores, as its prompt skill says.
@@ -74,7 +74,7 @@ When a check fails, build a corrected prompt that says what was wrong, and run i
 
 Fill [the keyframe template](templates/keyframe.md) once per beat, quoting its line of colour logic.
 
-- Send the style sheet last, and before it any base sheet or establishing view the user wants the keyframe to show, within the number of references the model takes.
+- Send the style sheet last, and before it any A-pose view, reference sheet, or grey form pass of a place the user wants the keyframe to show, within the number of references the model takes.
 - Fill `{{style_rules}}` with the style guide's shapes and texture, quoted, or the look the user described when there is no style guide.
 - Fill `{{references_line}}` with what each attached image is, in order, ending "The beat's own colour and light, above, win over the colours of every attached image." With nothing attached, it is empty.
 - Plan the keyframes. Render three first, the opening, the biggest turn, and the ending, so the user can judge the range before the rest; then the rest on the user's yes.

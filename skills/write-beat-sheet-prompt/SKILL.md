@@ -31,7 +31,8 @@ Every character who reads as a minor stays in ordinary, everyday situations. Not
 
 Choose the number of beats from the length:
 
-- under 2 minutes: 4 to 6 beats;
+- under 1 minute: 2 or 3 beats;
+- 1 to 2 minutes: 4 to 6 beats;
 - 2 to 5 minutes: 6 to 10;
 - 5 to 12 minutes: 10 to 15;
 - longer: about one beat a minute, grouped into acts.

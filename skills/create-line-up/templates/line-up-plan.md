@@ -10,9 +10,9 @@ The subjects, their heights, and their order. Every height is in one unit, {{uni
 
 Left to right.
 
-| # | name | sheet sent | outfit or variant | height | landmark against the anchor | group |
+| # | name | image sent | outfit or variant | height | landmark against the anchor | group |
 |---|---|---|---|---|---|---|
-| 1 | {{name}} | `{{base_sheet}}` | {{default}} | {{height}} | {{such as "the top of the head level with the anchor's shoulder"}} | {{group, when split}} |
+| 1 | {{name}} | `{{base_reference}}` | {{default}} | {{height}} | {{such as "the top of the head level with the anchor's shoulder"}} | {{group, when split}} |
 
 ## Groups
 

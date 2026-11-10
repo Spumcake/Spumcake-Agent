@@ -4,7 +4,7 @@ quality: high
 ---
 ## Prompt
 
-Create a clean MOUTH CHART for {{name}}, the {{kind}} shown on the attached reference sheets: the mouth shapes its lip-sync is drawn from, each labelled by its sound. The first attached image is its base reference sheet: keep its {{identity_features}}, proportions, colours, and art style exactly.{{style_sheet_line}} Do not switch to another rendering style.
+Create a clean MOUTH CHART for {{name}}, the {{kind}} shown in the attached images: the mouth shapes its lip-sync is drawn from, each labelled by its sound.{{references_line}}{{style_sheet_line}} Do not switch to another rendering style.
 
 A wide landscape page on a plain white background, with thin grey panel borders and small, legible labels.
 

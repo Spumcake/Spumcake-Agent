@@ -1,6 +1,6 @@
 # Model sheets: {{name}}
 
-Drawn from: the base sheet `{{base_sheet}}`{{outfit_sheet}}, the brief, and {{script_or_shot_list}}. Every name and label below stays fixed once the user approves it.
+Drawn from: the base reference `{{base_reference}}`{{outfit_sheet}}, the brief, and {{script_or_shot_list}}. Every name and label below stays fixed once the user approves it.
 
 ## Sheets
 

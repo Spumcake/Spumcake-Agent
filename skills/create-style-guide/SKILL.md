@@ -89,4 +89,4 @@ Hand back to the caller:
 - the chosen style frame and the style sheet, as the concept's style references;
 - the user's own artwork it was drawn from.
 
-Every later task in the concept, a subject's reference, a location, a board, or a shot, is prompted with the written rules and sent with the style sheet.
+Every later task in the concept, a subject's reference, a location, a board, or a shot, is sent the style sheet; its prompt quotes a written rule only where no image it sends already shows it.

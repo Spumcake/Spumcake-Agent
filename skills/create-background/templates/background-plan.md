@@ -8,10 +8,10 @@ Finish reference: {{finish_plate}}, chosen by the user, sent with every plate of
 
 One row per setup, in the shot list's order, named by its first shot. A setup seen in another mood has a row of its own, named by the setup and the mood, made from the setup's plate. Every shot of a setup uses its plate.
 
-| Plate | Shots that use it | Place | Camera position | Framing and angle | Horizon and floor line | Camera move | Plate shape and size | Where the framings sit | Mood and lighting key | Beat and colour script line | What passes in front | References, in order | Left out to fit | Take approved | Approved on |
+| Plate | Shots that use it | Place | Nearest view | Framing and angle | Horizon and floor line | Camera move | Plate shape and size | Where the framings sit | Mood and mood reference | Beat and colour script line | What passes in front | References, in order | Left out to fit | Take approved | Approved on |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `bg-{{shot}}` | {{shots}} | {{place}} | {{position}} | {{framing}}, {{angle}} | {{horizon}} | {{camera}} | {{plate_shape}} | {{framings}} | {{mood}}, `{{lighting_key}}` | {{beat}}: {{colour_script_line}} | {{in_front}} | {{references}} | {{left_out}} | {{take}} | {{date}} |
-| `bg-{{shot}}-{{mood}}` | {{shots}} | {{place}} | {{position}} | as `bg-{{shot}}` | as `bg-{{shot}}` | as `bg-{{shot}}` | as `bg-{{shot}}` | as `bg-{{shot}}` | {{mood}}, `{{lighting_key}}` | {{beat}}: {{colour_script_line}} | as `bg-{{shot}}` | the approved `bg-{{shot}}`, then {{references}} | {{left_out}} | {{take}} | {{date}} |
+| `bg-{{shot}}` | {{shots}} | {{place}} | {{view}} | {{framing}}, {{angle}} | {{horizon}} | {{camera}} | {{plate_shape}} | {{framings}} | {{mood}}, `{{mood_reference}}` | {{beat}}: {{colour_script_line}} | {{in_front}} | {{references}} | {{left_out}} | {{take}} | {{date}} |
+| `bg-{{shot}}-{{mood}}` | {{shots}} | {{place}} | {{view}} | as `bg-{{shot}}` | as `bg-{{shot}}` | as `bg-{{shot}}` | as `bg-{{shot}}` | as `bg-{{shot}}` | {{mood}}, `{{mood_reference}}` | {{beat}}: {{colour_script_line}} | as `bg-{{shot}}` | the approved `bg-{{shot}}`, then {{references}} | {{left_out}} | {{take}} | {{date}} |
 
 ## Accepted differences
 

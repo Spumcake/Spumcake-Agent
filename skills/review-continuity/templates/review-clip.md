@@ -37,7 +37,7 @@ Against the line-up: each subject's height against the others, by the landmarks 
 
 ### The place
 
-Against the place's views, its props, and its lighting key: walls, openings, fixed furniture, and the place's props where the views put them, as the camera moves; and the light's sources, direction, colour, and shadows.
+Against the place's views, with their neutral passes, and its mood reference: walls, openings, fixed furniture, and the place's props where the views put them, as the camera moves; and the light's sources, direction, colour, and shadows.
 
 ### The shot
 
@@ -62,7 +62,7 @@ Against the last frame of the shot before, {{previous_shot}}, and the first fram
 The clip is line art. In every sample:
 
 - character outlines only: no colour fill, no shading or tone, no background, floor, or ground line;
-- every line clean and unbroken, closed where the base sheet's lines are closed, with no stray marks, doubled lines, gaps, flicker of extra lines, or sketch lines;
+- every line clean and unbroken, closed where the references' lines are closed, with no stray marks, doubled lines, gaps, flicker of extra lines, or sketch lines;
 - line weight as the style guide's line rules give it, and the same from sample to sample.
 
 ### The look

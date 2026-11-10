@@ -1,6 +1,6 @@
 # Subject brief: {{name}}
 
-Fill every field from the user's request and the input images. Write "not specified" rather than inventing, and "not applicable" for a field that does not fit the subject, such as hair on a vehicle. Keep it short: the brief feeds the reference sheets and the dataset, and anything not listed here should not appear in either.
+Fill every field from the user's request and the input images. Write "not specified" rather than inventing, and "not applicable" for a field that does not fit the subject, such as hair on a vehicle. Keep it short: the brief is the record behind the base reference and the dataset, and anything not listed here should not appear in either. Its look fields are not copied into prompts that send images showing that look.
 
 ## Identity
 

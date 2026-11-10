@@ -9,7 +9,7 @@ Create a clean LINE-UP for the animated production "{{concept}}": its subjects s
 The attached images, in order:
 {{references_list}}
 
-Draw each subject exactly as on its own reference sheet: the same proportions, {{identity_features}}, colours, and art style. Do not switch to another rendering style, and do not make the subjects more alike.
+Draw each subject exactly as its own attached image shows it: the same proportions, {{identity_features}}, colours, and style. Do not switch to another rendering style, and do not make the subjects more alike.
 
 A wide landscape page on a plain white background, with small, legible labels.
 

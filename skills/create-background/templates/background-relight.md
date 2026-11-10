@@ -11,11 +11,7 @@ The attached images, in order:
 
 Keep everything in the first attached image exactly as it is: its size and shape, the camera, the framing, the horizon, the layout, every object, every material, and the clear room where the characters stand. Change only the light.
 
-The light, exactly as the lighting key for {{mood}} shows it:
-- Sources: {{sources}}, from {{direction}}
-- Colour: {{light_colours}}
-- Shadows: {{shadows}}
-- Contrast: {{contrast}}
+The light for {{mood}}: {{light}}.
 
 The colour script's line for this beat: {{colour_script_line}}
 

@@ -4,12 +4,11 @@ quality: high
 ---
 ## Prompt
 
-Redraw the user's rough sketch as a STORYBOARD FRAME for one shot of an animated film, in the board style. The sketch is the structure: keep its composition exactly, every figure in the same place, at the same size, in the same pose, facing the same way, with the same framing and horizon. Change only how it is drawn.
+Redraw the user's rough sketch as a storyboard frame for one shot of an animated film, in the board style. The sketch is the structure: keep its composition exactly, every figure in the same place, at the same size, in the same pose, facing the same way, with the same framing and horizon. Change only how it is drawn.
 
-What the sketch shows: {{sketch_description}}
 - Framing and angle: {{framing}}, {{angle}}.
 - Who is who: {{staging}}
-- Place: {{place}}, {{place_description}}.
+- Place: {{place}}{{place_description}}.
 - Arrows: {{arrows}} Keep any arrows the sketch has, redrawn as clean storyboard marks; add only these.
 
 Draw it in the board style, exactly as follows:

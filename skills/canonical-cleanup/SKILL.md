@@ -70,7 +70,7 @@ When there is any fix for the pre-vis, return to the pre-vis first: change it, r
 
 ## 3. Fixes for the generation
 
-Fill [the cleanup template](templates/cleanup.md) and send the generated image alone. The prompt says what the image is, then lists each correction: what to remove, or what is wrong and what it should be, as the canonical prompt asks. It describes nothing else, because the image carries it. Make two candidates.
+Fill [the cleanup template](templates/cleanup.md) and send the generated image alone. The prompt says what the image is, then lists each correction. Text fixes are for removing things, which works; counts and positions, such as the number of booths or the wall a door is on, do not change reliably by text, so fix them in the pre-vis and remake the image from it. Never inpaint: repainting a masked area changed little but surface materials and cost time and money. It describes nothing else, because the image carries it. Make two candidates.
 
 ## 4. Check
 

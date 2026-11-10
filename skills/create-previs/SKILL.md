@@ -52,6 +52,8 @@ When the user wants an approved image of the place seen from another angle, plac
 
 When the place's images show the mock-up needs changing, such as an object the place needs that the mock-up lacks, or something the user prefers where an image put it, change the layout and the mock-up to match, add it to the key, and render every camera again, so every later image of the place agrees.
 
+When a place goes into production, its neutral views carry enough to rebuild each object as a 3D model, with a 3D generative model or modelling by hand, and place them in a better pre-vis; then every later view keeps the place exactly. Simple shapes are enough until then.
+
 ## Hand back
 
 - the layout, as numbers and as a labelled drawing from above, with every camera marked;

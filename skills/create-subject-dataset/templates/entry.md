@@ -4,12 +4,12 @@ quality: high
 ---
 ## Prompt
 
-A single illustration of {{name}}, exactly as drawn on the attached reference sheets: same {{identity_features}}, proportions, colours, and art style ({{art_style}}).
+{{references_list}} I need a single illustration of {{name}}, with the same {{identity_features}}, proportions, and colours as {{subject_source}}, {{style_line}}.
 
+- Scene: {{scene}}.
 - Framing: {{framing description}}.
-- View: {{view}}, {{pose}}.
-- {{Form_word}}: {{outfit or variant description from the brief}}.{{expression_line}}
-- Prop: {{prop, or "none"}}.
+- View: {{view}}, {{pose}}.{{form_line}}{{expression_line}}
+- Prop: {{prop_line}}.
 - Background: {{background}}.
 
 One subject only. No text, labels, borders, or panels. The subject fills the frame as the framing says.

@@ -1,17 +1,17 @@
 ---
 name: create-background
-description: Make the background plates for a film's final look - one per shot, or one per camera setup shared by every shot taken from it, each showing the place alone with no characters, drawn from the place's views, plan, and props, lit by its lighting key for the shot's mood and the colour script's line for its beat, in the style guide's finished look, framed to match the shot's approved keyframe with the same camera angle, height, and horizon, made wide or tall enough for a camera move, and kept identical across the shots of one setup so the cuts match - with an image-edit model sent the lighting key, the keyframe for its framing only, and the place's references, tested on a few setups first, then each plate taken to the user to approve, for the characters to be composited over later. Use when the user asks for backgrounds, background plates, BGs, a shot's set without its characters, or the backdrop a shot's characters go over. Not for a place's reference views or lighting keys, the keyframes, or a character's layer.
+description: Make the background plates for a film's final look - one per shot, or one per camera setup shared by every shot taken from it, each showing the place alone with no characters, drawn from the place's primary canonical location and its views with their neutral passes, lit by the place's mood reference from the concept art phase and the colour script's line for its beat, in the style guide's finished look, framed to match the shot's approved keyframe with the same camera angle, height, and horizon, made wide or tall enough for a camera move, and kept identical across the shots of one setup so the cuts match - with an image-edit model sent the place's nearest view, its mood reference, and the keyframe for its framing only, tested on a few setups first, then each plate taken to the user to approve, for the characters to be composited over later. Use when the user asks for backgrounds, background plates, BGs, a shot's set without its characters, or the backdrop a shot's characters go over. Not for a place's canonical images, views, or mood references, the keyframes, or a character's layer.
 ---
 
 # Background plates
 
 A background plate is the place a shot happens in, drawn in the film's final look with nobody in it. The characters are animated on their own, and composited over the plate later, so the plate has to be exactly the stage the keyframe set: the same camera, the same horizon, the same floor where their feet will land, lit as the shot's mood and beat call for. Shots taken from the same camera setup share one plate, so when the film cuts back to that angle, the room has not changed.
 
-A good plate lines up with its keyframe: lay one over the other, and the horizon, the floor line, the walls, the doors, and the furniture fall in the same places, with clear room where each character stands. Every object is where the place's plan and views put it, and the light is the lighting key's. A plate for a camera move covers the whole move, with no seam. A plate has failed when the horizon or the angle differs from the keyframe, so the characters would float or slide; when a character, or a character's shadow or reflection, is in it; when a door, a window, or a prop has moved, appeared, or vanished; when its light is not the lighting key's; when two plates of one setup differ; or when a move runs off its edge.
+A good plate lines up with its keyframe: lay one over the other, and the horizon, the floor line, the walls, the doors, and the furniture fall in the same places, with clear room where each character stands. Every object is where the place's views put it, and the light is the mood reference's. A plate for a camera move covers the whole move, with no seam. A plate has failed when the horizon or the angle differs from the keyframe, so the characters would float or slide; when a character, or a character's shadow or reflection, is in it; when a door, a window, or a prop has moved, appeared, or vanished; when its light is not the mood reference's; when two plates of one setup differ; or when a move runs off its edge.
 
 ## The model
 
-Every plate comes from an **image-edit model** that takes the place's lighting key, the shot's keyframe, and the place's references as references. Never use a text-to-image model: it cannot hold a place from its views, and the plates would not match each other.
+Every plate comes from an **image-edit model** that takes the place's views, its mood reference, and the shot's keyframe as references. Never use a text-to-image model: it cannot hold a place from its views, and the plates would not match each other.
 
 The keyframe is sent for its framing only: its camera, angle, and horizon, and where things stand. Never send it as `structure`: a model that follows a structure image traces its edges, and would draw the characters' outlines into the plate.
 
@@ -29,7 +29,8 @@ From the caller:
 
 - an approved shot list, with each shot's number, framing, angle, camera move, and place;
 - the approved keyframes: one per shot, named by its shot number, and an end frame, named by the number and `-end`, for each camera move; with none, the keyframes are made and approved first;
-- each place's references: its establishing sheet, its plan with its numbered camera positions, its views, its props sheet when it has one, and its lighting keys, each named by its view and mood;
+- each place's primary canonical location and its views, each named by its camera, with their neutral passes;
+- each place's mood reference from the concept art phase, named by its mood, for each mood its shots are in;
 - the colour script, with its line of colour logic for each beat, and which beat each shot falls in;
 - the concept's style guide: its written rules and its style sheet;
 - the film's aspect ratio;
@@ -63,35 +64,35 @@ Characters are composited over the plate, so anything in the place that passes i
 
 ## Plate prompts
 
-Every plate's prompt says what the picture is, which reference is which, where the camera is, what it sees, then its light and look. Write it in this order, for any model:
+Every plate's prompt says what the picture is, which reference is which, where the camera is, what no image gives, then its light and look. Write it in this order, for any model:
 
 1. **What the image is:** "a BACKGROUND PLATE for one shot of an animated film: the place alone, with no characters, in the film's final look, for characters to be composited over".
-2. **The references,** one line each, in the order sent, and what each fixes: "The first attached image is the lighting key of the Kitchen from camera position 3, at night: the place, its materials, and its light are fixed." The keyframe line always says it is for framing only, and that its characters are not drawn.
-3. **The camera,** matching the keyframe exactly: its position on the plan, its framing, its angle and height, and where the horizon and the floor line sit in the frame, such as "the horizon a third of the way up, the floor meeting the back wall just below the window". For a move, the plate's shape and where each framing sits on it.
-4. **What is seen,** left to right and near to far, by the place's names, exactly where the plan and the views put it, including what the characters hide in the keyframe, drawn whole.
-5. **The light:** the lighting key's light, and the colour script's line for the shot's beat, quoted.
+2. **The references,** one line each, in the order sent, and what each fixes: "The first attached image is the texture pass of the Kitchen's view from the window camera, made under neutral light: the place, its layout, and its materials are fixed." The mood reference's line says it fixes the light only. The keyframe line always says it is for framing only, and that its characters are not drawn.
+3. **The camera,** matching the keyframe exactly: the view it is nearest, its framing, its angle and height, and where the horizon and the floor line sit in the frame, such as "the horizon a third of the way up, the floor meeting the back wall just below the window". For a move, the plate's shape and where each framing sits on it.
+4. **What no image gives:** what the characters hide in the keyframe is drawn whole, as the views show it. Never list what the views already show.
+5. **The light:** the mood reference's light, named as its image, never described; and the colour script's line for the shot's beat, quoted.
 6. **The look:** the style guide's written rules for environments, line, colour, light, and texture, quoted. A plate is finished, not flat: this is the final look.
 7. **What to leave out:** characters, their shadows and reflections, figures of any kind, text, labels, and borders. Say it plainly, as a sentence.
 
-Keep each part short; a plate with many things in it names only what the camera sees. Say what must not change, every time. Leave out what the model ignores, as its prompt skill says.
+Keep each part short. Say what must not change, every time. Leave out what the model ignores, as its prompt skill says.
 
 ### The order the references are sent in
 
-1. The lighting key of the view nearest the shot's camera, in the shot's mood; with no key for that mood, the view itself, and say so in the plan.
-2. The shot's approved keyframe, for its framing only; for a move, the start keyframe, then its end frame.
-3. The place's establishing sheet.
-4. The place's plan, when the plate shows what the view does not, such as what the characters hide or what lies past the view's edge.
-5. The place's props sheet, when the shot shows its props.
+1. The texture pass of the place's view nearest the shot's camera.
+2. The place's mood reference for the shot's mood; with no mood reference for that mood, say so in the plan, and ask the user before planning the plate.
+3. The shot's approved keyframe, for its framing only; for a move, the start keyframe, then its end frame.
+4. The place's primary canonical location.
+5. Another view of the place, such as the square-on view of a wall, when the plate shows what the nearest view does not, such as what the characters hide or what lies past the view's edge.
 6. The approved plate that set the plates' finish, once there is one.
 7. The style sheet, last.
 
 A plate in another mood is sent the setup's approved plate first, and an extension the plate so far first, since the first image is the one the model keeps most closely; the rest follow in the order above, without the finish plate.
 
-When the model takes fewer, leave out the props sheet first, then the plan, then the approved finish plate, and say which, for which plate, and ask the user before planning it. Never drop the lighting key or view, the keyframe, or the style sheet.
+When the model takes fewer, leave out the other view first, then the primary canonical location, then the approved finish plate, and say which, for which plate, and ask the user before planning it. Never drop the nearest view, the mood reference, the keyframe, or the style sheet.
 
-### When the lighting key and the colour script disagree
+### When the mood reference and the colour script disagree
 
-The lighting key fixes how the place is lit; the colour script's line fixes the beat's colour and mood. When they disagree, such as a warm key in a beat the colour script makes cold, say so, and ask the user which one the plate follows. Never blend them without saying.
+The mood reference fixes how the place is lit; the colour script's line fixes the beat's colour and mood. When they disagree, such as a warm mood reference in a beat the colour script makes cold, say so, and ask the user which one the plate follows. Never blend them without saying.
 
 ### Filling the templates
 
@@ -99,17 +100,18 @@ The lighting key fixes how the place is lit; the colour script's line fixes the 
 - `{{references_list}}` names each attached image on its own line, in the order sent, with what it fixes.
 - `{{style_rules}}` is the style guide's written rules for environments, line, colour, light, and texture, quoted.
 - `{{colour_script_line}}` is the colour script's line for the shot's beat, quoted.
-- `{{in_front}}` is what passes in front of the characters, from the plan, or "nothing".
+- `{{in_front}}` is what passes in front of the characters, from the background plan, or "nothing".
+- `{{light}}` is "exactly as the mood reference shows it"; only when the user agreed to a plate with no mood reference for its mood, it is the light in words.
 - On a wide plate, `{{wide_or_tall}}` is "WIDE" for a pan or a truck and "TALL" for a tilt or a crane; `{{horizon_change}}` is empty, or, for a tilt or a crane, says where the horizon sits at the start and at the end. `{{extension_line}}` is empty for a first request; for an extension, it is "The first attached image is the plate so far: keep everything in it exactly, and extend it {{direction}} by {{amount}}, with no seam where the new part meets it."
 
 ## 1. Plan the plates
 
 Fill [the background plan template](templates/background-plan.md):
 
-- **One row per setup,** in the shot list's order, named by its first shot: the shots that use it, its place, its camera position on the plan, its framing and angle, its camera move, its mood and the lighting key for it, its beat and the colour script's line, its plate's shape and size, what passes in front, and its references in order.
+- **One row per setup,** in the shot list's order, named by its first shot: the shots that use it, its place, the view nearest its camera, its framing and angle, its camera move, its mood and the mood reference for it, its beat and the colour script's line, its plate's shape and size, what passes in front, and its references in order.
 - **A row for each mood** a setup is seen in beyond its first, made from the setup's plate.
 
-Use the names the script, the shot list, and the place's references use. Show the plan to the user; their corrections win. Once approved, the setups keep their names.
+Use the names the script, the shot list, and the place's views use. Show the plan to the user; their corrections win. Once approved, the setups keep their names.
 
 ## 2. A short test
 
@@ -135,8 +137,8 @@ Make the rest a scene at a time, in shot order.
 Before showing a plate, compare it with what it must agree with, and list every difference:
 
 - with its keyframe, laid over it: the horizon, the floor line, the angle, and each wall, opening, and piece of furniture in the same place; and clear room where each character stands;
-- with the place's plan, views, and props: everything where they put it, and nothing they do not have;
-- with the lighting key and the colour script's line: the light's direction, colour, and shadows;
+- with the place's primary canonical location and its views: everything where they put it, and nothing they do not have;
+- with the mood reference and the colour script's line: the light's direction, colour, and shadows;
 - with the style guide's rules and the approved finish plate: the line, colour, and texture;
 - with nothing: no character, shadow, reflection, or figure of any kind;
 - a plate in another mood, with the setup's plate: only the light changed;
@@ -154,7 +156,7 @@ A setup keeps its name once approved, since its shots are composited over it by 
 
 - A new take of a plate keeps its name. The take the user approves replaces it, and every shot of the setup uses the new one; the earlier take is kept beside it.
 - When a keyframe's framing changes, redo the plate of its setup, and say which other shots of the setup it changes too. When a shot moves to another setup, the plan says so.
-- When a place's references, a lighting key, or a colour script line changes, redo only the plates it touches, and list what changed.
+- When a place's views, its mood reference, or a colour script line changes, redo only the plates it touches, and list what changed.
 
 ## Hand back
 

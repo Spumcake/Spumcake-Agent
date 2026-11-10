@@ -1,6 +1,6 @@
 ---
 name: research-references
-description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a pre-vis or concept art is made. Not for making images.
+description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a pre-vis or concept art is made; and, once a film's elements are canonical, to investigate its mood - genre, literary and film references, directors, animation, painting, light, palette, camera, and presentation - before its concept art. Not for making images.
 ---
 
 # Research references
@@ -48,9 +48,23 @@ Fill [the board template](templates/board.md):
 
 Show the board. List the files worth downloading, with their sources, licences, and sizes, and download only those the user approves.
 
+## 3. Mood investigation
+
+Before concept art, once a film's places, characters, and props are canonical, investigate its mood, as a film crew would: not more photographs of the place, which the canonical references already hold, but what the film should feel like and how films, books, and pictures have made that feeling. Start from what the beats ask, such as "quietly ominous, a weary, ordinary moment with something slightly wrong about it", and search for:
+
+- **genre and tone,** and the films, books, and animation that share it;
+- **literary references:** stories and authors whose situations or voice are close to the film's;
+- **film and television references,** by scene where one fits, and the directors and cinematographers whose way of seeing suits it;
+- **animation references** that show how such a mood is carried in animation;
+- **paintings and photographs** whose light, colour, or composition fit;
+- **time of day, light, palette, camera, presentation, sound, and pace,** as consequences of the references, not defaults: a scene at "closing time" may be mid-afternoon, dusk, or night.
+
+Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Show the brief. The user chooses a direction or a blend; record the choice in the brief, and list what in the style guide must change to agree with it. Mood images, later, come from these references, never from more photographs of the place.
+
 ## Hand back
 
 - the approved board;
 - the downloaded references, each named for what it shows, with its source and licence beside it;
 - the conclusions a pre-vis, concept art, or a character's design should follow;
-- for each element of a place, the photograph a pre-vis builds it from.
+- for each element of a place, the photograph a pre-vis builds it from;
+- the mood brief, with the user's chosen direction, when the mood was investigated.

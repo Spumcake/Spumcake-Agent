@@ -4,19 +4,4 @@ quality: high
 ---
 ## Prompt
 
-Create a clean {{KIND}} REFERENCE SHEET for the {{kind}} shown in the attached images: a turnaround that will be the single source of truth for this {{kind}}'s identity. Match the attached images' art style exactly: {{art_style}}. Do not switch to another rendering style.
-
-A wide landscape page on a plain white background, with thin grey panel borders and small, legible labels. Two parts only:
-
-HEADER (a thin strip across the top):
-- Title "{{KIND}} REFERENCE SHEET" and the name "{{name}}".
-- One short line: {{role}}.{{personality}}
-- A small palette strip of {{palette_count}} swatches: {{palette}}.
-
-TURNAROUND (the rest of the page):
-- The whole {{kind}} in its default form, {{default_form}}, {{stance}}.{{default_expression}}
-- Four views side by side at the same scale and height, labelled FRONT, THREE-QUARTER, SIDE, BACK.
-- Orthographic, flat even lighting, no background, resting on a common faint ground line, generous space between views.
-- Identical proportions, {{identity_features}}, and {{form_word}} in every view.
-
-Nothing else: no close-ups, props, callouts, or notes. One {{kind}} only.
+{{references_list}} I need a single reference sheet of this {{kind}} for an animated film: a turnaround of the whole {{kind}} in its default form, {{stance}}, in four views side by side at the same scale and height, from the front, three-quarter, side, and back. Orthographic, lit flat and evenly, resting on a common faint ground line, with generous space between views, on a plain white background. The same proportions, {{identity_features}}, and colours in every view, in the art style of {{style_source}}. No text, labels, colour swatches, close-ups, or other objects. One {{kind}} only.

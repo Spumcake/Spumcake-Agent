@@ -9,20 +9,19 @@ A {{wide_or_tall}} BACKGROUND PLATE for one shot of an animated film with a came
 The attached images, in order:
 {{references_list}}
 
-The keyframes are for framing only: match their camera exactly, and do not draw their characters. Draw whole whatever they hide, as the place's references show it.
+The keyframes are for framing only: match their camera exactly, and do not draw their characters. Draw whole whatever they hide, as the place's views show it.
 
-- The camera's move: {{camera}}, from position {{position}} on the plan, at {{camera_height}}, {{angle}}.
+- The camera's move: {{camera}}, near the {{view}} view, at {{camera_height}}, {{angle}}.
 - The plate: {{plate_shape}}. The start keyframe's framing is {{start_area}} of the plate; the end frame's framing is {{end_area}}. Both match their keyframes exactly, and the place runs on between them without a break.
 - The horizon sits {{horizon}}, level across the whole plate{{horizon_change}}.
-- What is seen, from {{start_edge}} to {{end_edge}} and near to far, exactly where the plan and the views put it: {{seen}}
 - Clear room where the characters will be: {{character_room}}, with the floor or ground there drawn whole.
 - In front of the characters, kept in the picture: {{in_front}}.
 
 {{extension_line}}
 
-The place's layout, architecture, materials, and props are exactly those of its references. Nothing is added, moved, or removed.
+The place's layout, architecture, materials, and props are exactly those of its views. Nothing is added, moved, or removed.
 
-The light, exactly as the lighting key shows it, the same across the whole plate: {{light}}
+The light: {{light}}, the same across the whole plate.
 The colour script's line for this beat: {{colour_script_line}}
 
 The look, exactly as follows: {{style_rules}}

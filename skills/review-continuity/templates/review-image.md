@@ -17,8 +17,8 @@ Check each of these, against the references given and nothing else:
 For each character, creature, prop, or vehicle in the image, against its reference sheets, model sheets, and colour list:
 
 - it is the subject named, and no subject is missing, added, or swapped for another;
-- its face, hair, eyes, skin, and markings, or its shape, parts, and markings, match its base sheet;
-- its proportions and build match its base sheet, seen from this angle;
+- its face, hair, eyes, skin, and markings, or its shape, parts, and markings, match its front A-pose view, or, for another subject, its reference sheet;
+- its proportions and build match its A-pose views, or its reference sheet, seen from this angle;
 - it wears the outfit or variant named, with every part present and none added;
 - each region's colour matches its colour list, in light and in shadow;
 - each prop it holds or wears matches the prop's sheet, and is in the hand or place the references give;
@@ -30,11 +30,11 @@ Against the line-up: each subject's height against the others, by the landmarks 
 
 ### The place
 
-Against the place's views, its props, and its lighting key:
+Against the place's primary canonical location and its views, with their neutral passes, and its mood reference:
 
 - walls, openings, and fixed furniture are where the views put them, seen from this camera position;
 - every prop of the place that this view shows is present, where it belongs, and none is added;
-- the light comes from the sources, direction, and time of day the lighting key gives, with its colour and its shadows.
+- the light comes from the sources, direction, and time of day the mood reference gives, with its colour and its shadows.
 
 ### The plate
 
@@ -61,7 +61,7 @@ Against the frames of the shots on either side, {{neighbours}}: which side of th
 The image is line art:
 
 - character outlines only: no colour fill, no shading or tone, no background, floor, or ground line;
-- every line clean and unbroken, closed where the base sheet's lines are closed, with no stray marks, doubled lines, gaps, or sketch lines;
+- every line clean and unbroken, closed where the references' lines are closed, with no stray marks, doubled lines, gaps, or sketch lines;
 - line weight as the style guide's line rules give it.
 
 How to report:

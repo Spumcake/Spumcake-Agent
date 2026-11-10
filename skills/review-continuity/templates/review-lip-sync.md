@@ -39,7 +39,7 @@ At each pair of frames with the same frame number: every subject's position, pos
 
 ### The subject
 
-Against the speaker's base sheet and mouth chart: the mouth, teeth, and jaw keep the subject's design in every sample, and the face around them does not change shape.
+Against the speaker's front A-pose view and mouth chart: the mouth, teeth, and jaw keep the subject's design in every sample, and the face around them does not change shape.
 
 ### Line art
 

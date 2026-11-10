@@ -39,5 +39,7 @@ When one is missing, say which and stop. Never do a step by hand because the set
 - Text describes what is wanted only when no image gives that context, as in a text-to-image request. A request that sends images never also carries text that describes what those images already show: the text and the images would compete as context. Its text says only what no attached image provides.
 - Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step, prompt, or caption.
 - Use only images and recordings the user has the right to use this way. Show a recognisable real person, or use a real person's voice, only when the user confirms that the person agreed to this use, or a guardian did for a child. Never make anything that shows a real person doing or saying something they did not, to deceive anyone.
+- Each step is made only from the latest approved results of the steps before it; a rejected round is never an input. Do only the step asked, and never design ahead of it. When a step fails, fix the skill that made it, then run the step again.
+- A word in capitals, a label, or a name in a prompt tends to be drawn as text in the image. Write prompts without them, unless the image is meant to carry those words.
 - Long steps report progress, and say what is running and how long it takes before waiting.
 - A skill calls whoever uses it **the user**.

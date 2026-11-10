@@ -22,7 +22,7 @@ Against each subject's colour model and colour list, in every sample: each regio
 
 ### The light
 
-Against the lighting key for {{place}} in {{mood}}: the light's sources, direction, colour, and contrast, and where the shadows fall, on the subjects and on the place alike. The light holds from sample to sample.
+Against the mood reference of {{place}} for {{mood}}: the light's sources, direction, colour, and contrast, and where the shadows fall, on the subjects and on the place alike. The light holds from sample to sample.
 
 ### The colour script
 
@@ -30,7 +30,7 @@ Against the colour script's line for its beat, {{beat}}: the dominant colours, t
 
 ### The place
 
-Against the place's views and props{{plate_note}}: walls, openings, fixed furniture, and the place's props where the views put them, from this camera position; none missing and none added. The background holds from sample to sample, and moves only with the camera.
+Against the place's views{{plate_note}}: walls, openings, fixed furniture, and the place's props where the views put them, from this camera position; none missing and none added. The background holds from sample to sample, and moves only with the camera.
 
 ### The subjects
 
@@ -49,7 +49,7 @@ How to report:
 - Report every difference you can see, however small, each as its own finding. Do not leave one out because the rest is right. A difference that lasts is one finding, at the first sample that shows it, with the span it lasts.
 - Say where it is: the sample's frame number and time, and the region, such as "frame 36, 0:01.50, the window behind Mira".
 - Say which reference it breaks, by the name given above and the part of it, and what that reference says it should be.
-- Mark it **blocks approval** when it breaks something a reference fixes: a subject moved, posed, or timed differently from the line-art shot; a colour that is not its colour list's; light against the lighting key; the place's layout or props; a subject off model; or a colour or light jump across a cut the colour script does not give. Mark everything else a **note**: a small difference that leaves what the reference fixes intact, or one where the references say nothing.
+- Mark it **blocks approval** when it breaks something a reference fixes: a subject moved, posed, or timed differently from the line-art shot; a colour that is not its colour list's; light against the mood reference; the place's layout or props; a subject off model; or a colour or light jump across a cut the colour script does not give. Mark everything else a **note**: a small difference that leaves what the reference fixes intact, or one where the references say nothing.
 - Give the evidence: what the samples show, and what the reference shows or says, side by side, with colour values when the reference gives them. When you are unsure, report it anyway and say why.
 - Compare only with the references given. Do not judge whether it looks good, give it a score or an overall verdict, or say how to fix or re-render it.
 - List every check above that found nothing under "Checked and clear", and every check the samples could not show under "Could not check".

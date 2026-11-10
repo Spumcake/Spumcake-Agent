@@ -1,6 +1,6 @@
 ---
 name: create-board
-description: Make the boards for an approved shot list - one rough layout frame per shot, named by its shot number, in the show's board style (loose line, grey tones, arrows for camera and motion), drawn from the shot's framing, angle, camera, action, characters, and place with an image-edit model sent the subjects' and the place's reference sheets and the style sheet, or redrawn from the user's own sketch into the board style without changing its composition - with a start frame for each camera move and an end frame when it matters, then take them to the user to choose. Use when the user asks for boards, a storyboard, layout frames, or thumbnails for a shot list, a scene, or one shot. Not for timing the boards, finished frames, or a single finished drawing of a character.
+description: Make the boards for an approved shot list - one rough layout frame per shot, named by its shot number, in the show's board style (loose line, grey tones, arrows for camera and motion), drawn from the shot's framing, angle, camera, action, characters, and place with an image-edit model sent the characters' A-pose views, other subjects' reference sheets, the place's references, and the style sheet, or redrawn from the user's own sketch into the board style without changing its composition - with a start frame for each camera move and an end frame when it matters, then take them to the user to choose. Use when the user asks for boards, a storyboard, layout frames, or thumbnails for a shot list, a scene, or one shot. Not for timing the boards, finished frames, or a single finished drawing of a character.
 ---
 
 # Boards
@@ -11,8 +11,8 @@ A good frame is readable at a glance. It has the framing and angle the shot list
 
 ## The models
 
-- **From the shot list,** use an **image-edit model** that takes the subjects' reference sheets, the place's references, and the style sheet as references. A text-to-image model cannot hold who is who from sheets. Use one only when nothing in the shot has a reference yet and the user agrees, and say that the frame may not match the designs later.
-- **From the user's sketch,** use a model that takes the sketch as **structure** and the sheets as references, so the sketch's composition stays and only its finish changes. Never send the sketch as a reference alone: the model would redraw the layout.
+- **From the shot list,** use an **image-edit model** that takes the subjects' base references, the place's references, and the style sheet as references. A text-to-image model cannot hold who is who from references. Use one only when nothing in the shot has a reference yet and the user agrees, and say that the frame may not match the designs later.
+- **From the user's sketch,** use a model that takes the sketch as **structure** and the subjects' A-pose views and sheets as references, so the sketch's composition stays and only its finish changes. Never send the sketch as a reference alone: the model would redraw the layout.
 
 ## Find the specifics
 
@@ -28,7 +28,7 @@ From the caller:
 
 - an approved shot list; with none, one is planned and approved first;
 - the concept's style guide, when it has one: its written rules and its style sheet;
-- each subject's reference sheets: its base sheet, and the outfit, variant, or detail sheet a shot needs, and its expression or pose sheet when the shot's action needs one;
+- each subject's base reference: for a character, its textured A-pose views in the outfit the shot needs, the front first; for any other subject, its reference sheet, or the variant sheet the shot needs; and the detail sheet a shot needs, and the expression or pose sheet when the shot's action needs one;
 - the line-up, with its heights, when a shot has several subjects;
 - each place's references, when it has them;
 - the user's sketches, when there are any, each named by the shot it is for;
@@ -45,17 +45,17 @@ Every frame's prompt says what the picture is, then what the camera sees, then w
 
 1. **What the image is:** "a rough storyboard frame for one shot of an animated film", one panel at the film's aspect ratio. The kind tells the model to stay rough.
 2. **The framing and angle,** from the shot list, in camera words: "a wide shot at eye level", "a close-up from slightly below". Say what fills the frame and where the horizon or floor line sits.
-3. **The staging:** each character by the shot list's name and by what they look like ("Mira, the girl in the red cap"), where they are in frame (left, right, centre, foreground, background), which way they face, and what they are doing at the moment the frame shows. Then the place, by the script's name and in a few words. When several subjects share the frame, quote their heights from the line-up, such as "Mira's head reaches Tom's shoulder".
+3. **The staging:** each character by the shot list's name and by the attached image that shows them ("Mira, the character in the first image"), never by what they look like, where they are in frame (left, right, centre, foreground, background), which way they face, and what they are doing at the moment the frame shows. Then the place, by the script's name, and in a few words only when no reference of the place is sent. In the templates, `{{place_description}}` is a comma and those few words, or empty when the place's references are sent. From the user's sketch, the prompt never describes what the sketch shows: it says only who is who, and the framing, angle, and arrows. When several subjects share the frame, quote their heights from the line-up, such as "Mira's head reaches Tom's shoulder".
 4. **The arrows:** the camera's move, drawn on the frame, such as an inner rectangle with corner arrows for a push in, or a broad arrow along the edge for a pan; and a thin arrow along each character's path when they move. A still shot has no camera arrow. Say the arrows are drawn as storyboard marks, not as objects in the scene.
 5. **The board style:** the plan's board style lines, quoted, not reworded.
-6. **The references,** in the order they are sent, and what to keep from each: identity and proportions from each subject's sheets, but not their colour or finish; the layout of the place; line and tones from the approved board frame; shapes and proportion from the style sheet, but not its colour. Say the model must draw in the board style, not in the references' finish.
+6. **The references,** in the order they are sent, what each is and how it was made, and what to keep from each: identity and proportions from each character's A-pose views and each other subject's sheets, but not their colour or finish; the layout of the place; line and tones from the approved board frame; shapes and proportion from the style sheet, but not its colour. Say the model must draw in the board style, not in the references' finish.
 7. **What to leave out:** colour, finished rendering, fine detail, and any text, captions, panel numbers, or borders. The shot number is the file's name, never in the picture. Say it plainly, as a sentence.
 
 Keep each part to a sentence or a few short lines; long prompts make models drop parts. A frame has one moment: the start of the shot, or, for an end frame, the end of its move. Leave out what the model ignores, as its prompt skill says.
 
-Send the references in this order: each subject's base sheet, in the order the prompt names them, then any outfit, variant, detail, expression, or pose sheet the shot needs; then the line-up, when several subjects share the frame; then the place's references; then the approved board frame, once there is one; then the style sheet, last. When the model takes fewer references than the shot has, say which would be left out and ask the user; never drop a base sheet of a character in frame without saying so.
+Send the references in this order: each subject's base reference, in the order the prompt names them, a character's front A-pose first, then its A-pose view nearest the way it faces when that is not the front; then any detail, expression, or pose sheet the shot needs; then the line-up, when several subjects share the frame; then the place's references; then the approved board frame, once there is one; then the style sheet, last. When the model takes fewer references than the shot has, say which would be left out and ask the user; never drop the front A-pose of a character in frame without saying so.
 
-Put each part into its field in the model's syntax, as its prompt skill says, and name the inputs by the [prompt roles](../../docs/prompt-roles.md): the sheets and frames as `references`, and the user's sketch, when there is one, as `structure`. Write each prompt with the setup's prompt writer, naming the prompt skill the workflow skill gives.
+Put each part into its field in the model's syntax, as its prompt skill says, and name the inputs by the [prompt roles](../../docs/prompt-roles.md): the A-pose views, sheets, and frames as `references`, and the user's sketch, when there is one, as `structure`. Write each prompt with the setup's prompt writer, naming the prompt skill the workflow skill gives.
 
 ## 1. Plan the board
 
