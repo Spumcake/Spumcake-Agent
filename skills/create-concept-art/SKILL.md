@@ -72,7 +72,21 @@ Show the brief to the user; their corrections win. They may add, drop, or rewrit
 
 ## 2. The directions
 
-Make one image per direction.
+First, explore. Concept art is created with a text-to-image workflow. A concept-stage image is written from the concept context template, word for word, with only two things added:
+- **a premise,** in as few words as possible, such as "two dogs talking seriously";
+- **its purpose,** such as "16:9 concept illustration".
+
+Add nothing else. No style words, no description of the character or the place, no lighting or composition, and no negative prompt unless the user asks for one. The fewer words, the better, because the context template works best when the rest is left to the model's interpretation. Make many candidates, eight or more, each with a new seed, so each is a different interpretation, the way an artist explores. The point is to find what the concept should be, not to get an exact picture. Exact, consistent prompts come later, once a concept is chosen.
+
+Fill [the concept context template](templates/concept-context.md) with the premise, such as "a tired diner cook" or "a roadside diner at night", and its purpose: "16:9 concept illustration" for a place or a moment, or "concept character design" for a subject. Plan the candidates, render them on the user's yes, and show them with the exact prompt sent. The user picks the candidates worth developing.
+
+**Text gives context only where no image does.** A text-to-image request needs text to describe what is wanted, because it has no visual context. A request that sends images must not also carry text that describes what those images already show: the text and the images then compete as context. Its text says only what no attached image provides: what each image is, how it was made, and what is needed.
+
+**A new camera on a chosen image.** When the user wants a chosen image, such as the primary canonical location, seen from another angle, render the new camera on the same grey pre-vis the image was made from, close enough to the original camera that the place is recognisable, and show it to the user first. Fill [the new camera template](templates/new-camera.md) and send three images, in this order: the pre-vis shot the chosen image was made from, the chosen image, and the new pre-vis shot. The prompt says what each image is and how it was made, and asks for the generated image from the new perspective; nothing else.
+
+**The primary canonical location.** The first image of a place made from its pre-vis is its primary canonical location: the image every other image of the place is based on. It shows the place only. When the concept is of a place, made from its pre-vis, send the pre-vis shot in grey, never colour-coded, so its colours do not carry into the painting. Say what it is for: a mock-up for positioning only, telling where things are, not the design, shape, colour, or style of anything. Send the research photographs of the place's elements with the pre-vis, and say what they are: photographs of real places that show what the mock-up's shapes are. Name the mock-up's shapes from its key, since grey shapes do not say what they are. Add "Do not add anything that is not in the mock-up." Leave out every mention of people or characters, including the context template's lines about characters, figures, and skin: an empty place needs none, and naming them invites them. Ask for low detail, since the place becomes a background for animation: change the context template's "medium detail" to "low detail" and add that detail is low and minimal, broad simple shapes with only the detail an animation background needs. The premise and purpose stay short, as the context template needs.
+
+Then, for the picks, make one image per direction, to settle the design.
 
 - For a character, a creature, a prop, or a vehicle, fill [the design template](templates/concept-design.md); for a place, fill [the place template](templates/concept-place.md). Only the direction's lines change between them.
 - Send the user's sketches first, in the order the brief lists them, and the style sheet last, when there are any.

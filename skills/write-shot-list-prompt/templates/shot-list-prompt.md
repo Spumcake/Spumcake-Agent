@@ -13,6 +13,8 @@ For each shot give:
 - **Lines:** the spoken lines it covers, by speaker, quoted word for word from the script, each marked *on screen* when the speaker's mouth is seen in this shot, or *off screen* when it is not, such as a line heard over another character's reaction;
 - **Characters and props, and place:** by the names the script lists, and only those.
 
+Keep the camera where the shot before left it. Change the framing, the angle, or the camera's position, or move it, only when the script or the user gives a reason, and write that reason in the shot's action. With no reason, do not change it.
+
 Every action and every spoken line of the script falls in exactly one shot. Open each scene on a shot that shows where it is, unless the camera notes or the script say otherwise. The lengths add up to {{length}}, within a few seconds. Characters who read as minors stay in ordinary, everyday situations; nothing about them is sexual or suggestive.
 
 The approved script:

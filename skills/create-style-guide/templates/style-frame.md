@@ -1,18 +1,20 @@
----
-aspect_ratio: "16:9"
-quality: high
----
 ## Prompt
 
-A single finished STYLE FRAME for an animated production: one moment of a scene, made only to show the production's look. {{scene}}
+Premise: {{premise}}. rule of thirds.
 
-The look, exactly as follows:
-- Shapes and proportion: {{shapes}}
-- Line: {{line}}
-- Colour: {{palette}}, {{fill}}
-- Light and shadow: {{lighting}}
-- Texture and finish: {{texture}}
+{{purpose}}
 
-This direction: {{direction}}
+The image should feel sparse, and readable with minimal depicted elements. medium detail composition is absolutely mandatory. Use controlled negative space with clear props and location identity. No depth of field.
 
-When images are attached, they are the user's own artwork: match their drawing, line, and colour exactly, and do not switch to another rendering style. No text, labels, logos, or borders anywhere in the image.
+appealing silhouettes, sculptural shapes, tactile brushy textures with enough definition for production design.
+
+Use diverse colors that pop (no more than ten). surface textures of background elements should be clearly visible. background elements are minimal. Use appealing animated feature shape language.
+
+characters are extremely minimal human-shaped arrangement of painted geometric masses. Identical brushwork, edge treatment, texture scale, and paint handling across entire image.
+
+Use strong environmental lighting influence
+The key light should have a strong clearly opinionated color creating rim lighting around characters. It should be distinct from secondary light which should contrast in color with environmental bounce.
+Use gentle reflected to lift the shadow side of the figure.
+Preserve wide midtone ranges between light and shadow.
+Avoid abrupt value steps, posterized shading, binary light-dark separation, and sharply cut shadow masks. volumetric lighting in the distance. Use soft diffuse lighting with broad penumbra and gradual tonal transitions across every form.
+Shadows on skin, clothing, and packages should feather gradually rather than forming hard graphic shapes.

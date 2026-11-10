@@ -28,6 +28,8 @@ Every image of a character who reads as a minor stays ordinary and everyday. Not
 
 ## Image prompts
 
+These rules are for the style sheet, which must hold exactly to the chosen frame. Style frames use the concept context template instead, as step 2 says.
+
 Every image prompt here says what the picture is for, then what is in it, then how it looks. With reference images, it also says what each reference is for, because the model cannot guess which parts to keep. Write it in this order, for any model:
 
 1. **What the image is:** one line naming the kind of image and its use, such as "a style frame for an animated production" or "a style sheet". The kind sets the model's expectations for layout and finish.
@@ -53,14 +55,21 @@ Show the rules to the user; their corrections win. A correction the user writes 
 
 ## 2. Style frames
 
-Unless the user's artwork already settles the look, make three to four **style frames**: one image each, of the same small scene, in a different reading of the rules, so the user can choose a direction by eye.
+Unless the user's artwork already settles the look, make **style frames**: concept illustrations of one small moment of the concept, to find its mood, not replicas of the final picture.
 
-- Fill [the style frame template](templates/style-frame.md) once per direction; only the direction's lines change between them.
-- Send the user's artwork as references when there is any.
-- Plan the frames, render them on the user's yes, and report each output's path.
-- Inspect each frame against the written rules, and report where it breaks them.
+**Concept art is created with a text-to-image workflow.** A concept-stage image is written from the concept context template, word for word, with only two things added:
+- **a premise,** in as few words as possible, such as "two dogs talking seriously";
+- **its purpose,** such as "16:9 concept illustration".
 
-The user chooses one direction, or asks for a mix; never choose for them. Update the written rules to match what they chose.
+Add nothing else. No style words, no description of the character or the place, no lighting or composition, and no negative prompt unless the user asks for one. The fewer words, the better, because the context template works best when the rest is left to the model's interpretation. Make many candidates, eight or more, each with a new seed, so each is a different interpretation, the way an artist explores. The point is to find what the concept should be, not to get an exact picture. Exact, consistent prompts come later, once a concept is chosen.
+
+**Text gives context only where no image does.** A text-to-image request needs text to describe what is wanted, because it has no visual context. A request that sends images must not also carry text that describes what those images already show: the text and the images then compete as context. Its text says only what no attached image provides: what each image is, how it was made, and what is needed.
+
+- Fill [the style frame template](templates/style-frame.md): the premise from the brief, in a few words, and the purpose "16:9 concept illustration".
+- Plan the candidates, with their count and cost, render them on the user's yes, and show them together with the exact prompt sent.
+- Report honestly what each candidate does with the premise; never judge the look for the user.
+
+The user chooses a frame, asks for a mix, or asks for more candidates; never choose for them. Update the written rules to match what they chose.
 
 ## 3. The style sheet
 

@@ -45,6 +45,7 @@ Before showing it, check that:
 - every shot is numbered by its scene, such as `3-1`, and has a length in whole seconds, a framing, an angle, one camera move or still, an action, its lines, and its characters, props, and place by the script's names;
 - every action and every spoken line of the script is in a shot, once, quoted word for word, and marked *on screen* or *off screen*;
 - each scene opens on a shot that shows where it is, unless the style guide or the script says otherwise;
+- every change of framing, angle, or camera position, and every camera move, has its reason written in the shot's action, from the script or the user; a change with no reason is a failed check, since a camera change must be deliberate;
 - the lengths add up to the film's length, within a few seconds; and a shot longer than 10 seconds says why.
 
 When a check fails, build a corrected prompt that says what was wrong, and run it again. When it runs over or short, say where, and what you would cut or hold.

@@ -34,6 +34,9 @@ When one is missing, say which and stop. Never do a step by hand because the set
 
 - Nothing renders, trains, downloads, or spends money before the user's yes to that specific plan. A yes to a plan never approves downloading a model.
 - The user chooses keepers and judges results. A skill never scores a picture or a sound.
+- Every proposal and every result is shown to the user with the whole prompt sent, word for word and never shortened, with its negative, its settings, and its cost, and every image or clip sent with it: shown, in the order sent, labelled by its place in that order, with its full path.
+- A prompt sent with references tells the model plainly what each attached image is, how it was made in the pipeline, and how the images relate, then what is needed, in the same words throughout. It speaks to a model about the process, never to an artist about a painting.
+- Text describes what is wanted only when no image gives that context, as in a text-to-image request. A request that sends images never also carries text that describes what those images already show: the text and the images would compete as context. Its text says only what no attached image provides.
 - Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step, prompt, or caption.
 - Use only images and recordings the user has the right to use this way. Show a recognisable real person, or use a real person's voice, only when the user confirms that the person agreed to this use, or a guardian did for a child. Never make anything that shows a real person doing or saying something they did not, to deceive anyone.
 - Long steps report progress, and say what is running and how long it takes before waiting.
