@@ -19,7 +19,7 @@ Skills for general AI animated filmmaking, with the user directing every step: p
 | [research-references](skills/research-references/SKILL.md) | researches real places and character archetypes on the web, into a sourced reference board |
 | [create-previs](skills/create-previs/SKILL.md) | builds a place's simple 3D mock-up, each piece a recognisable shape from the research with a key naming it, and renders its shot and its views |
 | [canonical-cleanup](skills/canonical-cleanup/SKILL.md) | audits a generated image against its canonical prompt and the pre-vis, traces each fault to the pre-vis or the generation, and fixes it, across every view |
-| [refine-concept-art](skills/refine-concept-art/SKILL.md) | rebuilds chosen concept art of a place on a believable floor plan, keeping its mood |
+| [refine-concept-art](skills/refine-concept-art/SKILL.md) | makes a recurring place canonical, in order: research, pre-vis, primary canonical location, canonical cleanup, and its views |
 | [create-subject-reference](skills/create-subject-reference/SKILL.md) | builds a recurring subject's brief, reference sheets, and gallery with an image-edit model |
 | [create-subject-dataset](skills/create-subject-dataset/SKILL.md) | makes a themed dataset of images of an existing subject |
 | [create-model-sheet](skills/create-model-sheet/SKILL.md) | makes a subject's expression sheet, pose sheet, mouth chart, and colour model |

@@ -29,4 +29,4 @@ For: {{premise}}. Researched {{date}}.
 
 ## Conclusions to follow
 
-{{what a floor plan, concept art, or character design should follow, each traced to the facts above}}
+{{what a pre-vis, concept art, or character design should follow, each traced to the facts above}}

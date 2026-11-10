@@ -1,6 +1,6 @@
 ---
 name: research-references
-description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a floor plan or concept art is made. Not for making images.
+description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a pre-vis or concept art is made. Not for making images.
 ---
 
 # Research references
@@ -38,7 +38,7 @@ Read each source, not only its title. Keep the source address, the date read, an
 Fill [the board template](templates/board.md):
 
 - **What is always true** of the place or the archetype, each with its sources;
-- **Layout:** the parts in order and their usual sizes, to feed a floor plan;
+- **Layout:** the parts in order and their usual sizes, to feed the pre-vis;
 - **Elements:** each thing the place holds, with the photograph that shows it, its shape, and its usual size, so a pre-vis can build it as that thing;
 - **Camera:** the positions and framings that show the place best, with the reference that shows each;
 - **For each archetype:** body, face, dress, props, posture, and movement, with references;
@@ -50,5 +50,5 @@ Show the board. List the files worth downloading, with their sources, licences, 
 
 - the approved board;
 - the downloaded references, each named for what it shows, with its source and licence beside it;
-- the conclusions a floor plan, concept art, or a character's design should follow;
+- the conclusions a pre-vis, concept art, or a character's design should follow;
 - for each element of a place, the photograph a pre-vis builds it from.
