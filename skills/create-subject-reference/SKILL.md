@@ -66,7 +66,14 @@ Each sheet is a separate 3:2 page with a header and one job, so no sheet is crow
   - Fill [the prop template](templates/reference-prop.md).
   - Send it with the input images that show it, and the base sheet.
 
-**A-pose views,** for a character, once its base sheet is approved: the cleanest reference of the character, as a 3D model would show it. Four separate images, front, back, left side, and right side, each the whole character standing in an A-pose, arms angled down and away from the body, at one scale, on a transparent background, or a plain one cut away afterwards. Make each view three times, as a viewport shows a 3D model: in plain grey, with each part in its own flat colour, and with its colours and textures under neutral, even light. Send the base sheet, with the research photographs of the character's clothing and carried things. Say what each image is and how it was made, and only what no image gives: the pose, the view, and the shading. These views feed the height chart and every later image of the character.
+**A-pose views,** for a character, once its primary canonical image is approved: the cleanest working map of the character, as a 3D model would show it. Make them in order, each step from the user's choice in the one before:
+
+1. **The front A-pose, as a textured viewport view:** fill [the A-pose template](templates/a-pose.md) and send the primary canonical image alone. It asks for the character as a 3D model in a viewport's material preview, under neutral light: the mood and lighting are already held by the primary canonical image, so the A-pose starts neutral and is itself the texture view. An A-pose is symmetrical: upright with no lean, the head facing straight ahead, the arms at the same angle on both sides. It needs to be a good working map of the character, not a pose fit for rigging. Reject any view that turns the head, tilts the body, or poses the arms unevenly.
+2. **The other views:** fill [the A-pose view template](templates/a-pose-view.md) for the back, the left side, and the right side, each sent with the approved front alone.
+3. **Without outer layers:** when an outer layer, such as an apron or a coat, hides what is under it, fill [the layer template](templates/a-pose-layer.md) for the front without it, sent with the approved front alone, then its back and sides from that, as in step 2.
+4. **The form passes:** convert every view with `create-concept-art`'s grey form and coloured form passes; the texture pass is not needed, since each view already is one. The form passes are the ones agents use most: with no texture, the character's contours and silhouette are clearest. For the coloured form, choose one flat colour per part, such as skin, shirt, apron, trousers, and shoes, and name them in every view's prompt, so the colours agree across views.
+
+Keep each view whole, at one scale, on a plain background, cut away afterwards to a transparent one. These views feed the height chart and every later image of the character.
 
 Expressions, head angles, poses, and gestures belong in the gallery, not on a sheet.
 

@@ -20,9 +20,11 @@ From the caller:
 
 References match the film's period and setting: a present-day diner is researched from present-day photographs, not from archives of another era.
 
-Search where a studio would, such as an image search on the web, as well as open collections. Ask before downloading any file: name each one, its source page, its licence when known, and its size. An image under copyright may be kept as internal reference when the user accepts it: it stays out of version control and out of anything published, with its source page recorded beside it. When such images are sent to a model, send several for each element, so the model learns what the element is rather than copying one real place.
+Search where a studio would, such as an image search on the web, as well as open collections. Ask before downloading any file: name each one, its source page, its licence when known, and its size. An image under copyright may be kept as internal reference when the user accepts it: it stays out of version control and out of anything published, with its source page recorded beside it. When such images are sent to a model, send several for each element, so the model learns what the element is rather than copying one real place. Photographs of real, recognisable people are fine as references for a character's build, face, and dress: send several different people together, never one alone, so the character comes out as a stylised blend of the archetype, not one person's likeness.
 
 ## 1. Search
+
+Search the way a person would: short, plain phrases of two to four words, such as "stocky diner cook" or "diner back counter", one idea at a time. Long, specific queries that describe a whole picture return product shots and noise; try several short ones instead.
 
 For each location and archetype, search the web from several sides:
 
