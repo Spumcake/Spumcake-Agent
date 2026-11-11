@@ -2,17 +2,17 @@
 
 The order the skills run in to make one animated film, and what each step is made from. Each step is made only from the latest approved results of the steps before it; a rejected round is never an input to anything.
 
-The point of the pipeline is the intermediate steps: every canonical element of a film, its places, characters, props, look, and sound, is made, shown, and open to the user's changes before any video is generated, so the user's intent survives to the final render.
+The user gives a brief; the agent turns it into finished results, making every choice the brief leaves open itself, from the brief, and saying why, and the user edits any result they want changed. No step waits for the user to choose. The point of the pipeline is the intermediate steps: every canonical element of a film, its places, characters, props, look, and sound, is made, shown, and open to the user's changes before any video is generated, so the user's intent survives to the final render.
 
 ## 1. Concept and intent
 
 1. **The concept:** the user's brief: premise, characters, length, genre, and tone.
-2. **The mood brief** (`research-references`), from the brief; the user chooses a direction.
-3. **Visual identity research** (`research-references`), from the brief and the chosen mood; the user keeps the frames that fit.
-4. **The visual identity brief** (`write-visual-identity-brief`), from the brief, the mood brief, and the visual identity research; the user approves it.
-5. **The audio identity brief** (`write-audio-identity-brief`), from the brief and the visual identity brief; the user approves it.
+2. **The mood brief** (`research-references`), from the brief; the agent chooses the direction that serves it best.
+3. **Visual identity research** (`research-references`), from the brief and the chosen mood; the agent keeps the frames that fit.
+4. **The visual identity brief** (`write-visual-identity-brief`), from the brief, the mood brief, and the visual identity research.
+5. **The audio identity brief** (`write-audio-identity-brief`), from the brief and the visual identity brief.
 
-No other research begins until the identity briefs are approved. Every later research question, for the canonical elements and for the mood, comes from them, so what is searched for serves what the film is meant to be.
+No other research begins until the identity briefs are written. Every later research question, for the canonical elements and for the mood, comes from them, so what is searched for serves what the film is meant to be.
 
 ## 2. Story
 

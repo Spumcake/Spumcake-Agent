@@ -1,6 +1,6 @@
 # Visual identity brief: {{film}}
 
-From: {{the brief's path}}, and {{the other sources' paths}}. Drafted from them; anything marked *proposed* is the agent's, for the user to keep or change. What the brief fixes is not restated here. Approved by the user on {{date}}.
+From: {{the brief's path}}, and {{the other sources' paths}}. Drafted from them; anything marked *proposed* is the agent's, for the user to keep or change. What the brief fixes is not restated here. Edited by the user on: {{dates, or none}}.
 
 ## The feeling, moment by moment
 

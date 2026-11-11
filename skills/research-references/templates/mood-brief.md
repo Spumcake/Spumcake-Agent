@@ -26,6 +26,6 @@ For each direction, four to eight short phrases, each with the reference it come
 
 - "{{phrase}}" ({{reference}})
 
-## The user's choice
+## The chosen direction
 
-{{direction chosen or blended, the date, and what the style guide changes because of it}}
+{{the direction or blend the agent chose, the reason from the brief's own words, and the date; the user may change it by editing}}

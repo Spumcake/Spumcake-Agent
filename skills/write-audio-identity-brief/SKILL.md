@@ -16,7 +16,7 @@ This skill makes no sound. It reads the user's brief, writes the whole audio ide
 From the caller:
 
 - the concept: the user's brief;
-- the approved visual identity brief, so the sound and the picture serve the same intent;
+- the visual identity brief, so the sound and the picture serve the same intent;
 - the beat sheet or script, when one exists, for its lines;
 - a folder for the brief.
 
@@ -34,13 +34,13 @@ Take everything the user's brief, the visual identity brief, and the script say 
 
 Fill [the brief template](templates/audio-identity-brief.md). Point to the brief and the script for what they fix, such as a line's words, instead of restating them; keep every statement something a listener could check, and mark everything the user did not say as *proposed*.
 
-## 3. Approval
+## 3. Hand it on
 
-Show the finished draft. The user edits it, directly or by saying what to change; apply every edit, and date the approval. A later change goes into the brief, dated, before anything is built on it.
+The brief is finished when it is written; the next step uses it at once. The user may edit it at any time, directly or by saying what to change; apply every edit, dated, and check what was built on it. A later change goes into the brief, dated, before anything is built on it.
 
 ## Hand back
 
-- the approved audio identity brief;
+- the audio identity brief;
 - for each voice, a description a voice model or a casting call can be given;
 - the sounds to find or make, one line each.
 

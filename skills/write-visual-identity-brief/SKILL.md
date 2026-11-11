@@ -16,7 +16,7 @@ This skill does not research, and it makes no images. It reads the user's brief,
 From the caller:
 
 - the concept: the user's brief, with its premise, characters, length, genre, and tone;
-- the approved mood brief, with its chosen direction (`research-references`);
+- the mood brief, with its chosen direction (`research-references`);
 - the visual identity research: frames of CG animated features the user kept, each with its reading (`research-references`);
 - the beat sheet, when one already exists;
 - a folder for the brief.
@@ -40,13 +40,13 @@ Decide each of these, specifically enough to judge a picture by: not "tense", bu
 
 Fill [the brief template](templates/visual-identity-brief.md). Point to the brief for what it fixes, such as "the visitor stays unseen (the brief)", instead of restating it; keep every statement checkable against a picture, and mark everything the user did not say as *proposed*. Touchstones are a few named works, not a mood board: gathering images is research's job, from this brief.
 
-## 3. Approval
+## 3. Hand it on
 
-Show the finished draft. The user edits it, directly or by saying what to change; apply every edit, and date the approval. A change of intent later goes into the brief, dated, before anything is built on it.
+The brief is finished when it is written; the next step uses it at once. The user may edit it at any time, directly or by saying what to change; apply every edit, dated, and check what was built on it. A change of intent later goes into the brief, dated, before anything is built on it.
 
 ## Hand back
 
-- the approved visual identity brief, with its colour intent and its palette candidates;
+- the visual identity brief, with its colour intent and its palette candidates;
 - the questions research should answer, one line each, drawn from the brief, such as "how is the space behind a character made to feel occupied?".
 
 Run `check-canonical-consistency` on the brief before showing it.
