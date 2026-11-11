@@ -59,9 +59,21 @@ Before concept art, once a film's places, characters, and props are canonical, i
 - **paintings and photographs** whose light, colour, or composition fit;
 - **time of day, light, palette, camera, presentation, sound, and pace,** as consequences of the references, not defaults: a scene at "closing time" may be mid-afternoon, dusk, or night.
 
-Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then collect the images. For each direction, find stills of the named film scenes, frames of the animation, the paintings, and the photographs, with short, plain searches, such as "Mulholland Drive Winkie's" or "Eggleston diner": several images for each reference, showing its light, palette, and framing. Preview them on a contact sheet, numbered, with each image's source page; keep only those the user chooses, as internal reference, out of version control. A brief with no images is not finished.
+Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then collect the images, for every direction, not only the one that looks likeliest: a direction with no images is a guess, and its prompts will be guesses.
 
-Show the brief with its contact sheets. The user chooses a direction or a blend; record the choice in the brief, and list what in the style guide must change to agree with it. Mood images come from these references, never from more photographs of the place.
+The images are for light and colour, because that is what the concept art takes from them. Choose each for how light and colour fill a space like the film's: a room, its windows, its lamps, its shadows. Not close-ups of faces, which carry a scene's tension but no palette, and not tabletops or details, which show no room's light. For each direction, find:
+
+- **screencaps of feature CG animated films,** above all, never hand-drawn or stop-motion: frames of interiors, such as a diner, a café, a shop, or a kitchen, at the direction's time of day, wide enough to show the room and its light. These are the references the concept art is judged against: they show how a studio's painters and lighters handle that light in a finished film. Libraries of screencaps, such as animationscreencaps.com, hold whole films frame by frame;
+- the art of those films, such as colour scripts and background paintings, when it shows a room's light;
+- live-action stills, paintings, and photographs only to fill a gap the animated films leave, never as most of a direction.
+
+Search with short, plain phrases, such as "Ratatouille kitchen night" or "Flo's V8 Cafe dusk": six to ten images for each direction. Preview them on a contact sheet, numbered, with each image's source page.
+
+**Read each image** before any prompt is written, in the brief beside the image: each light by its kind (direct sun, overcast sky, open skylight, moonlight, fluorescent, neon, tungsten, candle, a screen), its colour, its source, and where it falls, as key, secondary, and practical lights; any haze and volumetric light; how saturated the whole picture is; and its main colours, with five or six sampled from the image itself as named colours and hex values. A reading names only what is in the picture. Keep only the images the user chooses, as internal reference, out of version control. A brief with no images, or images with no readings, is not finished.
+
+Then distil the chosen direction into **tone phrases:** four to eight short phrases of a few words each, each drawn from one of its references and named beside it, such as "an ordinary room where something is slightly wrong" (Lynch). They say the direction's tone to the user and the style guide; they are not put into image prompts, where a vague phrase such as "something slightly wrong" is read as something supernatural. A mood prompt's words come from the readings.
+
+Show the brief with its contact sheets and readings. The user chooses a direction or a blend; record the choice in the brief, and list what in the style guide must change to agree with it. Mood images come from these references, never from more photographs of the place, and every light and colour a mood prompt names comes from a reading, with the image it came from noted beside it.
 
 ## Hand back
 
@@ -69,4 +81,4 @@ Show the brief with its contact sheets. The user chooses a direction or a blend;
 - the downloaded references, each named for what it shows, with its source and licence beside it;
 - the conclusions a pre-vis, concept art, or a character's design should follow;
 - for each element of a place, the photograph a pre-vis builds it from;
-- the mood brief, with the user's chosen direction and the reference images kept for it, when the mood was investigated.
+- the mood brief, with the user's chosen direction, the reference images kept for it, and its tone phrases, when the mood was investigated.
