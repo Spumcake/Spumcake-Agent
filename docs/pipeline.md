@@ -24,7 +24,7 @@ The look's style guide (`create-style-guide`) is made alongside the story, from 
 
 ## 3. Breakdown
 
-Every recurring character, place, and prop the script needs, what each must be in general, and the shots it appears in (`write-breakdown-prompt`). Concept candidates from the concept context template (`create-concept-art`) may explore what an element could look like before it is made canonical.
+Every recurring character, place, and prop the script needs, what each must be in general, and the shots it appears in (`write-breakdown-prompt`). Concept candidates from the concept context template (`explore-concept`) may explore what an element could look like before it is made canonical.
 
 ## 4. Canonical elements
 
@@ -39,16 +39,16 @@ Each through `make-canonical`, which holds each one's steps:
 
 ## 5. Concept art
 
-1. **The character study** (`create-concept-art`), from the main character's coloured form front A-pose; it becomes the style reference.
-2. **The places, restyled to match** the character study (`create-concept-art`), each from its canonical angle's texture pass, then tried in each mood from the visual identity brief.
-3. **The concept art** (`create-concept-art`), from the character study and the restyled places.
+Canonical reference, then concept art reference, then concept artwork, so concept artwork and the images for video rest on the same canon.
+
+1. **Concept art references** (`create-concept-reference`): each canonical element repainted in the concept look: a character's front study from its A-pose and its props' sheets; each view of a place in each mood, from its texture pass and the visual identity brief.
+2. **Concept artwork** (`create-concept-artwork`): characters' studies placed into a place's painting, for a moment of the film; it visualises the mood and look design, and is the look reference for the first frames.
 
 ## 6. Staging and the shots
 
-1. **Staging** (`create-concept-art`): the canonical characters and props placed into the place's view each shot uses.
-2. **The animatic:** keyframes (`create-keyframe`), timed (`create-animatic`), with voices made first, as the audio identity brief describes them.
-3. **Line-art animation,** lip-synced to the voices.
-4. **Final animation,** over background plates (`create-background`), and the cut.
+1. **The animatic:** keyframes (`create-keyframe`), staged into the canonical views with the concept artwork as their look reference, timed (`create-animatic`), with voices made first, as the audio identity brief describes them.
+2. **Line-art animation,** lip-synced to the voices.
+3. **Final animation,** over background plates (`create-background`), and the cut.
 
 Consistency is checked (`check-canonical-consistency`) at the end of every step that writes or changes a brief, a story document, the style guide, a prompt, or the film map: every fact has one home, and the rest point to it.
 

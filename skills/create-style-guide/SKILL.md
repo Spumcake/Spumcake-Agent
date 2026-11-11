@@ -57,11 +57,7 @@ Show the rules to the user; their corrections win. A correction the user writes 
 
 Unless the user's artwork already settles the look, make **style frames**: concept illustrations of one small moment of the concept, to find its mood, not replicas of the final picture.
 
-**Concept art is created with a text-to-image workflow.** A concept-stage image is written from the concept context template, word for word, with only two things added:
-- **a premise,** in as few words as possible, such as "two dogs talking seriously";
-- **its purpose,** such as "16:9 concept illustration".
-
-Add nothing else. No style words, no description of the character or the place, no lighting or composition, and no negative prompt unless the user asks for one. The fewer words, the better, because the context template works best when the rest is left to the model's interpretation. Make many candidates, eight or more, each with a new seed, so each is a different interpretation, the way an artist explores. The point is to find what the concept should be, not to get an exact picture. Exact, consistent prompts come later, once a concept is chosen.
+**Style frames are made as `explore-concept` makes its candidates:** from its concept context template, word for word, with only a premise and a purpose added.
 
 **Text gives context only where no image does,** as the [prompt roles](../../docs/prompt-roles.md) say.
 

@@ -20,13 +20,15 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | [write-shot-list-prompt](skills/write-shot-list-prompt/SKILL.md) | plans a timed shot list from the script and builds the prompt a language model writes it from |
 | [create-style-guide](skills/create-style-guide/SKILL.md) | builds a concept's style rules, and the prompts for style frames to choose from and a style sheet |
 | [write-image-prompt](skills/write-image-prompt/SKILL.md) | writes the words of any image prompt as visual, image-generator phrases, not prose |
-| [create-concept-art](skills/create-concept-art/SKILL.md) | explores a design with text-to-image candidates, makes a place's or character's primary canonical image, new views, neutral passes, a character study that sets the concept style, each place restyled to match and tried in each mood, the concept art, and staging |
+| [explore-concept](skills/explore-concept/SKILL.md) | explores what a subject or place could look like, with a brief, directions, text-to-image candidates, and refinements, before it is canonical |
+| [create-concept-reference](skills/create-concept-reference/SKILL.md) | turns a canonical reference into its concept art reference: a character's study, a place's view in each mood |
+| [create-concept-artwork](skills/create-concept-artwork/SKILL.md) | makes concept artwork from concept art references: a character staged into a place's painting, the look reference for first frames |
 | [create-colour-script](skills/create-colour-script/SKILL.md) | plans the colour and light of each beat, then a keyframe for each, in story order |
 | [research-references](skills/research-references/SKILL.md) | researches real places and character archetypes on the web, into a sourced reference board, and a film's mood into a mood brief, with frames from CG animated features read for their light |
 | [create-previs](skills/create-previs/SKILL.md) | builds a place's simple 3D mock-up, each piece a recognisable shape from the research with a key naming it, and renders its shot and its views |
 | [canonical-cleanup](skills/canonical-cleanup/SKILL.md) | fixes a generated image from its continuity review: traces each finding to the pre-vis or the generation, and fixes it there, across every view |
 | [write-breakdown-prompt](skills/write-breakdown-prompt/SKILL.md) | plans a film's breakdown of every recurring character, place, and prop, and builds the prompt a language model writes it from |
-| [make-canonical](skills/make-canonical/SKILL.md) | makes one recurring place, character, or prop canonical, step by step, from a story check through its neutral views |
+| [make-canonical](skills/make-canonical/SKILL.md) | makes one recurring place, character, or prop canonical, step by step, from a story check through its neutral views, including its canonical images and their neutral passes |
 | [create-subject-reference](skills/create-subject-reference/SKILL.md) | builds a recurring subject's brief, reference sheets, and gallery; a character's A-pose views; a small prop's sheet |
 | [create-subject-dataset](skills/create-subject-dataset/SKILL.md) | makes a themed dataset of images of an existing subject |
 | [create-model-sheet](skills/create-model-sheet/SKILL.md) | makes a subject's expression sheet, pose sheet, mouth chart, and colour model |
