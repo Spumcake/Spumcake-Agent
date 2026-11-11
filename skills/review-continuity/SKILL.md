@@ -72,7 +72,6 @@ Choose the template for the result's kind, and gather what it must agree with:
 - **its pre-vis,** when it was made from one, as its inventory: anything the pre-vis does not represent, except the world seen through the windows; and for each such thing, whether it reads clearly as a thing the place needs, such as a door;
 - **each visible object, one by one:** an object that does not read clearly as any one thing, or a thing formed wrongly, such as a partition that could be a door, a window, or a cabinet;
 - **on a form pass,** a view with no textures: texture that shows through, such as lettering, or patterns on floors, walls, or upholstery;
-- **across a place's views,** when it has several made from its primary canonical location: an object that appears twice, goes missing, or changes kind between views.
 
 A style the model chose for something that was asked for, and a thing asked for that is right, are not findings.
 

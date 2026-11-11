@@ -19,7 +19,7 @@ One per difference, in the order they appear in the result. A difference that la
 - **Against:** {{the reference, by its file or name and the part of it, such as "Mira's colour list, the jacket row", "the shot list, shot 3-2, framing", or the canonical prompt's line, quoted}}
 - **Should be:** {{what the reference fixes, in its own words or values}}
 - **Serious:** {{blocks approval, or note}}
-- **Kind:** {{for a generated image: ruled out by the prompt, wrong against the prompt, not in the pre-vis, not in the pre-vis but needed, malformed, texture on a form pass, or across the views; otherwise leave out}}
+- **Kind:** {{for a generated image: ruled out by the prompt, wrong against the prompt, not in the pre-vis, not in the pre-vis but needed, malformed, or texture on a form pass; otherwise leave out}}
 - **Evidence:** {{what the result shows, and what the reference shows or says, side by side; and what makes you unsure, when you are}}
 - **The user's decision:** —
 

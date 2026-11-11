@@ -47,14 +47,6 @@ Work out where each finding comes from. It is your job to trace it, not the user
 
 Decide every fix yourself, from the canonical prompt: how much fewer, where, which way. Fill [the fix plan](templates/fix-plan.md).
 
-## 1b. Across the views
-
-Of the review's findings across a place's views, fix only the major ones, such as an object that appears twice, goes missing, or changes kind between views, like a second clock, or a plain door that gains a round window. Small ones stay; removing every one needs better pre-vis assets than simple shapes. Fix each major one in this order, cheapest first:
-
-1. choose the candidate that already has it right;
-2. remove an object the generation added, with [the cleanup template](templates/cleanup.md);
-3. when the images agree with each other against the pre-vis, change the pre-vis to match them.
-
 ## 2. Fixes for the pre-vis
 
 When there is any fix for the pre-vis, return to the pre-vis first: change it, render the camera again, and show it. Then recreate the place's primary canonical location from the corrected pre-vis, by the same step that first made it, since every other image of the place is based on it. Review the new primary canonical location from step 1, then remake the images based on it. Fixes for the generation wait for that new image, since it may no longer need them.
@@ -72,6 +64,5 @@ Run `review-continuity` on each candidate again, against the same canonical prom
 - the continuity review, and the fix plan, with each fix filed for the pre-vis or the generation, and what was done;
 - the corrected pre-vis, when it was changed, with every new and needed object added to it and its key;
 - the malformed objects, each with the wall whose square-on view will show it;
-- the major inconsistencies across the views, and how each was fixed;
 - the cleaned image the user chooses, which replaces the generated one for everything after it;
 - every prompt and image sent.

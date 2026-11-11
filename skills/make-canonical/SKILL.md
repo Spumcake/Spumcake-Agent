@@ -63,6 +63,8 @@ Run `research-references` for the element: a photograph of every item the story 
 2. **A small prop,** with few details, such as a rag, a mug, or a bell: run `create-subject-reference`'s small prop sheet, one coloured, non-textured sheet of the prop alone and in its character's hand, from the character's coloured A-pose and the prop's photographs.
 3. **A large prop,** such as a vehicle or a piece of furniture a character uses: make it as a character is made, with a primary canonical image, cleanup, and views from the front, back, and both sides, then their form passes.
 
+As the user judged on 2026-11-11, an element's views drift from each other, and image edits cannot make them agree: cleaning several canonical images against each other was tried on a diner and failed. Views are made once and not cleaned against each other; keeping every view of an element consistent needs the element built as a full 3D model, when the setup has a way to make one.
+
 ## Hand back
 
 - the story check's list, with each item's place in the canonical images;
