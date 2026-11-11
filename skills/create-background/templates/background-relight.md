@@ -4,7 +4,7 @@ quality: high
 ---
 ## Prompt
 
-A BACKGROUND PLATE for a later shot of the same camera setup: the first attached image, the setup's approved plate of {{place}}, relit for {{mood}}. The shots it serves cut with the first plate's shots, so the two must match in everything but the light.
+A background plate for a later shot of the same camera setup: the first attached image, the setup's approved plate of {{place}}, relit for {{mood}}. The shots it serves cut with the first plate's shots, so the two must match in everything but the light.
 
 The attached images, in order:
 {{references_list}}

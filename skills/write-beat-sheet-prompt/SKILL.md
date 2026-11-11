@@ -25,7 +25,7 @@ From the caller:
 
 Ask for the length and the ending's direction when the brief leaves them open; never let the model invent the ending of someone's story. Everything else the brief leaves open, the model proposes, marked *proposed*.
 
-Every character who reads as a minor stays in ordinary, everyday situations. Nothing about them is sexual or suggestive, in any beat.
+Characters who read as minors are kept as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 1. Plan
 
@@ -43,7 +43,7 @@ Fill [the beat sheet prompt template](templates/beat-sheet-prompt.md) with the b
 
 ## 3. Run it
 
-Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send only the saved prompt, as a fresh request, so the answer depends on nothing but the prompt. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation.
+Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send it as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 4. Check the answer
 
@@ -54,7 +54,7 @@ Before showing it, check that:
 - the beats are events, not shots or lines;
 - the ending follows the direction the user gave, and anything the brief left open is marked *proposed*.
 
-When a check fails, build a corrected prompt that says what was wrong, and run it again.
+When a check fails, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 5. The user's review
 

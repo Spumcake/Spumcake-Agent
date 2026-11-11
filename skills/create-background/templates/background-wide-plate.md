@@ -4,7 +4,7 @@ quality: high
 ---
 ## Prompt
 
-A {{wide_or_tall}} BACKGROUND PLATE for one shot of an animated film with a camera move: {{place}} alone, with no characters, in the film's final look, large enough for the whole move, for characters to be composited over later.
+A {{wide_or_tall}} background plate for one shot of an animated film with a camera move: {{place}} alone, with no characters, in the film's final look, large enough for the whole move, for characters to be composited over later.
 
 The attached images, in order:
 {{references_list}}

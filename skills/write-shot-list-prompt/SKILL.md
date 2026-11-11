@@ -24,7 +24,7 @@ From the caller:
 - the concept's style guide, when there is one, for how the camera behaves, such as still and composed or loose and handheld;
 - a folder for the prompt, the answer, and the shot list.
 
-Every character who reads as a minor stays in ordinary, everyday situations. Nothing about them is sexual or suggestive, in any shot.
+Characters who read as minors are kept as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 1. Plan
 
@@ -36,7 +36,7 @@ Fill [the shot list prompt template](templates/shot-list-prompt.md) with the app
 
 ## 3. Run it
 
-Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send only the saved prompt, as a fresh request, so the answer depends on nothing but the prompt. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation.
+Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send it as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 4. Check the answer
 
@@ -48,7 +48,7 @@ Before showing it, check that:
 - every change of framing, angle, or camera position, and every camera move, has its reason written in the shot's action, from the script or the user; a change with no reason is a failed check, since a camera change must be deliberate;
 - the lengths add up to the film's length, within a few seconds; and a shot longer than 10 seconds says why.
 
-When a check fails, build a corrected prompt that says what was wrong, and run it again. When it runs over or short, say where, and what you would cut or hold.
+When a check fails, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say. When it runs over or short, say where, and what you would cut or hold.
 
 ## 5. The user's review
 

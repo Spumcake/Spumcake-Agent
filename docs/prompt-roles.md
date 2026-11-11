@@ -42,7 +42,9 @@ When one is missing, say which and stop. Never do a step by hand because the set
 - Text describes what is wanted only when no image gives that context, as in a text-to-image request. A request that sends images never also carries text that describes what those images already show: the text and the images would compete as context. Its text says only what no attached image provides. The one exception is a reinterpretation, such as a place repainted in a style: it names each object the image holds only to say how its form is reduced, such as "blocky dispensers" or "receding red stools", never where it is.
 - Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step, prompt, or caption.
 - Use only images and recordings the user has the right to use this way. Show a recognisable real person, or use a real person's voice, only when the user confirms that the person agreed to this use, or a guardian did for a child. Never make anything that shows a real person doing or saying something they did not, to deceive anyone.
+- A prompt to a language model is sent alone: only the saved prompt and its files, as a fresh request, so the answer depends on nothing but the prompt. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation.
+- When a check of a model's answer fails, build a corrected prompt that says what was wrong, and run it again.
 - Each step is made only from the latest approved results of the steps before it; a rejected round is never an input. Do only the step asked, and never design ahead of it. When a step fails, fix the skill that made it, then run the step again.
-- A word in capitals, a label, or a name in a prompt tends to be drawn as text in the image. Write prompts without them, unless the image is meant to carry those words.
+- Capitals, labels, and names stay out of a prompt, as `write-image-prompt` says.
 - Long steps report progress, and say what is running and how long it takes before waiting.
 - A skill calls whoever uses it **the user**.

@@ -4,7 +4,7 @@ quality: medium
 ---
 ## Prompt
 
-A COLOUR KEY for one beat of an animated film: a small, simple painting of one moment, made only to show its colour and light, not its detail.
+A colour key for one beat of an animated film: a small, simple painting of one moment, made only to show its colour and light, not its detail.
 
 The moment, beat {{number}}, "{{name}}": {{moment}}
 

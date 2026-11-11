@@ -70,6 +70,6 @@ Run `research-references` for the element: a photograph of every item the story 
 - for a place, the pre-vis, its layout, key, good shot, and views, and the primary canonical location, its canonical angle, and each view with its grey form, coloured form, and texture passes; name the canonical angle's files plainly, so every later step finds them;
 - for a character, the primary canonical image and the A-pose set with its form passes;
 - for a prop, its sheet or its views;
-- every audit, prompt, and image sent, and what the user chose at each step.
+- every continuity review, fix plan, prompt, and image sent, and what the user chose at each step.
 
 The element is then ready for the concept art phase, and for staging.

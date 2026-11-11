@@ -2,41 +2,58 @@
 
 The order the skills run in to make one animated film, and what each step is made from. Each step is made only from the latest approved results of the steps before it; a rejected round is never an input to anything.
 
-## 1. Story
+The point of the pipeline is the intermediate steps: every canonical element of a film, its places, characters, props, look, and sound, is made, shown, and open to the user's changes before any video is generated, so the user's intent survives to the final render.
 
-1. **Beat sheet** (`write-beat-sheet-prompt`), from the user's brief.
+## 1. Concept and intent
+
+1. **The concept:** the user's brief: premise, characters, length, genre, and tone.
+2. **The mood brief** (`research-references`), from the brief; the user chooses a direction.
+3. **Visual identity research** (`research-references`), from the brief and the chosen mood; the user keeps the frames that fit.
+4. **The visual identity brief** (`write-visual-identity-brief`), from the brief, the mood brief, and the visual identity research; the user approves it.
+5. **The audio identity brief** (`write-audio-identity-brief`), from the brief and the visual identity brief; the user approves it.
+
+No other research begins until the identity briefs are approved. Every later research question, for the canonical elements and for the mood, comes from them, so what is searched for serves what the film is meant to be.
+
+## 2. Story
+
+1. **Beat sheet** (`write-beat-sheet-prompt`), from the concept and the identity briefs.
 2. **Script** (`write-script-prompt`), from the beat sheet.
 3. **Shot list** (`write-shot-list-prompt`), from the script.
 
-The look's style guide (`create-style-guide`) is made alongside the story.
+The look's style guide (`create-style-guide`) is made alongside the story, from the visual identity brief.
 
-## 2. Breakdown
+## 3. Breakdown
 
 Every recurring character, place, and prop the script needs, what each must be in general, and the shots it appears in (`write-breakdown-prompt`). Concept candidates from the concept context template (`create-concept-art`) may explore what an element could look like before it is made canonical.
 
-## 3. Canonical elements
+## 4. Canonical elements
 
 Each recurring element is made canonical, one at a time, before any concept art with characters. A place's primary canonical location is its canonical angle: every later step that returns to the place starts from it and its passes.
 
-Each through `make-canonical`:
+Each through `make-canonical`, which holds each one's steps:
 
-- **A place:** the story check, research (`research-references`), the pre-vis (`create-previs`), the primary canonical location, canonical cleanup (`canonical-cleanup`), its views, and their grey form, coloured form, and texture passes.
-- **A character:** research, the primary canonical character, canonical cleanup, then A-pose views made as textured viewport views, the front first, then the back and both sides, then the same without outer layers, then their grey and coloured form passes.
-- **A small prop:** one coloured, non-textured sheet of the prop alone and in its character's hand.
+- **A place,** from its research (`research-references`) and its pre-vis (`create-previs`).
+- **A character,** from its research and the place's texture view.
+- **A small prop,** from its character's coloured A-pose and its photographs.
 - **Several characters** (`create-line-up`): a height chart composited from their A-pose fronts, not generated.
 
-## 4. Concept art
+## 5. Concept art
 
-1. **The mood brief** (`research-references`, mood investigation): genre, literary, film, and animation references, directors, painting, time of day, light, palette, camera, and presentation, in two or three directions, each with frames from CG animated features read for their light; the user chooses.
-2. **The character study** (`create-concept-art`): the main character restyled into the concept style, alone on white, from its coloured form front A-pose; it becomes the style reference.
-3. **The places, restyled to match** the character study, each from its canonical angle's texture pass, never its coloured form, and tried in each mood with the place mood template, its light taken from the mood brief's readings (`create-concept-art`).
-4. **The concept art,** combining them (`create-concept-art`).
+1. **The character study** (`create-concept-art`), from the main character's coloured form front A-pose; it becomes the style reference.
+2. **The places, restyled to match** the character study (`create-concept-art`), each from its canonical angle's texture pass, then tried in each mood from the visual identity brief.
+3. **The concept art** (`create-concept-art`), from the character study and the restyled places.
 
-## 5. Staging and the shots
+## 6. Staging and the shots
 
 1. **Staging** (`create-concept-art`): the canonical characters and props placed into the place's view each shot uses.
-2. **The animatic:** keyframes (`create-keyframe`), timed (`create-animatic`), with voices made first.
+2. **The animatic:** keyframes (`create-keyframe`), timed (`create-animatic`), with voices made first, as the audio identity brief describes them.
 3. **Line-art animation,** lip-synced to the voices.
 4. **Final animation,** over background plates (`create-background`), and the cut.
 
+Consistency is checked (`check-canonical-consistency`) at the end of every step that writes or changes a brief, a story document, the style guide, a prompt, or the film map: every fact has one home, and the rest point to it.
+
 Continuity is reviewed (`review-continuity`) at the end of every step that makes an image, a clip, or a sound, before the user approves it.
+
+## The film map
+
+Every film keeps one map of its canonical artifacts, started with the concept and updated at the end of every step: each artifact the film needs, from the briefs and the research through the pre-vis, the canonical renders, the concept art's references and the concept art itself, to the keyframes, the animatic, the voices, and the cut; its status, as [the film map template](film-map-template.md) names them; and the full path of the one version that counts. Rejected rounds are not listed, only that they were rejected. The agent reads the map before every step, to know what the step is made from and what is still missing, and the user reads it to find any file. Fill [the film map template](film-map-template.md).

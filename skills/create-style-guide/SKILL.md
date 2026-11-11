@@ -24,7 +24,7 @@ The caller gives the user's request, the concept's brief when there is one, the 
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt.
+Characters who read as minors are kept as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Image prompts
 
@@ -39,7 +39,7 @@ Every image prompt here says what the picture is for, then what is in it, then h
 5. **The references,** when there are any: what each one is, in the order they are sent, and what to keep from it, such as "the first attached image is the chosen style frame: match its line and colour exactly". Say what must not change, and that the model must not switch to another rendering style.
 6. **What to leave out:** text, logos, borders, extra figures, or anything the request rules out. Say it plainly, as a sentence; a model reads "no text" better than a list of banned words.
 
-Keep each part to a sentence or a few short lines. Long prompts make models drop parts, and a page with many panels needs each panel to be short. Leave out what the model ignores, as its prompt skill says.
+Keep each part to a sentence or a few short lines, as `write-image-prompt` says; a page with many panels needs each panel to be short. Leave out what the model ignores, as its prompt skill says.
 
 Text to image has nothing to hold it to a look but the words, so the look carries all of it. An edit with references holds the style from the images, so the references carry most of it, and the look only says what they do not show. When the request has artwork, never write a frame as text to image instead: it would drift from the artwork.
 
@@ -49,7 +49,7 @@ Put each part into its field in the model's syntax, as its prompt skill says, an
 
 Build the prompt for the rules from [the rules prompt template](templates/rules-prompt.md): the user's request, the brief, a description of each piece of artwork, or the artwork itself when the language model takes images, and [the style guide template](templates/style-guide.md) as the exact form of its answer. Plan it, and run it on the user's yes when it costs anything.
 
-Check the answer before showing it: every section of the template is filled; each rule names the artwork it is drawn from, or is marked *proposed*; and each rule is concrete enough to check an image against, such as "thick, even outer lines; thin inner lines; no hatching" rather than "bold lines". When it is not, build a corrected prompt that says what was wrong, and run it again.
+Check the answer before showing it: every section of the template is filled; each rule names the artwork it is drawn from, or is marked *proposed*; and each rule is concrete enough to check an image against, such as "thick, even outer lines; thin inner lines; no hatching" rather than "bold lines". When it is not, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say.
 
 Show the rules to the user; their corrections win. A correction the user writes is made in the rules directly.
 
@@ -63,7 +63,7 @@ Unless the user's artwork already settles the look, make **style frames**: conce
 
 Add nothing else. No style words, no description of the character or the place, no lighting or composition, and no negative prompt unless the user asks for one. The fewer words, the better, because the context template works best when the rest is left to the model's interpretation. Make many candidates, eight or more, each with a new seed, so each is a different interpretation, the way an artist explores. The point is to find what the concept should be, not to get an exact picture. Exact, consistent prompts come later, once a concept is chosen.
 
-**Text gives context only where no image does.** A text-to-image request needs text to describe what is wanted, because it has no visual context. A request that sends images must not also carry text that describes what those images already show: the text and the images then compete as context. Its text says only what no attached image provides: what each image is, how it was made, and what is needed.
+**Text gives context only where no image does,** as the [prompt roles](../../docs/prompt-roles.md) say.
 
 - Fill [the style frame template](templates/style-frame.md): the premise from the brief, in a few words, and the purpose "16:9 concept illustration".
 - Plan the candidates, with their count and cost, render them on the user's yes, and show them together with the exact prompt sent.

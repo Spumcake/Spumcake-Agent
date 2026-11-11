@@ -37,7 +37,7 @@ From the caller:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a model new to this board is a short test of two or three frames.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt. Draw a recognisable real person only when the user confirms that the person agreed to this use, or a guardian did for a child; never to deceive anyone.
+Characters who read as minors, and recognisable real people, are shown only as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Board prompts
 
@@ -51,7 +51,7 @@ Every frame's prompt says what the picture is, then what the camera sees, then w
 6. **The references,** in the order they are sent, what each is and how it was made, and what to keep from each: identity and proportions from each character's A-pose views and each other subject's sheets, but not their colour or finish; the layout of the place; line and tones from the approved board frame; shapes and proportion from the style sheet, but not its colour. Say the model must draw in the board style, not in the references' finish.
 7. **What to leave out:** colour, finished rendering, fine detail, and any text, captions, panel numbers, or borders. The shot number is the file's name, never in the picture. Say it plainly, as a sentence.
 
-Keep each part to a sentence or a few short lines; long prompts make models drop parts. A frame has one moment: the start of the shot, or, for an end frame, the end of its move. Leave out what the model ignores, as its prompt skill says.
+Keep each part to a sentence or a few short lines, as `write-image-prompt` says. A frame has one moment: the start of the shot, or, for an end frame, the end of its move. Leave out what the model ignores, as its prompt skill says.
 
 Send the references in this order: each subject's base reference, in the order the prompt names them, a character's front A-pose first, then its A-pose view nearest the way it faces when that is not the front; then any detail, expression, or pose sheet the shot needs; then the line-up, when several subjects share the frame; then the place's references; then the approved board frame, once there is one; then the style sheet, last. When the model takes fewer references than the shot has, say which would be left out and ask the user; never drop the front A-pose of a character in frame without saying so.
 

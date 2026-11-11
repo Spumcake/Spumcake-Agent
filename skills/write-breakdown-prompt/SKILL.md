@@ -34,7 +34,7 @@ Fill [the breakdown prompt template](templates/breakdown-prompt.md) with the scr
 
 ## 3. Run it
 
-Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send only the saved prompt, as a fresh request. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation.
+Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send it as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 4. Check the answer
 
@@ -47,7 +47,7 @@ Before showing it, check that:
 - each prop is marked small, with few details, or large;
 - anything the script does not have is marked *proposed*.
 
-When a check fails, build a corrected prompt that says what was wrong, and run it again.
+When a check fails, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 5. The user's review
 

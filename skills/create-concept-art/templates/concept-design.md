@@ -4,7 +4,7 @@ quality: high
 ---
 ## Prompt
 
-A single CONCEPT DESIGN for an animated production: one design direction for {{subject}}, {{role}}. It must read as {{convey}}, and it always has {{must_have}}.
+A single concept design for an animated production: one design direction for {{subject}}, {{role}}. It must read as {{convey}}, and it always has {{must_have}}.
 
 This direction: {{direction}}
 

@@ -4,7 +4,7 @@ quality: high
 ---
 ## Prompt
 
-A single CONCEPT PAINTING for an animated production: one design direction for {{subject}}, {{role}}. It must read as {{convey}}, and it always has {{must_have}}.
+A single concept painting for an animated production: one design direction for {{subject}}, {{role}}. It must read as {{convey}}, and it always has {{must_have}}.
 
 This direction: {{direction}}
 

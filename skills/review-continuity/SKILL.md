@@ -35,9 +35,7 @@ From the caller:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first review on a new model is a short test, one result, before a batch.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt.
-
-Review a recognisable real person's likeness or voice only when the user confirms that the person agreed to this use, or a guardian did for a child; never to deceive anyone.
+Characters who read as minors, and a recognisable real person's likeness or voice, are reviewed only as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Review prompts
 
@@ -67,6 +65,16 @@ Choose the template for the result's kind, and gather what it must agree with:
 - **A final shot** uses [the final shot template](templates/review-final-shot.md). It agrees with the line-art or lip-synced shot it was made from, the colour models and colour lists, the place's mood reference for its mood, the colour script's line for its beat, the place's views or its background plate, the characters' A-pose views and the other subjects' reference sheets, the style guide, and the final shots on either side. Every group of checks applies.
 - **A sound,** a voice line, an effect, an ambience, or music, uses [the sound template](templates/review-sound.md). It agrees with the script's words and directions, the speaker's voice reference, the timing sheet's cue and the shot's length, the shot list's action, the place, and the beat's mood, and with the sounds on either side. Checks: the words and the voice for a voice line; the timing, the place and the mood, and across the cut for every sound.
 - **A sequence of shots** uses [the sequence template](templates/review-sequence.md), when the user asks for one, or once every shot of a scene has its own review. It agrees with the shot list's rows, the subjects' and the place's references, and the colour script. Every group of checks applies.
+
+**A generated image's own sources.** Every image a model made from a request is also checked against what it descends from, which is how `canonical-cleanup` finds what to fix:
+
+- **its canonical prompt,** the text-to-image prompt it descends from, as sent, however many edits came after it: what the image has that a line rules out, such as many elements where the prompt asks for minimal ones, and what a line asks for that came out wrong, each finding quoting the line. The prompt is the only measure here: what it does not say, such as a number of stools, is not a finding;
+- **its pre-vis,** when it was made from one, as its inventory: anything the pre-vis does not represent, except the world seen through the windows; and for each such thing, whether it reads clearly as a thing the place needs, such as a door;
+- **each visible object, one by one:** an object that does not read clearly as any one thing, or a thing formed wrongly, such as a partition that could be a door, a window, or a cabinet;
+- **on a form pass,** a view with no textures: texture that shows through, such as lettering, or patterns on floors, walls, or upholstery;
+- **across a place's views,** when it has several made from its primary canonical location: an object that appears twice, goes missing, or changes kind between views.
+
+A style the model chose for something that was asked for, and a thing asked for that is right, are not findings.
 
 Send only approved references. When one is missing, say which, and ask whether to stop or to review without it; without it, its checks go under *Could not check*. When a reference has changed since the result was made, say so: the result is out of date, and is reviewed against the new version.
 
@@ -103,7 +111,7 @@ Save the prompt beside the samples, named for the result and the review's number
 
 ## 4. Run it
 
-Plan the run: the model, the number of requests, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send only the saved prompt and its files, as a fresh request, so the answer depends on nothing but the prompt. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation. When the review was split across requests, merge the answers into one findings list, in order, and report a difference found in two overlapping requests once.
+Plan the run: the model, the number of requests, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send it and its files as the [prompt roles](../../docs/prompt-roles.md) say. When the review was split across requests, merge the answers into one findings list, in order, and report a difference found in two overlapping requests once.
 
 ## 5. Check the answer
 
@@ -117,7 +125,7 @@ Before showing it, check that:
 - the names are the script's and the shot list's;
 - there is no score, no overall verdict, and no fix, redraw, or re-render proposed.
 
-When a check fails, build a corrected prompt that says what was wrong, and run it again.
+When a check fails, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say.
 
 Then look at the sample each finding points to. When the difference cannot be seen there, say so beside the finding; never drop a finding, and never add one of your own to the model's list. A difference you see that the review missed is told to the user separately, as yours.
 
@@ -130,7 +138,7 @@ The user decides each finding:
 - **accept it:** the result stands with that difference, recorded with the user's reason when they give one;
 - **remake:** the result goes back to the step that made it, with the finding as what to change.
 
-Never choose for them, never fix the result, and never remake it here. Record each decision in the finding's "The user's decision" line, and the date in "Decided". When a remade result comes back, review it again from step 2 with the same references, and say which earlier findings are gone and which remain.
+Never choose for them, never fix the result, and never remake it here. When `canonical-cleanup` called the review, its findings go to the cleanup instead, which fixes them as part of the step and shows the user the findings and the fixes together afterwards. Record each decision in the finding's "The user's decision" line, and the date in "Decided". When a remade result comes back, review it again from step 2 with the same references, and say which earlier findings are gone and which remain.
 
 ## Hand back
 

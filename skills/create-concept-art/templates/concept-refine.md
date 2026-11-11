@@ -4,7 +4,7 @@ quality: high
 ---
 ## Prompt
 
-A single {{CONCEPT_KIND}} for an animated production: {{subject}}, {{role}}, refined from the attached designs into one.
+A single {{concept_kind}} for an animated production: {{subject}}, {{role}}, refined from the attached designs into one.
 
 The attached images, in order:
 {{references_list}}

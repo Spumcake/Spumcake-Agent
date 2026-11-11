@@ -39,7 +39,7 @@ The caller gives:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the number of requests and an estimate.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is ever sexual or suggestive, in any step, prompt, or caption.
+Characters who read as minors are kept as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Filling the templates
 
@@ -53,7 +53,7 @@ The templates are written for any subject. Fill their subject words from the bri
 - A detail sheet's `{{subject_image}}` names the attached image of the subject, such as "the third attached image, the front A-pose of Mira", and its `{{relation}}` says how the detail belongs to the subject, such as "the prop {{name}} carries" or "a part of {{name}}".
 - In the outfit A-pose template, `{{outfit_image}}` says what the second image is and how it was made, such as "The second attached image is a photograph of a real waiter's jacket.", and `{{outfit}}` is "the outfit from the second image". When no image shows the outfit, `{{outfit_image}}` is empty and `{{outfit}}` describes it in words, from the brief.
 
-A prompt sent with images says only what no attached image gives. Never describe in words a look an attached image already shows.
+What a prompt sent with images says is in the [prompt roles](../../docs/prompt-roles.md).
 
 ## 1. Brief
 

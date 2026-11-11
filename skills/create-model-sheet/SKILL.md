@@ -43,15 +43,13 @@ From the caller:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a new model is one sheet, as a test, before the rest.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt.
-
-Show a recognisable real person only when the user confirms that the person agreed to this use, or a guardian did for a child; never to deceive anyone.
+Characters who read as minors, and recognisable real people, are shown only as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Sheet prompts
 
 A sheet prompt says which sheet it is, what each reference is and how it was made, then the panels, then what changes in them and what never does. Write it in this order, for any model:
 
-1. **What the image is:** the sheet's name and use, such as "an EXPRESSION SHEET for Mira: the single source of truth for her faces".
+1. **What the image is:** the sheet's name and use, such as "an expression sheet for Mira: the single source of truth for her faces".
 2. **The references,** in the order sent: "The first attached image is a generated character model of Mira in a symmetrical A-pose, seen straight from the front, a textured viewport capture made for this film: keep her face, proportions, and colours exactly." Another view or the variant sheet next, when it is used, and the style sheet last. Never describe in words what the references show.
 3. **The layout:** a grid, its number of panels, in reading order, and each panel's label in quotes. Keep labels to a word or two; models misspell long text.
 4. **What changes,** panel by panel, and only that: the face, the pose, or the mouth. A colour model changes nothing; it adds callouts.
@@ -70,7 +68,7 @@ The templates are written for any subject. Fill their subject words from the bri
 - **For any other subject,** such as a prop or a vehicle: `{{identity_features}}` is its shape, parts, and markings; `{{form_word}}` is "variant". It has no expression sheet or mouth chart unless it has a face, and its pose sheet shows its states and positions, such as doors open or wheels turned.
 - `{{references_line}}` says what each attached image of the subject is and how it was made, in the order sent, then what to keep from them. It begins with a space. For a character: " The first attached image is a generated character model of {{name}} in a symmetrical A-pose, seen straight from the front, a textured viewport capture made for this film: keep its {{identity_features}}, proportions, colours, and style exactly.", with, for a colour model, "The second is the same model seen from the back.", or, for a three-quarter sheet, "The second is the same model seen from the side." For any other subject: " The first attached image is its reference sheet, a generated turnaround made for this film: keep its {{identity_features}}, proportions, colours, and art style exactly.", with, for a variant, "The second attached image is its {{form_word}} sheet: draw it in that {{form_word}}."
 - `{{style_sheet_line}}` is " The last attached image is the concept's style sheet: match its line, colour, and light." when one is sent; otherwise it is empty.
-- `{{outfit_sheet}}`, `{{form_note}}`, and `{{form_header}}` name the outfit or variant the sheet is for in the plan, the colour list, and the header, such as ", the raincoat sheet", ": raincoat", and ", RAINCOAT", or are empty. `{{base_reference}}` names the files of the base reference the sheets are drawn from.
+- `{{outfit_sheet}}`, `{{form_note}}`, and `{{form_header}}` name the outfit or variant the sheet is for in the plan, the colour list, and the header, such as ", the raincoat sheet", ": raincoat", and ", raincoat", or are empty. `{{base_reference}}` names the files of the base reference the sheets are drawn from.
 - `{{expressions}}`, `{{poses}}`, and `{{mouth_shapes}}` are one line per panel, in order, from the sheet plan: its label in quotes, then a few words, such as `"MBP": lips pressed together`.
 - `{{personality}}` is the brief's personality; for a subject without one, what its poses must show, such as "its weight and age".
 - `{{callouts}}` is one line per row of the colour list, such as `HAIR: "RUST #B5512C"`.

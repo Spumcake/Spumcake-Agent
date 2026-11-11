@@ -33,9 +33,7 @@ From the caller:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a new model is a short test before the rest.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt.
-
-Show a recognisable real person only when the user confirms that the person agreed to this use, or a guardian did for a child; never to deceive anyone.
+Characters who read as minors, and recognisable real people, are shown only as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Keyframe prompts
 
@@ -49,7 +47,7 @@ A keyframe prompt says what the picture is for, then the moment, then its colour
 6. **The references,** when there are any, in the order sent: a character's front A-pose view, or another subject's reference sheet, first, for its shape and colours only; the grey form pass of the place's primary canonical location, or of its view nearest the composition, next, for its layout; the style sheet last, for its line, colour, and light. Say that the beat's own colour and light win over the colours of every reference.
 7. **What to leave out:** text, labels, borders, faces in detail, and fine texture, as a plain sentence.
 
-Keep the colour-and-light part in the same form in every keyframe, and change only its words, so the differences the user sees are the logic's differences. Keep each part short; long prompts make models drop parts. Leave out what the model ignores, as its prompt skill says.
+Keep the colour-and-light part in the same form in every keyframe, and change only its words, so the differences the user sees are the logic's differences. Keep each part short, as `write-image-prompt` says. Leave out what the model ignores, as its prompt skill says.
 
 Put each part into its field in the model's syntax, as its prompt skill says: the words in `prompt`, what to avoid in `negative` when the model takes it, and the images, in order, in `references`, by the [prompt roles](../../docs/prompt-roles.md). Write each prompt with the setup's prompt writer.
 
@@ -59,7 +57,7 @@ From the beat sheet or the shot list, list its beats or sequences in story order
 
 ## 2. The colour logic
 
-Build the prompt from [the colour logic template](templates/colour-logic-request.md): the beat sheet or shot list, the style guide's colour and light rules quoted, and [the colour script template](templates/colour-script.md) as the exact form of its answer. Plan it, and run it on the user's yes when it costs anything. Send only the saved prompt, as a fresh request. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation.
+Build the prompt from [the colour logic template](templates/colour-logic-request.md): the beat sheet or shot list, the style guide's colour and light rules quoted, and [the colour script template](templates/colour-script.md) as the exact form of its answer. Plan it, and run it on the user's yes when it costs anything. Send it as the [prompt roles](../../docs/prompt-roles.md) say.
 
 Check the answer before showing it:
 
@@ -68,7 +66,7 @@ Check the answer before showing it:
 - every colour is from the style guide's palette, or is marked *departure* with its reason;
 - the arc is stated in a few lines: where the film starts, where it turns, and where it ends.
 
-When a check fails, build a corrected prompt that says what was wrong, and run it again. Show the colour logic to the user; their corrections win, and a correction they write is made in the colour script directly.
+When a check fails, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say. Show the colour logic to the user; their corrections win, and a correction they write is made in the colour script directly.
 
 ## 3. The keyframes
 

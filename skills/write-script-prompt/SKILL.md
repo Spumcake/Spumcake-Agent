@@ -24,7 +24,7 @@ From the caller:
 - the concept's style guide, when there is one, for tone and for how places look;
 - a folder for the prompt, the answer, and the script.
 
-Every character who reads as a minor stays in ordinary, everyday situations. Nothing about them is sexual or suggestive, in any line or action.
+Characters who read as minors are kept as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 1. Plan
 
@@ -42,7 +42,7 @@ Fill [the script prompt template](templates/script-prompt.md) with the approved 
 
 ## 3. Run it
 
-Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send only the saved prompt, as a fresh request, so the answer depends on nothing but the prompt. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation.
+Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send it as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 4. Check the answer
 
@@ -55,7 +55,7 @@ Before showing it, check that:
 - anything the beats do not have is marked *proposed*;
 - it runs about the planned length.
 
-When a check fails, build a corrected prompt that says what was wrong, and run it again.
+When a check fails, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## 5. The user's review
 

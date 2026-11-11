@@ -4,7 +4,7 @@ quality: high
 ---
 ## Prompt
 
-A BACKGROUND PLATE for one shot of an animated film: {{place}} alone, with no characters, in the film's final look, for characters to be composited over later.
+A background plate for one shot of an animated film: {{place}} alone, with no characters, in the film's final look, for characters to be composited over later.
 
 The attached images, in order:
 {{references_list}}

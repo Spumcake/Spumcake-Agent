@@ -34,15 +34,13 @@ From the caller:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a new model is one request, as a test, before the rest.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt.
-
-Show a recognisable real person only when the user confirms that the person agreed to this use, or a guardian did for a child; never to deceive anyone.
+Characters who read as minors, and recognisable real people, are shown only as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Line-up prompts
 
 With several references, the model cannot guess which image is which subject, or how big each should be. A line-up prompt says both before anything else. Write it in this order, for any model:
 
-1. **What the image is:** "a LINE-UP" or "a HEIGHT CHART" for an animated production: its subjects side by side at true relative scale, the source of truth for their sizes.
+1. **What the image is:** "a line-up" or "a height chart" for an animated production: its subjects side by side at true relative scale, the source of truth for their sizes.
 2. **The references,** one line each, in the order sent, saying what each is and how it was made: "The first attached image is a generated character model of Mira in a symmetrical A-pose, seen straight from the front, a textured viewport capture." The style sheet last, for line, colour, and light only. Never describe in words what the references show.
 3. **The order and placement:** left to right, each by name, all in the same view, standing on one ground line, evenly spaced, not overlapping.
 4. **The heights:** each subject's height as a number and as a landmark against the anchor, such as "Tom: 120 cm, the top of his head level with Mira's shoulder". Models follow a landmark better than a number; give both.

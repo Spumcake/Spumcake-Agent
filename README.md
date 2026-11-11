@@ -12,6 +12,9 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 
 | Skill | Does |
 |---|---|
+| [write-visual-identity-brief](skills/write-visual-identity-brief/SKILL.md) | drafts what a film should feel and look like, what its colours must achieve, and candidate palettes, from the brief, the mood brief, and the visual identity research |
+| [write-audio-identity-brief](skills/write-audio-identity-brief/SKILL.md) | drafts from the brief and the visual identity brief a film's sound design, music, voice direction, and voices, before any other research |
+| [check-canonical-consistency](skills/check-canonical-consistency/SKILL.md) | checks a film's written artifacts for drift: one home for every fact, the rest pointing to it |
 | [write-beat-sheet-prompt](skills/write-beat-sheet-prompt/SKILL.md) | plans a story's beat sheet and builds the prompt a language model writes it from |
 | [write-script-prompt](skills/write-script-prompt/SKILL.md) | plans a script from the approved beats and builds the prompt a language model writes it from |
 | [write-shot-list-prompt](skills/write-shot-list-prompt/SKILL.md) | plans a timed shot list from the script and builds the prompt a language model writes it from |
@@ -21,7 +24,7 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | [create-colour-script](skills/create-colour-script/SKILL.md) | plans the colour and light of each beat, then a keyframe for each, in story order |
 | [research-references](skills/research-references/SKILL.md) | researches real places and character archetypes on the web, into a sourced reference board, and a film's mood into a mood brief, with frames from CG animated features read for their light |
 | [create-previs](skills/create-previs/SKILL.md) | builds a place's simple 3D mock-up, each piece a recognisable shape from the research with a key naming it, and renders its shot and its views |
-| [canonical-cleanup](skills/canonical-cleanup/SKILL.md) | audits a generated image against its canonical prompt and the pre-vis, traces each fault to the pre-vis or the generation, and fixes it, across every view |
+| [canonical-cleanup](skills/canonical-cleanup/SKILL.md) | fixes a generated image from its continuity review: traces each finding to the pre-vis or the generation, and fixes it there, across every view |
 | [write-breakdown-prompt](skills/write-breakdown-prompt/SKILL.md) | plans a film's breakdown of every recurring character, place, and prop, and builds the prompt a language model writes it from |
 | [make-canonical](skills/make-canonical/SKILL.md) | makes one recurring place, character, or prop canonical, step by step, from a story check through its neutral views |
 | [create-subject-reference](skills/create-subject-reference/SKILL.md) | builds a recurring subject's brief, reference sheets, and gallery; a character's A-pose views; a small prop's sheet |

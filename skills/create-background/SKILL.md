@@ -38,7 +38,7 @@ From the caller:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a model new to this film is a short test of a few setups.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt. Use only art and photographs the user has the right to use this way.
+Characters who read as minors, and the art and photographs the user may use, are as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## Setups
 
@@ -66,7 +66,7 @@ Characters are composited over the plate, so anything in the place that passes i
 
 Every plate's prompt says what the picture is, which reference is which, where the camera is, what no image gives, then its light and look. Write it in this order, for any model:
 
-1. **What the image is:** "a BACKGROUND PLATE for one shot of an animated film: the place alone, with no characters, in the film's final look, for characters to be composited over".
+1. **What the image is:** "a background plate for one shot of an animated film: the place alone, with no characters, in the film's final look, for characters to be composited over".
 2. **The references,** one line each, in the order sent, and what each fixes: "The first attached image is the texture pass of the Kitchen's view from the window camera, made under neutral light: the place, its layout, and its materials are fixed." The mood reference's line says it fixes the light only. The keyframe line always says it is for framing only, and that its characters are not drawn.
 3. **The camera,** matching the keyframe exactly: the view it is nearest, its framing, its angle and height, and where the horizon and the floor line sit in the frame, such as "the horizon a third of the way up, the floor meeting the back wall just below the window". For a move, the plate's shape and where each framing sits on it.
 4. **What no image gives:** what the characters hide in the keyframe is drawn whole, as the views show it. Never list what the views already show.
@@ -102,7 +102,7 @@ The mood reference fixes how the place is lit; the colour script's line fixes th
 - `{{colour_script_line}}` is the colour script's line for the shot's beat, quoted.
 - `{{in_front}}` is what passes in front of the characters, from the background plan, or "nothing".
 - `{{light}}` is "exactly as the mood reference shows it"; only when the user agreed to a plate with no mood reference for its mood, it is the light in words.
-- On a wide plate, `{{wide_or_tall}}` is "WIDE" for a pan or a truck and "TALL" for a tilt or a crane; `{{horizon_change}}` is empty, or, for a tilt or a crane, says where the horizon sits at the start and at the end. `{{extension_line}}` is empty for a first request; for an extension, it is "The first attached image is the plate so far: keep everything in it exactly, and extend it {{direction}} by {{amount}}, with no seam where the new part meets it."
+- On a wide plate, `{{wide_or_tall}}` is "wide" for a pan or a truck and "tall" for a tilt or a crane; `{{horizon_change}}` is empty, or, for a tilt or a crane, says where the horizon sits at the start and at the end. `{{extension_line}}` is empty for a first request; for an extension, it is "The first attached image is the plate so far: keep everything in it exactly, and extend it {{direction}} by {{amount}}, with no seam where the new part meets it."
 
 ## 1. Plan the plates
 

@@ -35,7 +35,7 @@ From the caller:
 
 Each step waits for the user's yes before the next. A check that costs anything waits for a yes to its plan: the model, the number of requests, and the cost.
 
-Every character who reads as a minor stays in ordinary, everyday situations. Nothing about them is sexual or suggestive, in any step, cue, or prompt.
+Characters who read as minors are kept as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## The timing sheet
 
@@ -78,9 +78,9 @@ Note each shot whose lines, at their recorded lengths with half a second before 
 
 Build the check's prompt from [the timing check template](templates/timing-check.md): the timing sheet, the approved script, and [the timing findings template](templates/timing-findings.md) as the exact form of its answer. Save the prompt beside the sheet.
 
-Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send only the saved prompt, as a fresh request, so the answer depends on nothing but the prompt. When the agent itself is the language model, it answers the saved prompt alone, as if it had seen nothing else of the conversation.
+Plan the run: the model, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send it as the [prompt roles](../../docs/prompt-roles.md) say.
 
-Check the answer before showing it: every shot is in it once, by its number; each finding names the shot and the line; and every count agrees with the sheet. When it does not, build a corrected prompt that says what was wrong, and run it again.
+Check the answer before showing it: every shot is in it once, by its number; each finding names the shot and the line; and every count agrees with the sheet. When it does not, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say.
 
 The check proposes; it never changes a length. A shot too short for its lines, or a long silence, is shown to the user with what the check suggests.
 

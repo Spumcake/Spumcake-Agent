@@ -1,6 +1,6 @@
 ---
 name: research-references
-description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a pre-vis or concept art is made; and, once a film's elements are canonical, to investigate its mood - genre, literary and film references, directors, animation, painting, light, palette, camera, and presentation - before its concept art. Not for making images.
+description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a pre-vis or concept art is made; and, right after a film's brief, for its mood brief - genre, literary and film references, directors, animation, painting, light, palette, camera, and presentation - and its visual identity research. Not for making images.
 ---
 
 # Research references
@@ -48,32 +48,32 @@ Fill [the board template](templates/board.md):
 
 Show the board. List the files worth downloading, with their sources, licences, and sizes, and download only those the user approves.
 
-## 3. Mood investigation
+## 3. The mood brief
 
-Before concept art, once a film's places, characters, and props are canonical, investigate its mood, as a film crew would: not more photographs of the place, which the canonical references already hold, but what the film should feel like and how films, books, and pictures have made that feeling. Start from what the beats ask, such as "quietly ominous, a weary, ordinary moment with something slightly wrong about it", and search for:
+Right after the film's brief, before any other research, draft its mood, as a film crew would: what the film should feel like, and how films, books, and pictures have made that feeling. Draft it from the brief alone, as a finished result the user edits. It holds the mood only: genre and tone, references, and how light, colour, camera, and pace feel. It never retells the story, the setting, the time of day, or the characters, which are the brief's, nor the sound, which is the audio identity brief's: it points to the brief, so a later change to the brief cannot leave it contradicting. Every direction stays within what the brief fixes: a brief set at night gets directions within night. `check-canonical-consistency` keeps it so. Draw on:
 
 - **genre and tone,** and the films, books, and animation that share it;
 - **literary references:** stories and authors whose situations or voice are close to the film's;
 - **film and television references,** by scene where one fits, and the directors and cinematographers whose way of seeing suits it;
 - **animation references** that show how such a mood is carried in animation;
 - **paintings and photographs** whose light, colour, or composition fit;
-- **time of day, light, palette, camera, presentation, sound, and pace,** as consequences of the references, not defaults: a scene at "closing time" may be mid-afternoon, dusk, or night.
+- **light, palette, camera, presentation, and pace,** as consequences of the references, within what the brief fixes.
 
-Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then collect the images, for every direction, not only the one that looks likeliest: a direction with no images is a guess, and its prompts will be guesses.
+Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then distil each direction into **tone phrases:** four to eight short phrases of a few words each, each drawn from one of its references and named beside it, such as "an ordinary room where something is slightly wrong" (Lynch). They say the direction's tone to the user and the style guide; they are not put into image prompts, where vague phrases are misread (see `write-image-prompt`).
 
-The images are for light and colour, because that is what the concept art takes from them. Choose each for how light and colour fill a space like the film's: a room, its windows, its lamps, its shadows. Not close-ups of faces, which carry a scene's tension but no palette, and not tabletops or details, which show no room's light. For each direction, find:
+Show the brief. The user chooses a direction or a blend, or edits one; record the choice in the brief. No images are collected yet: that is the visual identity research, built on the brief and the chosen mood.
 
-- **screencaps of feature CG animated films,** above all, never hand-drawn or stop-motion: frames of interiors, such as a diner, a café, a shop, or a kitchen, at the direction's time of day, wide enough to show the room and its light. These are the references the concept art is judged against: they show how a studio's painters and lighters handle that light in a finished film. Libraries of screencaps, such as animationscreencaps.com, hold whole films frame by frame;
+## 4. Visual identity research
+
+Built on the film's brief and its chosen mood, look at how films like it look and are lit, so the visual identity brief's touchstones and colour come from real work, not from the agent's taste. Search for moments like the film's, not only places like it: places like the film's, at the time the brief sets, in the chosen mood, and scenes whose situation is like the film's, such as a character alone at work after hours with a dark space behind him. The images are for light, colour, and composition. Choose each for how light and colour fill a space like the film's and where the eye goes in it: not close-ups of faces, which carry a scene's tension but no palette, and not tabletops or details, which show no room's light. Find:
+
+- **screencaps of feature CG animated films,** above all, never hand-drawn or stop-motion, wide enough to show the room and its light. They show how a studio's painters and lighters handle that light in a finished film. Libraries of screencaps, such as animationscreencaps.com, hold whole films frame by frame;
 - the art of those films, such as colour scripts and background paintings, when it shows a room's light;
-- live-action stills, paintings, and photographs only to fill a gap the animated films leave, never as most of a direction.
+- live-action stills, paintings, and photographs only to fill a gap the animated films leave, never as most of the research.
 
-Search with short, plain phrases, such as "Ratatouille kitchen night" or "Flo's V8 Cafe dusk": six to ten images for each direction. Preview them on a contact sheet, numbered, with each image's source page.
+Start from frames already kept for the film, and search only for what they do not answer. Search with short, plain phrases, such as "Ratatouille kitchen night": six to ten new images at most. Preview them on a contact sheet, numbered, with each image's source page.
 
-**Read each image** before any prompt is written, in the brief beside the image: each light by its kind (direct sun, overcast sky, open skylight, moonlight, fluorescent, neon, tungsten, candle, a screen), its colour, its source, and where it falls, as key, secondary, and practical lights; any haze and volumetric light; how saturated the whole picture is; and its main colours, with five or six sampled from the image itself as named colours and hex values. A reading names only what is in the picture. Keep only the images the user chooses, as internal reference, out of version control. A brief with no images, or images with no readings, is not finished.
-
-Then distil the chosen direction into **tone phrases:** four to eight short phrases of a few words each, each drawn from one of its references and named beside it, such as "an ordinary room where something is slightly wrong" (Lynch). They say the direction's tone to the user and the style guide; they are not put into image prompts, where a vague phrase such as "something slightly wrong" is read as something supernatural. A mood prompt's words come from the readings.
-
-Show the brief with its contact sheets and readings. The user chooses a direction or a blend; record the choice in the brief, and list what in the style guide must change to agree with it. Mood images come from these references, never from more photographs of the place, and every light and colour a mood prompt names comes from a reading, with the image it came from noted beside it.
+**Read each image** in [the research template](templates/visual-identity-research.md): where the eye goes, the darkest shape, and where tension would sit; each light by its kind (direct sun, overcast sky, open skylight, moonlight, fluorescent, neon, tungsten, candle, a screen), its colour, its source, and where it falls, as key, secondary, and practical lights; any haze and volumetric light; how saturated the whole picture is; its main colours, with five or six sampled from the image itself as named colours and hex values; and which of the brief's needs it answers. A reading names only what is in the picture. A frame whose artificial light is warm may serve composition and darkness, never the palette, whose artificial light `write-visual-identity-brief` sets. Keep only the images the user chooses, as internal reference. The visual identity brief (`write-visual-identity-brief`) takes its touchstones and its palette candidates from the kept frames, each colour traced to its frame.
 
 ## Hand back
 
@@ -81,4 +81,5 @@ Show the brief with its contact sheets and readings. The user chooses a directio
 - the downloaded references, each named for what it shows, with its source and licence beside it;
 - the conclusions a pre-vis, concept art, or a character's design should follow;
 - for each element of a place, the photograph a pre-vis builds it from;
-- the mood brief, with the user's chosen direction, the reference images kept for it, and its tone phrases, when the mood was investigated.
+- the mood brief, with the user's chosen direction and its tone phrases;
+- the visual identity research: the kept frames, each with its reading.

@@ -38,7 +38,7 @@ From the caller:
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a model new to this film is a short test of a few shots.
 
-Every image of a character who reads as a minor stays ordinary and everyday. Nothing is sexual or suggestive, in any step or prompt. Draw a recognisable real person only when the user confirms that the person agreed to this use, or a guardian did for a child; never to deceive anyone.
+Characters who read as minors, and recognisable real people, are shown only as the [prompt roles](../../docs/prompt-roles.md) say.
 
 ## The keyframe look
 
@@ -59,13 +59,13 @@ Every keyframe's prompt says what the picture is, which reference is which, what
 1. **What the image is:** "an on-model keyframe for one shot of an animated film", one frame at the film's aspect ratio, of the shot's first moment, or, for an end frame, its last.
 2. **The references,** one line each, in the order sent, and what each fixes: "The first attached image is the front A-pose view of Mira, made as a textured viewport view: her face, hair, proportions, outfit, and colours are fixed." A view's grey form pass fixes the place's layout only, not its detail or light; the approved keyframe fixes the keyframe look; the style sheet, last, fixes line, shapes, and palette, not its light or texture.
 3. **The framing and angle,** from the shot list, in camera words: "a wide shot at eye level", "a close-up from slightly below". Say what fills the frame, and where the horizon or floor line sits, such as "the horizon a third of the way up".
-4. **The staging:** each character by the shot list's name, which their attached A-pose views show, where they are in frame (left, right, centre, foreground, background), which way they face, what they are doing at this moment, and their expression or pose by its sheet's label, such as "her SURPRISED face". Props by the script's names, in whose hands or where.
+4. **The staging:** each character by the shot list's name, which their attached A-pose views show, where they are in frame (left, right, centre, foreground, background), which way they face, what they are doing at this moment, and their expression or pose by its sheet's label, such as "her surprised face". Props by the script's names, in whose hands or where.
 5. **The heights,** when several subjects share the frame: each against the line-up's anchor, as a landmark, such as "Tom's head reaches Mira's shoulder". Models follow a landmark better than a number.
 6. **The place,** by the script's name, from its view nearest the camera, and only what no image gives: which of the view's parts the action needs, by the script's names. Never describe what the view already shows.
 7. **The keyframe look:** the plan's look lines, quoted, not reworded.
 8. **What to leave out:** shading, lighting, texture, background detail, arrows, text, shot numbers, borders, and anyone not named. Say it plainly, as a sentence. The shot number is the file's name, never in the picture.
 
-Keep each part to a sentence or a few short lines; long prompts make models drop parts. A keyframe has one moment. Leave out what the model ignores, as its prompt skill says.
+Keep each part to a sentence or a few short lines, as `write-image-prompt` says. A keyframe has one moment. Leave out what the model ignores, as its prompt skill says.
 
 ### The order the references are sent in
 
