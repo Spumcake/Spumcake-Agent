@@ -22,6 +22,7 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | [write-image-prompt](skills/write-image-prompt/SKILL.md) | writes the words of any image prompt as visual, image-generator phrases, not prose |
 | [explore-concept](skills/explore-concept/SKILL.md) | explores what a subject or place could look like, with a brief, directions, text-to-image candidates, and refinements, before it is canonical |
 | [create-concept-reference](skills/create-concept-reference/SKILL.md) | turns a canonical reference into its concept art reference: a character's study, a place's view in each mood |
+| [create-detail-sheet](skills/create-detail-sheet/SKILL.md) | paints a character's or prop's level-of-detail sheet: the subject at four distances, one brush size, fewer strokes the further it is |
 | [create-concept-artwork](skills/create-concept-artwork/SKILL.md) | makes concept artwork from concept art references: a character staged into a place's painting, the look reference for first frames |
 | [create-colour-script](skills/create-colour-script/SKILL.md) | plans the colour and light of each beat, then a keyframe for each, in story order |
 | [research-references](skills/research-references/SKILL.md) | researches real places and character archetypes on the web, into a sourced reference board, and a film's mood into a mood brief, with frames from CG animated features read for their light |

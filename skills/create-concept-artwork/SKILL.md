@@ -16,7 +16,7 @@ As `create-concept-reference` says: an image-edit model that takes the prompt ex
 ## What it needs
 
 - the place's concept art reference, the painting of the view the moment uses, in the moment's mood;
-- each character's concept art reference, their study;
+- each character's concept art reference, their study, and their level-of-detail sheet (`create-detail-sheet`);
 - the beat, and what the visual identity brief asks of the moment;
 - a folder for the prompts and the images.
 
@@ -59,7 +59,7 @@ As the user set on 2026-11-12, every concept artwork request carries all of thes
 4. **Hands by two names:** the character's side and the frame's, such as "his right hand, the hand on the left of the frame"; the model swaps them otherwise (2026-11-11).
 5. **The expression and its strength,** such as "speaking quietly, his mouth barely open, his face tired and calm"; "his mouth open on a word" was painted as shouting (2026-11-11).
 6. **Size against the nearest objects;** a model left to choose makes a character small (2026-11-11).
-7. **The painting's brush size on the character,** never the study's detail, and no stroke length, which a model exaggerates (2026-11-11).
+7. **The painting's brush size on the character,** never the study's detail, and no stroke length, which a model exaggerates (2026-11-11); and, once the character has one, its level-of-detail sheet (`create-detail-sheet`) sent after its study, with the figure that matches its height in the frame named. Without it, a model keeps the study's detail and makes the character huge to hold it, or paints it more finely than the place (the user, 2026-11-12).
 8. **Shaded simply, but painted:** each part in one or two large, simple areas, no modelling of muscles, wrinkles, or folds, and "painted, not cel-shaded", the edge between light and shadow a brushed edge, "neither a smooth gradient nor a hard, clean line". Asked only for brush size, the model modelled his muscles; asked for no gradient, he came out too clean, almost cel-shaded (the user, 2026-11-11 and 2026-11-12).
 9. **One light, named, the others off:** the light the moment needs, such as the lamp above the character, which the image's purpose decides.
 10. **Values follow depth, not the frame:** the plane of focus at the character's distance keeps its value across the whole width; the foreground falls into deep shadow; the background is only very slightly darker, its details readable; "it is not a vignette". Darkening by areas of the frame, or around a focal point, read as a bad vignette; a dark background made the place dull (the user, 2026-11-12).

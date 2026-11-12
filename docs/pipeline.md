@@ -42,7 +42,8 @@ Each through `make-canonical`, which holds each one's steps:
 Canonical reference, then concept art reference, then concept artwork, so concept artwork and the images for video rest on the same canon.
 
 1. **Concept art references** (`create-concept-reference`): each canonical element repainted in the concept look: a character's front study from its A-pose and its props' sheets; each view of a place in each mood, from its texture pass and the visual identity brief.
-2. **Concept artwork** (`create-concept-artwork`): characters' studies placed into a place's painting, for a moment of the film; it visualises the mood and look design, and is the look reference for the first frames.
+2. **Level-of-detail sheets** (`create-detail-sheet`): each character and prop to be staged, painted at four distances with one brush size, so concept artwork paints it with the detail its distance allows.
+3. **Concept artwork** (`create-concept-artwork`): characters' studies placed into a place's painting, for a moment of the film; it visualises the mood and look design, and is the look reference for the first frames.
 
 ## 6. Staging and the shots
 
