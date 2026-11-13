@@ -6,11 +6,11 @@ From the shot list approved on {{shot_list_date}}. {{shot_count}} shots, {{keyfr
 
 One look for every keyframe of the film. Quote these lines in every keyframe's prompt.
 
-- Line: loose, confident sketch lines that keep every character on model, construction lines cleaned away; not finished line art.
-- Tone: grey cel shading, no colour anywhere: each subject in two or three flat grey tones, a light, a shadow, and a dark, with hard edges. No gradients, highlights, or texture.
-- Light: one simple light, the same in every keyframe, only to show form and staging. No mood lighting.
+- Line: partially completed digital line art that keeps every character on model: the main forms in clean, confident, single lines in dark grey-black, the weight varying a little, and only here and there a light construction stroke still showing, as if the inking is half done.
+- Tone: no fills, no shading, and no grey tones; no colour anywhere. Grey only for a shadow the scene casts that the shot needs, as one flat, light grey shape.
+- Light: none drawn, except that shadow. No mood lighting.
 - Shapes and proportion: {{shapes}}.
-- Place: a few simple grey shapes for the layout the shot needs: the floor or ground line, the horizon, the walls and openings in frame. Props only when the action uses them. No set dressing, texture, distant detail, sky effects, or atmosphere.
+- Place: faint, light-grey construction lines, like a perspective grid, for the layout the shot needs: the floor or ground line, the horizon, the walls and openings in frame. Props only when the action uses them. No set dressing, texture, distant detail, sky effects, or atmosphere.
 - Never: arrows, text, captions, shot numbers, borders, or anyone the shot does not name; {{never}}.
 
 Look reference: {{look_keyframe}}, chosen by the user, sent with every keyframe once approved.

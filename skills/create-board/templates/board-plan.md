@@ -6,8 +6,8 @@ From the shot list approved on {{shot_list_date}}. {{shot_count}} shots, {{frame
 
 One look for every frame of the board. Quote these lines in every frame's prompt.
 
-- Line: loose, sketchy pencil line, a little uneven, with construction lines left in; {{line}}.
-- Tones: three flat grey tones on white, light, middle, and dark, laid in quickly to separate the figures from the place and to show where the light comes from; {{tones}}.
+- Line: partially completed digital line art: the main forms in clean, confident, single lines, and only here and there a light construction stroke still showing, as if the inking is half done; {{line}}.
+- Tones: none by default: line on white, with no fills or shading, as the user set on 2026-11-12; grey only for a shadow the scene casts that the shot needs, laid in as one flat, light shape; {{tones}}.
 - Shapes and proportion: {{shapes}}, simplified to read at a glance.
 - Detail: only what the shot needs to read: faces as simple shapes with clear eye direction; hands as simple shapes; the place blocked in, its main shapes only.
 - Arrows: camera moves as broad, outlined arrows, or an inner rectangle with corner arrows for a push in or pull out; characters' motion as thin, curved arrows along their path; all in a dark grey, drawn on top of the picture as storyboard marks.

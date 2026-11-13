@@ -28,6 +28,8 @@ Fill [the detail sheet template](templates/detail-sheet.md) and send the concept
 - `{{background}}`: a plain background of a value that both the subject's lightest and darkest colours stand out against, such as "a plain mid-grey background"; a light subject on a light background loses its silhouette at a distance.
 - `{{close_marks}}`, `{{middle_marks}}`, `{{far_marks}}`, `{{very_far_marks}}`: what each figure is made of, from the subject's own parts, losing detail step by step. For a character: close, the face's marks and the fingers read as their own simple marks; middle, the face is a stroke or two and the hands plain shapes; far, a few patches of colour and no face; very far, one small silhouette of a few strokes with touches of its key colours. For a prop: close, its parts and markings; middle, its main parts as single shapes; far, its silhouette and main colours; very far, one shape.
 
+For the animatic, fill [the board-style detail sheet template](templates/detail-sheet-board.md) instead, sending the concept art reference first and the animatic expression sheet second, for its board look: the same four distances in partially completed line art with no shading, with one pen width, so the further the subject is, the fewer lines (the user, 2026-11-12).
+
 The figures stand on one ground line at halving heights, so concept artwork can match a figure to the subject's height in the frame. Make one; a second call is for a sheet that failed. Show it with its prompt and the reference sent.
 
 ## Hand back
