@@ -54,6 +54,8 @@ Put the words in `prompt`, and the files, numbered as the prompt numbers them, i
 
 ## 1. Gather the references
 
+First run `scripts/records.py check` on the result. A result with no record, a record pointing at a missing file, a copy with no source, or an image with no contents is not reviewed or shown until its record is fixed ([records](../../docs/records.md)).
+
 Choose the template for the result's kind, and gather what it must agree with:
 
 - **A pre-production image,** such as an A-pose view, a reference or model sheet, concept art, a line-up, a place's primary canonical location or one of its views, a neutral pass, or a mood reference, uses [the image template](templates/review-image.md). It agrees with the characters' A-pose views, the other subjects' reference sheets, model sheets, and colour lists; the line-up's heights; the place's primary canonical location and its views, with their neutral passes, and its mood reference; the style guide's rules and style sheet; and, for an image of a beat, the colour script's line. Checks: the subjects, the heights, the place, the look.
@@ -65,6 +67,8 @@ Choose the template for the result's kind, and gather what it must agree with:
 - **A final shot** uses [the final shot template](templates/review-final-shot.md). It agrees with the line-art or lip-synced shot it was made from, the colour models and colour lists, the place's mood reference for its mood, the colour script's line for its beat, the place's views or its background plate, the characters' A-pose views and the other subjects' reference sheets, the style guide, and the final shots on either side. Every group of checks applies.
 - **A sound,** a voice line, an effect, an ambience, or music, uses [the sound template](templates/review-sound.md). It agrees with the script's words and directions, the speaker's voice reference, the timing sheet's cue and the shot's length, the shot list's action, the place, and the beat's mood, and with the sounds on either side. Checks: the words and the voice for a voice line; the timing, the place and the mood, and across the cut for every sound.
 - **A sequence of shots** uses [the sequence template](templates/review-sequence.md), when the user asks for one, or once every shot of a scene has its own review. It agrees with the shot list's rows, the subjects' and the place's references, and the colour script. Every group of checks applies.
+
+**Space.** Every image with a character in a place is also checked against the place's floor plan and the timing reference's blocking: each character stands on their mark, faces the way it gives, and looks at the named object it gives, as this camera sees it; each named object is where the plan puts it, and in the state the blocking gives, such as a door open or closed. A look aimed at the wrong door is a finding, however good the frame (the user, 2026-11-13).
 
 **A generated image's own sources.** Every image a model made from a request is also checked against what it descends from, which is how `canonical-cleanup` finds what to fix:
 

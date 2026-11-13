@@ -28,6 +28,7 @@ From the caller:
 
 - an approved shot list; with none, one is planned and approved first;
 - for each camera, its pre-vis render, from which its animatic layout drawing is made;
+- each place's floor plan (`create-previs`) and the timing reference's blocking, for where each character stands, faces, and looks, by the plan's names;
 - each character's animatic expression sheet, acting sheet, and turnaround (`create-model-sheet`), and board-style level-of-detail sheet (`create-detail-sheet`), with their panel labels; the expression sheet holds a panel for each look a shot needs, drawn as that shot needs it;
 - the line-up, when several characters share a frame;
 - the shot's rough board, when there is one, or the user's sketch, each named by the shot it is for;
@@ -44,12 +45,12 @@ A keyframe is not the final look. The final look's light, shading, texture, and 
 
 - **Partially completed digital line art:** the main forms drawn with clean, confident, single lines in dark grey-black that keep every character on model, the line's weight varying a little, and only here and there a light construction stroke still showing, as if the inking is half done (the user, 2026-11-12: looser sketch lines were too sketchy). An animatic stays focused on the action.
 - **No shading by default:** no fills, no shading, and no grey tones on the characters or the place; no colour anywhere. Grey appears only when the shot needs a shadow the scene casts on them, such as a character standing in a doorway's shadow, as one flat, light grey shape (the user, 2026-11-12: these models shade by habit, and shading is never the default).
-- **Only what the characters touch:** the place is only the forms the characters touch, outlined in light grey, floating on the white page, as the shot's layout drawing draws them: no walls, floor, ceiling, or grid. Decisions about props and background elements are not made in the animatic.
+- **Only what the characters touch or look at:** the place is only the forms the characters touch or look at, outlined in light grey, floating on the white page, as the shot's layout drawing draws them: no walls, floor, ceiling, or grid. Decisions about props and background elements are not made in the animatic.
 - **Never:** arrows, text, captions, shot numbers, borders, or anyone the shot does not name.
 
 These rules are what the layout drawing and the animatic sheets show; a keyframe prompt that sends them does not restate them, as `docs/prompt-roles.md` says.
 
-**The layout drawing.** Before any keyframe from a camera, make that camera's animatic layout drawing from its pre-vis render with [the animatic layout template](templates/animatic-layout.md): only what the characters touch, outlined, with no walls, floor, ceiling, or grid. It is sent first to every keyframe from that camera, so every animatic frame draws the place the same way (the user, 2026-11-12; the template records how it was narrowed).
+**The layout drawing.** Before any keyframe from a camera, make that camera's animatic layout drawing from its pre-vis render with [the animatic layout template](templates/animatic-layout.md): only what the characters touch or look at, outlined, with no walls, floor, ceiling, or grid. It is sent first to every keyframe from that camera, so every animatic frame draws the place the same way (the user, 2026-11-12; the template records how it was narrowed).
 
 **The characters' sheets.** A character's references are their animatic expression sheet, acting sheet, and turnaround (`create-model-sheet`) and their board-style level-of-detail sheet (`create-detail-sheet`). Their size in the frame is a figure of the level-of-detail sheet, never a landmark in words: landmarks left Otis too big, and the sheet's figure brought him to scale (the user, 2026-11-12). Their look is an expression panel drawn for the shot; when no panel looks the way the shot needs, make that panel first, since text that contradicts a panel loses to the drawing.
 
@@ -73,7 +74,9 @@ Count the references each keyframe needs before planning it. When the model take
 
 - Put each part into its field in the model's syntax, as its prompt skill says, and name the inputs by the [prompt roles](../../docs/prompt-roles.md): the layout drawing, the sheets, and the keyframes as `references`, in the order above, and the board or the sketch as `structure`.
 - The keyframe template's "Filling it" gives every slot with Otis saying the line as its example.
-- For each thing a character touches, `{{placement}}` says where they are against it: which side, how far along it, what it hides of them, and where their hands land. With the place reduced to what is touched, "behind the counter on the right" left the model to put him anywhere (the user, 2026-11-12).
+- **Read the records first.** Before writing the prompt, read the record of each image to be sent: the layout drawing's says which named objects are in the frame, where, and in what state; the floor plan and the blocking say which of them the character stands at and looks at. Write the prompt from that mapping. The keyframe's [record](../../docs/records.md) is written with the result: its sources with their roles, the layout's contents, and each character with their mark and what they look at, given to the renderer as its contents.
+- **What a character looks at is named as it appears in the image,** never by a document's name the model cannot see, and never by the character's own left or right. The floor plan decides which object it is; the prompt points at it as drawn: "he turns his head away from the camera, back towards the door in image 1, the door that has just opened behind him, and looks at it". "The front door" is a name the model has never seen, and "over his right shoulder", meaning his own right, the frame's left, was read as the frame's right: four keyframes sent him staring away from the door that had just opened (the user, 2026-11-13). When the object is behind the character in this camera, the prompt says the head turns away from the camera; eyes alone cannot look behind a face turned to the lens.
+- `{{placement}}` comes from the timing reference's blocking, read against the floor plan, and names each object by its floor-plan name. For each thing a character touches, it says where they are against it: which side, how far along it, what it hides of them, and where their hands land. With the place reduced to what is touched, "behind the counter on the right" left the model to put him anywhere (the user, 2026-11-12).
 - From a board or a sketch, fill [the structure template](templates/keyframe-from-structure.md); for an end frame, [the end frame template](templates/keyframe-end-frame.md). Both follow the same rule: what each image is, and only what no image shows.
 
 ## 1. Plan the keyframes
@@ -115,6 +118,7 @@ Before showing a keyframe, compare it with what it must agree with, and list eve
 - the heights with the line-up, when several characters share the frame;
 - the framing, angle, staging, and facing with the shot list, and with the keyframes of the shots before and after it: who is on which side, and which way they face across the cut;
 - the place with its layout drawing: what is where, and nothing it leaves out;
+- each character's mark, facing, and look with the blocking and the floor plan: standing where the plan puts them, and looking at the named object the blocking gives, such as the front door, from this camera;
 - the look with the keyframe look's lines: no colour, texture, or background or prop detail crept in, and no shading crept in, beyond a shadow the staging names;
 - an end frame with its start keyframe: the same place and characters, moved only as the camera and the action move them.
 

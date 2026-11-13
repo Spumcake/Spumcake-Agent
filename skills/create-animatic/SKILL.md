@@ -26,10 +26,12 @@ All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) descr
 
 From the caller:
 
+- the approved timing reference (`timing-reference`): each frame's in and out, and each cue's and line's time; as the user set on 2026-11-13, the frames and the audio are made to it, and the animatic is assembled on it;
 - an approved shot list, with each shot's number, length, camera, and lines; with none, one is planned and approved first;
 - the approved board for it: one frame per shot, named by its shot number, and an end frame, named by the number and `-end`, for each camera move that has one; with none, the board is made and approved first;
 - the approved script, for its lines and any transitions it writes, such as a fade in;
-- the approved voice recording of every spoken line, each with its measured length, since voices are made before the animatic, so it is timed to the real lines; a line with no recording yet is marked *estimated*;
+- the approved voice take of every spoken line (`create-voice`), each with where its line starts and ends inside it, since voices are made before the animatic, so it is timed to the real lines; a line with no recording yet is marked *estimated*;
+- the approved sound bed (`create-sound`): the scene's sound effects and music, with no voices;
 - the film's length and frame rate;
 - a folder for the timing sheet, the check's prompt, and its answer.
 
@@ -86,7 +88,13 @@ The check proposes; it never changes a length. A shot too short for its lines, o
 
 ## 4. Assemble the clip
 
-Have the timing sheet assembled into one video, with the setup's renderer or editor: each board held for its length, in order; a camera move shown as a slow move across its board, from its start frame to its end frame when there is one; the transitions as marked; and the recorded lines on their own track, at their cues; a cue card stands in only for a line marked *estimated*. Plan it, with the cost when it bills, and assemble it on the user's yes. Watch it against the sheet: every shot, in order, for its length. The clip is named for the film and the sheet's version, and is remade whenever the sheet changes.
+Assemble it with [the assembly script](scripts/assemble.py), which needs ffmpeg and costs nothing. Write its `assembly.json` from the timing reference:
+
+- **the frames:** each approved keyframe with its in and out, running on from zero to the film's length;
+- **the bed:** the sound bed, under everything;
+- **the clips:** each voice take, trimmed to the line or voice sound inside it and laid at its cue, with a gain that keeps the voices the loudest, as the sound design brief's mix asks.
+
+The script mixes the audio, holds each frame for its length, renders one video at the film's size and frame rate, and writes the video's [record](../../docs/records.md), every frame and take with its place in the cut. A camera move or a transition the timing sheet marks is added in the editor or by a later version of the script; say when a clip has none. Check the video against the timing reference: every frame, in order, for its length, and every line on its cue. The clip is named for the film and the sheet's version, and is remade whenever the sheet, a frame, or a take changes.
 
 ## 5. The user's review
 

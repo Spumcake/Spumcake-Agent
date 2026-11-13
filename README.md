@@ -4,7 +4,7 @@ An agnostic, open-source collection of pre-made skills for animated filmmaking f
 
 Skills for general AI animated filmmaking, with the user directing every step: planning a story from beat sheet to shot list, setting a concept's style and colour, designing and referencing its subjects and places, and boarding and timing its shots. Each skill plans its task and creates the prompts destined for the models that make its results; the setup it runs in renders them.
 
-[docs/overview.md](docs/overview.md) says what Spumcake Agent is and where it is going. [docs/prompt-roles.md](docs/prompt-roles.md) describes the roles a prompt is filled by, and what a setup provides to run it.
+[docs/overview.md](docs/overview.md) says what Spumcake Agent is and where it is going. [docs/prompt-roles.md](docs/prompt-roles.md) describes the roles a prompt is filled by, and what a setup provides to run it. [docs/records.md](docs/records.md) describes the record every file keeps, its paper trail and contents, written with [scripts/records.py](scripts/records.py); [scripts/generate.py](scripts/generate.py) sends a prompt to an image or audio model exactly as written and writes the result's record.
 
 ## Skills
 
@@ -15,6 +15,9 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | [write-visual-identity-brief](skills/write-visual-identity-brief/SKILL.md) | drafts what a film should feel and look like, what its colours must achieve, and candidate palettes, from the brief, the mood brief, and the visual identity research |
 | [write-audio-identity-brief](skills/write-audio-identity-brief/SKILL.md) | drafts from the brief and the visual identity brief what a film's sound is for, before any other research |
 | [write-voice-brief](skills/write-voice-brief/SKILL.md) | drafts one speaking character's voice and the delivery of each of their lines, the description voice generation is sent |
+| [timing-reference](skills/timing-reference/SKILL.md) | works out every moment, sound cue, line, and animatic frame on one timeline before anything is made |
+| [create-voice](skills/create-voice/SKILL.md) | makes each line as a voice-only take from its voice brief |
+| [create-sound](skills/create-sound/SKILL.md) | makes a scene's sound effects and music as one bed with no voices |
 | [write-sound-design-brief](skills/write-sound-design-brief/SKILL.md) | drafts every sound of a film cue by cue on its length, a spotting list, which sound generation and the audio cut are made from |
 | [check-canonical-consistency](skills/check-canonical-consistency/SKILL.md) | checks a film's written artifacts for drift: one home for every fact, the rest pointing to it |
 | [write-beat-sheet-prompt](skills/write-beat-sheet-prompt/SKILL.md) | plans a story's beat sheet and builds the prompt a language model writes it from |

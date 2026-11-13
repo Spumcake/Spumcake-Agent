@@ -28,7 +28,7 @@ From the caller:
 
 ## 1. The layout
 
-Work out the place's layout from its research: the room's size, each wall's doors and windows, and each element's position and size in metres, on one grid, where that kind of place puts it. Hold everything the place must hold, and nothing it does not need. Draw it from above, labelled, and show it. The user's corrections win. Keep the numbers: the mock-up is built from them.
+Work out the place's layout from its research: the room's size, each wall's doors and windows, each door named for what it is and where it leads, such as "the front door" or "the restroom door", with which way it opens, and each element's position and size in metres, on one grid, where that kind of place puts it. Hold everything the place must hold, and nothing it does not need. Draw it from above, labelled, and show it. The user's corrections win. Keep the numbers: the mock-up is built from them.
 
 ## 2. Build the mock-up
 
@@ -54,9 +54,19 @@ When the place's images show the mock-up needs changing, such as an object the p
 
 When a place goes into production, its neutral views carry enough to rebuild each object as a 3D model, with a 3D generative model or modelling by hand, and place them in a better pre-vis; then every later view keeps the place exactly. Simple shapes are enough until then.
 
+## 7. The floor plan
+
+Every render's [record](../../docs/records.md) is written by the builder from the geometry, with `scripts/records.py`, as the [prompt roles](../../docs/prompt-roles.md) say: the camera, and each named object in the frame, by its floor-plan name, with its box in the frame and whether it lies left, centre, or right. Every image made from a render inherits this record, so it always says what it shows.
+
+
+Once the views are approved, fill [the floor plan template](templates/floor-plan.md) from the layout's numbers, and draw the plan from above with every wall, every door and opening, every fixture, and every camera, each labelled by its name. It is the one home for where everything in the place is and what each thing is called. The timing reference adds each character's marks to it, and the drawing is made again with them.
+
+Every skill that places or directs a character reads the floor plan first, as the [prompt roles](../../docs/prompt-roles.md) say. As the user found on 2026-11-13, a place whose positions lived only in the builder's code was described in words step by step, and the words drifted: four doors called "the door", a character's place re-invented in every prompt, and his looks aimed at different doors from frame to frame.
+
 ## Hand back
 
 - the layout, as numbers and as a labelled drawing from above, with every camera marked;
 - the key: each element, named, with the photograph it was built from;
+- the floor plan and its drawing, the place's one home for where everything is and what it is called;
 - the good shot and every view, each in plain greys for the model and colour-coded and labelled for the user;
 - each camera's position, height, direction, and lens, with its reason or its move from the original camera.

@@ -20,6 +20,7 @@ Each fact lives in one artifact, the one whose job it is:
 - **each voice brief:** that character's voice, and the delivery of each of their lines and non-verbal sounds;
 - **the sound design brief:** every sound, cue by cue: its time, length, place, level, and what it does, the room tone, silence, and the mix;
 - **the beat sheet, script, and shot list:** what happens, in what order, in which shot;
+- **each place's floor plan:** where everything is, what each thing is called, each camera, and each character's marks; a statement that calls a thing by another name, or says "the door" where the place has several, is a finding;
 - **the style guide:** the look's rules;
 - **the breakdown:** which characters, places, and props recur;
 - **each canonical element's approved images:** how that element looks: its objects, their shapes, colours, materials, and number, as its primary canonical image, its views, and its passes show them, or a character's A-pose views, or a prop's sheet. The images outrank any description of them: a document or a prompt that describes a canonical element differently is wrong, not the image;

@@ -36,7 +36,7 @@ Each recurring element is made canonical, one at a time, before any concept art 
 
 Each through `make-canonical`, which holds each one's steps:
 
-- **A place,** from its research (`research-references`) and its pre-vis (`create-previs`).
+- **A place,** from its research (`research-references`) and its pre-vis (`create-previs`), ending in its floor plan: where everything is and what each thing is called, which every later step that places or directs a character reads first.
 - **A character,** from its research and the place's texture view.
 - **A small prop,** from its character's coloured A-pose and its photographs.
 - **Several characters** (`create-line-up`): a height chart composited from their A-pose fronts, not generated.
@@ -51,7 +51,11 @@ Canonical reference, then concept art reference, then concept artwork, so concep
 
 ## 6. Staging and the shots
 
-1. **The animatic:** the audio cut first, the voices and sounds made from the voice and sound design briefs and laid on one timeline; then each character's animatic sheets (`create-model-sheet`, `create-detail-sheet`) and each camera's layout drawing, then keyframes (`create-keyframe`) in partially completed line art with no shading, timed (`create-animatic`), with voices made first, as the audio identity brief describes them. Staging into the canonical views, with the concept artwork as the look reference, makes the first frames for video (`create-keyframe`'s staging).
+1. **The animatic,** in the order the user set on 2026-11-13:
+   1. **Timing** (`timing-reference`): every moment, sound cue, line, and frame on one timeline, before anything is made; the sound and the frames are both made to it.
+   2. **Audio:** the voices (`create-voice`), voice only, and the sound effects and music together as one bed with no voices (`create-sound`), made apart and laid together in the mix.
+   3. **Frames:** each character's animatic sheets (`create-model-sheet`, `create-detail-sheet`), each camera's layout drawing, then the keyframes the timing reference lists (`create-keyframe`), in partially completed line art with no shading.
+   4. **Assembly** (`create-animatic`): the frames held on their times over the mixed audio, rendered as one video. Staging into the canonical views, with the concept artwork as the look reference, makes the first frames for video (`create-keyframe`'s staging).
 2. **Line-art animation,** lip-synced to the voices.
 3. **Final animation,** over background plates (`create-background`), and the cut.
 

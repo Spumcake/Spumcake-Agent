@@ -17,6 +17,7 @@ This skill makes no sound. It writes the brief as a finished draft and stops at 
 - the beat sheet or the script, for what happens and when, and the film's length;
 - the place's pre-vis key and canonical images, for what can make a sound;
 - the voice briefs, for where each line and non-verbal sound falls, so the cues leave room for them;
+- the timing reference (`timing-reference`), once it exists, whose cue times the brief takes rather than setting its own;
 - a folder for the brief.
 
 ## 1. Decide

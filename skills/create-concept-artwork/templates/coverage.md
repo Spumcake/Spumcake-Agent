@@ -11,4 +11,4 @@ The first attached image is a finished piece of concept art: {{who}} {{action}}.
 - `{{where_in_the_room}}`: the place, against things both views show, such as "behind the counter under the lit lamp".
 - `{{what_they_face}}`: where, in the second image's frame, the person or thing the action is towards is, such as "The front door he speaks to is off frame to the left of the second image."
 - `{{body}}`: which way the body faces, against that, such as "His body faces away from the door, towards the right of the frame."
-- `{{head}}`: the head and eyes as a small movement from the body, in the character's own left and right, such as "He turns his head slightly over his right shoulder towards the door, his eyes towards it, not at the camera."
+- `{{head}}`: the head and eyes as a turn towards the thing as the image shows it, never in the character's own left or right, such as "He turns his head towards the door in the second image, his eyes on it, not on the camera."

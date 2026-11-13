@@ -16,6 +16,6 @@ Every sentence is either what an image is or something no image shows; nothing a
 - `{{size}}`: the level-of-detail sheet's figure: "His size and detail are those of the third figure in image 5."
 - `{{expression}}`: the expression sheet's panel, by its label: "His expression is the panel \"the line\" in image 2."
 - `{{direction}}`: left empty. Where the character looks is the expression panel's, drawn for this shot in `create-model-sheet`; when no panel looks the way the shot needs, make that panel first. Text that contradicts a panel loses to the drawing (2026-11-12).
-- `{{changes}}`: only what differs from the sheets: "The towel is under his right hand on the counter, not at his apron."
+- `{{changes}}`: only what differs from the sheets: "The towel is under his right hand, the hand on the left of the frame, on the counter, not at his apron."
 
 As the user set on 2026-11-12, a keyframe prompt is this short. An earlier template restated the keyframe look, the characters, and the place on top of the images that show them, and named images that were not sent; at about 900 words it contradicted its own references, and the model drew walls and a horizon the layout had left out.

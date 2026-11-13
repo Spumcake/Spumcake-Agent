@@ -42,6 +42,7 @@ One table for each place, character, and prop the breakdown names.
 | Primary canonical image | | |
 | Canonical cleanup | | |
 | Views, or A-pose views | | |
+| Floor plan |  |  |
 | Neutral passes | | |
 
 ## 5. Concept art
@@ -57,6 +58,7 @@ One table for each place, character, and prop the breakdown names.
 | Artifact | Status | Path |
 |---|---|---|
 | Staging, per shot | | |
+| Timing reference | | |
 | Voices | | |
 | Sound | | |
 | Audio cut | | |

@@ -28,6 +28,8 @@ From the caller:
 
 From the script and shot list, list the names the breakdown must cover: each character, each place, each prop. A character who is never seen, such as a voice off screen, is listed with what is heard of them, and marked as never designed.
 
+Give each recurring element one name, and each door, window, or opening the story uses its own name, such as "the front door", never "the door": the place's floor plan keeps these names, and every later document uses them.
+
 ## 2. Build the prompt
 
 Fill [the breakdown prompt template](templates/breakdown-prompt.md) with the script, the shot list, the beat sheet, the brief, the style guide's requirements, the lists above, and [the breakdown template](templates/breakdown.md) as the exact form of the answer. Save the prompt beside the answer it will produce.

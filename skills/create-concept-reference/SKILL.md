@@ -11,7 +11,7 @@ A good concept art reference keeps everything that makes the element itself, its
 
 ## The models and the route
 
-An **image-edit model** that takes the prompt exactly as written, with no reasoning model rewriting it, such as OpenAI's image edit endpoint with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio. The execution skill that implements `create-concept-reference` in this setup renders it; when none does, the setup's renderer. It comes from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe; if it is missing, say which and stop.
+An **image-edit model** that takes the prompt exactly as written, with no reasoning model rewriting it, such as OpenAI's image edit endpoint with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio. The execution skill that implements `create-concept-reference` in this setup renders it; when none does, the setup's renderer. Whatever renders it writes the result's [record](../../docs/records.md); [`scripts/generate.py`](../../scripts/generate.py) renders it so. It comes from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe; if it is missing, say which and stop.
 
 ## What it needs
 
