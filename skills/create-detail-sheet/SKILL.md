@@ -1,6 +1,6 @@
 ---
 name: create-detail-sheet
-description: Paint a character's or a prop's level-of-detail sheet - the same subject four times, from close to very far, painted with one brush size so the further it is, the fewer brushstrokes it is made of - from its concept art reference, so concept artwork paints it with the detail its distance from the camera allows. Use once a character or prop has its concept art reference, before it is staged into concept artwork. Not for the reference itself (create-concept-reference), for sizes against other characters (create-line-up), or for staging (create-concept-artwork).
+description: Paint a character's or a prop's level-of-detail sheet - the same subject four times, from close to very far, painted with one brush size so the further it is, the fewer brushstrokes it is made of - from its concept art reference, so concept artwork paints it, and the animatic's keyframes draw it, with the detail and size its distance from the camera allows; a line-art version for the animatic is drawn from its animatic expression sheet. Use once a character or prop has its concept art reference, before it is staged into concept artwork. Not for the reference itself (create-concept-reference), for sizes against other characters (create-line-up), or for staging (create-concept-artwork).
 ---
 
 # Level-of-detail sheet

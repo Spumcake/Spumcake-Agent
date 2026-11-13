@@ -1,18 +1,18 @@
 ---
 name: create-keyframe
-description: Make the on-model keyframes for an approved shot list - one generated image per shot, named by its shot number, with an end frame for each camera move, showing the shot's characters exactly as their A-pose views, model sheets, and expression or pose sheets draw them, at the line-up's heights, placed in the shot list's framing, angle, action, and staging in the place as its views show it, and drawn in partially completed, on-model digital line art with no shading and no colour, keeping the focus on the action, with no background or prop detail beyond what the action needs - with an image-edit model sent the A-pose views and sheets, the line-up, the place's view, and the style sheet in a fixed order, or from the shot's rough board or the user's sketch sent as structure so its composition stays, tested on a few shots first, then each keyframe taken to the user to approve. Use when the user asks for keyframes, on-model frames, the frames an animatic is made of, or the frames a shot's line art and animation start from. Not for rough grey layout frames, background plates, a character's own sheets, or the colour keys of a whole film.
+description: Make the on-model keyframes for an approved shot list - one generated image per shot, named by its shot number, with an end frame for each camera move, drawn in partially completed digital line art with no shading and no colour, keeping the focus on the action - with an image-edit model sent the shot's animatic layout drawing first, then each character's animatic expression sheet, acting sheet, turnaround, and level-of-detail sheet, with a short prompt that says only what each image is and what no image shows, or from the shot's rough board or the user's sketch sent as structure so its composition stays, tested on a few shots first, then each keyframe taken to the user to approve. Use when the user asks for keyframes, on-model frames, the frames an animatic is made of, or the frames a shot's line art and animation start from. Not for rough layout frames, background plates, a character's own sheets, or the colour keys of a whole film.
 ---
 
 # Keyframes
 
-The keyframes are the animatic's pictures: one rough, on-model sketch for each shot of an approved shot list, held for the shot's length when the animatic is assembled. They are what the rest of the film is drawn from. The line-art stage redraws each keyframe as character outlines, and animates the shot from it, and from its end frame when it has one. So a keyframe is drawn to be redrawn: every character exactly as designed, in the right place, in clean line and flat colour, with nothing a tracer would have to guess at.
+The keyframes are the animatic's pictures: one rough, on-model sketch for each shot of an approved shot list, held for the shot's length when the animatic is assembled. They are what the rest of the film is drawn from. The line-art stage redraws each keyframe as character outlines, and animates the shot from it, and from its end frame when it has one. So a keyframe is drawn to be redrawn: every character exactly as designed, in the right place, in clean line with no shading, with nothing a tracer would have to guess at.
 
-A good keyframe shows the shot list's framing and angle, the shot's characters on model, at the line-up's heights, where the staging puts them, facing the right way, doing what the action says at the shot's first moment, in the place as its view lays it out. Every keyframe of the film shares one keyframe look. A keyframe has failed when a character's face, hair, proportions, outfit, or colours drift from their A-pose views and sheets; when heights disagree with the line-up; when who is who is swapped, or someone is missing or added; when the framing, angle, or screen direction differs from the shot; when shading, lighting, texture, or a detailed background creeps in; when its look changes from keyframe to keyframe; or, from a board or a sketch, when the composition moved.
+A good keyframe shows the shot list's framing and angle, the shot's characters on model, at the size their level-of-detail sheet sets, where the staging puts them against what they touch, facing the right way, doing what the action says at the shot's first moment, in the place as its layout drawing draws it. Every keyframe of the film shares one keyframe look. A keyframe has failed when a character's face, hair, proportions, or outfit drift from their animatic sheets; when sizes disagree with their level-of-detail sheets; when who is who is swapped, or someone is missing or added; when the framing, angle, or screen direction differs from the shot; when shading, lighting, texture, or anything the layout drawing leaves out creeps in; when its look changes from keyframe to keyframe; or, from a board or a sketch, when the composition moved.
 
 ## The models
 
-- **From the shot list,** use an **image-edit model** that takes the subjects' A-pose views and sheets, the line-up, and the place's view as references. Never use a text-to-image model: it cannot hold a character from its references, and an off-model keyframe carries its errors into every stage after it. A subject in the shot with no A-pose views or reference sheet needs its reference first; say so and stop for that shot.
-- **From the shot's rough board or the user's sketch,** use an image-edit model that takes it as **structure** as well as the A-pose views and sheets as references, so the composition stays and only the drawing changes. Never send a board or a sketch as a reference alone: the model would redraw the layout.
+- **From the shot list,** use an **image-edit model** that takes the shot's layout drawing and each character's animatic sheets as references. Never use a text-to-image model: it cannot hold a character from its references, and an off-model keyframe carries its errors into every stage after it. A character in the shot with no animatic sheets needs them first (`create-model-sheet`, `create-detail-sheet`); say so and stop for that shot.
+- **From the shot's rough board or the user's sketch,** use an image-edit model that takes it as **structure** as well as the animatic sheets as references, so the composition stays and only the drawing changes. Never send a board or a sketch as a reference alone: the model would redraw the layout.
 
 ## Find the specifics
 
@@ -27,11 +27,9 @@ All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) descr
 From the caller:
 
 - an approved shot list; with none, one is planned and approved first;
-- the concept's style guide: its written rules and its style sheet; with none, the keyframe look's line and palette are agreed with the user first, in words;
-- each character's A-pose views, the front first, then the back, the sides, and the views without outer layers as a shot needs them; each other subject's reference sheet, such as a prop's; and the outfit, variant, or detail sheet a shot needs;
-- each character's expression and pose sheets, with their panel labels;
-- the line-up, with its heights and anchor, when a shot has several subjects;
-- each place's primary canonical location and its views, each named by its camera, with their neutral passes;
+- for each camera, its pre-vis render, from which its animatic layout drawing is made;
+- each character's animatic expression sheet, acting sheet, and turnaround (`create-model-sheet`), and board-style level-of-detail sheet (`create-detail-sheet`), with their panel labels; the expression sheet holds a panel for each look a shot needs, drawn as that shot needs it;
+- the line-up, when several characters share a frame;
 - the shot's rough board, when there is one, or the user's sketch, each named by the shot it is for;
 - the film's aspect ratio;
 - a folder for the keyframe plan, the prompts, and the keyframes, each keyframe saved beside its prompt.
@@ -46,65 +44,43 @@ A keyframe is not the final look. The final look's light, shading, texture, and 
 
 - **Partially completed digital line art:** the main forms drawn with clean, confident, single lines in dark grey-black that keep every character on model, the line's weight varying a little, and only here and there a light construction stroke still showing, as if the inking is half done (the user, 2026-11-12: looser sketch lines were too sketchy). An animatic stays focused on the action.
 - **No shading by default:** no fills, no shading, and no grey tones on the characters or the place; no colour anywhere. Grey appears only when the shot needs a shadow the scene casts on them, such as a character standing in a doorway's shadow, as one flat, light grey shape (the user, 2026-11-12: these models shade by habit, and shading is never the default).
-- **Only what the action needs:** the place as faint, light-grey construction lines, like a perspective grid that shows the camera's angle: the floor or ground line, the horizon, the corners of the walls, and the openings in frame, outlined, with no tone or detail. Props appear only when the action uses them, outlined the same way. Decisions about props and background elements are not made in the animatic.
+- **Only what the characters touch:** the place is only the forms the characters touch, outlined in light grey, floating on the white page, as the shot's layout drawing draws them: no walls, floor, ceiling, or grid. Decisions about props and background elements are not made in the animatic.
 - **Never:** arrows, text, captions, shot numbers, borders, or anyone the shot does not name.
 
-These rules are what the layout drawing and the animatic sheets show; a keyframe prompt that sends them does not restate them, as `docs/prompt-roles.md` says: it says only what each image is and what no image shows, in [the keyframe template](templates/keyframe.md). The place as construction lines is the user's (2026-11-12), from animatic boards whose environment is often only a grid to show the camera's angle. Before any keyframe from a camera, make that camera's **animatic layout drawing** from its pre-vis render with [the animatic layout template](templates/animatic-layout.md): only the narratively relevant forms outlined, the walls and ceiling as a sparse perspective grid, nothing else; it is sent first to every keyframe from that camera, so every animatic frame draws the place the same way (the user, 2026-11-12). Give the character's size by landmarks on the forms the layout keeps, such as the counter at his waist. A character's references for a keyframe are their **animatic expression sheet**, **animatic turnaround**, and **animatic acting sheet** (`create-model-sheet`), which fix the face, the body from every angle, the body's acting, and the board look, with the panel for the shot's expression and the drawing for its acting named, and their board-style **level-of-detail sheet** (`create-detail-sheet`), with the figure that matches their height in the frame named: the first test, Otis saying the line, came out on model and at the right detail in one call (2026-11-12).
+These rules are what the layout drawing and the animatic sheets show; a keyframe prompt that sends them does not restate them, as `docs/prompt-roles.md` says.
+
+**The layout drawing.** Before any keyframe from a camera, make that camera's animatic layout drawing from its pre-vis render with [the animatic layout template](templates/animatic-layout.md): only what the characters touch, outlined, with no walls, floor, ceiling, or grid. It is sent first to every keyframe from that camera, so every animatic frame draws the place the same way (the user, 2026-11-12; the template records how it was narrowed).
+
+**The characters' sheets.** A character's references are their animatic expression sheet, acting sheet, and turnaround (`create-model-sheet`) and their board-style level-of-detail sheet (`create-detail-sheet`). Their size in the frame is a figure of the level-of-detail sheet, never a landmark in words: landmarks left Otis too big, and the sheet's figure brought him to scale (the user, 2026-11-12). Their look is an expression panel drawn for the shot; when no panel looks the way the shot needs, make that panel first, since text that contradicts a panel loses to the drawing.
 
 ## Keyframe prompts
 
-Every keyframe's prompt says what the picture is, which reference is which, what the camera sees, who is where, then how it is drawn. With several references, the model cannot guess which image is which character, so the references come early. Write it in this order, for any model:
-
-1. **What the image is:** "an on-model keyframe for one shot of an animated film", one frame at the film's aspect ratio, of the shot's first moment, or, for an end frame, its last.
-2. **The references,** one line each, in the order sent, and what each fixes: "The first attached image is the front A-pose view of Mira, made as a textured viewport view: her face, hair, proportions, outfit, and colours are fixed." A view's grey form pass fixes the place's layout only, not its detail or light; the approved keyframe fixes the keyframe look; the style sheet, last, fixes line, shapes, and palette, not its light or texture.
-3. **The framing and angle,** from the shot list, in camera words: "a wide shot at eye level", "a close-up from slightly below". Say what fills the frame, and where the horizon or floor line sits, such as "the horizon a third of the way up".
-4. **The staging:** each character by the shot list's name, which their attached A-pose views show, where they are in frame (left, right, centre, foreground, background), which way they face, what they are doing at this moment, and their expression or pose by its sheet's label, such as "her surprised face". Props by the script's names, in whose hands or where.
-5. **The heights,** when several subjects share the frame: each against the line-up's anchor, as a landmark, such as "Tom's head reaches Mira's shoulder". Models follow a landmark better than a number.
-6. **The place,** by the script's name, from its view nearest the camera, and only what no image gives: which of the view's parts the action needs, by the script's names. Never describe what the view already shows.
-7. **The keyframe look:** the plan's look lines, quoted, not reworded.
-8. **What to leave out:** shading, lighting, texture, background detail, arrows, text, shot numbers, borders, and anyone not named. Say it plainly, as a sentence. The shot number is the file's name, never in the picture.
-
-Keep each part to a sentence or a few short lines, as `write-image-prompt` says. A keyframe has one moment. Leave out what the model ignores, as its prompt skill says.
+Fill [the keyframe template](templates/keyframe.md). The prompt is short: what each image is, in the order sent, then only what no image shows: where each character is against what they touch, which level-of-detail figure sets their size, which expression panel they wear, and anything that differs from the sheets, such as a prop in a hand. Nothing an image already shows is described: not the look, the character, or the place. An earlier template of about 900 words restated them on top of the images and contradicted its own references (the user, 2026-11-12).
 
 ### The order the references are sent in
 
-1. Each character's front A-pose view, or another subject's reference sheet, in the order the prompt names them, main character first.
-2. Then the other A-pose views the shot's angle needs, the outfit, variant, or detail sheet each needs, and the expression or pose sheet the shot's action calls for, in the same order.
-3. The line-up, when several subjects share the frame.
-4. The grey form pass of the place's view nearest the camera; then another of its views, such as the square-on view of a wall, only when the shot needs what the first does not show.
-5. For an end frame, the shot's approved start keyframe; otherwise the approved keyframe that set the keyframe look, once there is one.
-6. The style sheet, last.
+1. The shot's layout drawing; for an end frame, the shot's approved start keyframe after it.
+2. For each character, main character first: the animatic expression sheet, acting sheet, turnaround, and level-of-detail sheet.
+3. The line-up, when several characters share the frame.
 
 A board or a sketch is not in this list: it goes as `structure`.
 
 ### When the references do not fit
 
-Count the references each keyframe needs before planning it. When the model takes fewer, leave out, in this order, and only as far as needed:
-
-1. a second view of the place;
-2. a character's A-pose views beyond the front, when the shot's angle is near the front;
-3. the line-up, when the heights are quoted as landmarks in the prompt;
-4. the approved look keyframe, when the style sheet is sent;
-5. an expression or pose sheet, when the expression is described in words instead.
-
-Say which would be left out, for which keyframe, and ask the user before planning it. Never drop the front A-pose view of a character in frame, or the style sheet, and describe it in words instead: the character would come back off model. When the front A-pose views alone do not fit, say so, and ask the user to choose a model that takes more references, or to restage the shot with fewer characters in frame.
+Count the references each keyframe needs before planning it. When the model takes fewer, leave out, in this order, and only as far as needed: the turnaround, when the shot's angle is near the expression sheet's; then the acting sheet, when the shot's pose is the expression panel's. Never leave out the layout drawing, a character's expression sheet, or their level-of-detail sheet, and never describe them in words instead. Say which would be left out, for which keyframe, and ask the user before planning it.
 
 ### Filling the templates
 
-- Put each part into its field in the model's syntax, as its prompt skill says, and name the inputs by the [prompt roles](../../docs/prompt-roles.md): the A-pose views and sheets, the line-up, the view, and the keyframes as `references`, in the order above, and the board or the sketch as `structure`. Write each prompt with the setup's prompt writer, naming the prompt skill the workflow skill gives.
-- `{{references_list}}` names each attached image on its own line, in the order sent, with what it fixes.
-- `{{keyframe_look}}` is the plan's look lines, quoted.
-- `{{identity_features}}` is "faces, hair, eyes, and markings" when the shot's subjects are characters or creatures; add "shapes, parts, and markings" when a prop or a vehicle is a subject in it.
-- `{{staging}}` is one line per subject, in the order the references name them. For each thing a subject touches, it says where the subject is against it: which side, how far along it, what it hides of them, and where their hands land, such as "Otis stands behind the counter, on its right-hand side, halfway along its length; the long edge of the top nearest him crosses in front of his waist, so the counter hides him from the waist down; his hands rest flat on the top just in front of him, at arm's length". With the place reduced to what is touched, "behind the counter on the right" left the model to put him anywhere (the user, 2026-11-12).
-- `{{heights}}` is the line-up's landmarks for the subjects in frame; for one subject alone, it is "not needed: one subject".
-- `{{layout}}` names only which of the view's parts the action needs, by the script's names, such as "the floor, the back wall, and the door"; never where they are or what they look like, which the view shows.
-- From a board or a sketch, the prompt says what the structure image is first, and the references after it, since the structure sets the composition. `{{structure_kind}}` is "the shot's rough storyboard frame" or "the user's own sketch of the shot"; `{{moment}}` is "the first moment of the shot", or, for an end frame, "the last moment of the shot, after the camera's move". An end frame from a board or a sketch is also sent its approved start keyframe, as the order above says.
+- Put each part into its field in the model's syntax, as its prompt skill says, and name the inputs by the [prompt roles](../../docs/prompt-roles.md): the layout drawing, the sheets, and the keyframes as `references`, in the order above, and the board or the sketch as `structure`.
+- The keyframe template's "Filling it" gives every slot with Otis saying the line as its example.
+- For each thing a character touches, `{{placement}}` says where they are against it: which side, how far along it, what it hides of them, and where their hands land. With the place reduced to what is touched, "behind the counter on the right" left the model to put him anywhere (the user, 2026-11-12).
+- From a board or a sketch, fill [the structure template](templates/keyframe-from-structure.md); for an end frame, [the end frame template](templates/keyframe-end-frame.md). Both follow the same rule: what each image is, and only what no image shows.
 
 ## 1. Plan the keyframes
 
 Fill [the keyframe plan template](templates/keyframe-plan.md):
 
-- **The keyframe look:** its lines, from the template's fixed rule and the style guide's line, shapes, and palette, quoted. It is one look for the whole film, and it never changes between keyframes.
+- **The keyframe look:** the fixed rule above, one look for the whole film, recorded in the plan; it is carried by the layout drawings and the animatic sheets, never quoted in a prompt.
 - **One row per keyframe,** in the shot list's order. Every shot has a start keyframe, named by its number, such as `3-1`. Every shot with a camera move also has an end frame, named by its number and `-end`, such as `3-1-end`: the last moment, once the move is done. A still shot has none.
 - **Its source:** the shot list, the shot's rough board, or the user's sketch.
 - **Its characters and props,** with the expression or pose label each takes, and **its place,** with the view nearest its camera.
@@ -120,7 +96,7 @@ Choose two or three shots that differ, such as a wide shot that shows a place, a
 - Plan them, render them on the user's yes, and report each output's path.
 - Review each against everything it must agree with, as step 4 says, and report every difference honestly.
 
-The user chooses the keyframe whose look sets the keyframe look, or asks for another take; never choose for them. Update the look lines only where the user asks. From now on, that approved keyframe is sent with every keyframe as the film's keyframe look.
+The user approves each test keyframe, or asks for another take; never choose for them. A fix to the look goes into the sheets or the layout drawing, never into a prompt.
 
 ## 3. The rest of the keyframes
 
@@ -135,10 +111,10 @@ Make the rest a scene at a time, in shot order.
 
 Before showing a keyframe, compare it with what it must agree with, and list every difference:
 
-- each character with their A-pose views and sheets: face, hair, eyes, proportions, outfit, and props, in line, with no shading; and the expression or pose with its sheet's panel;
-- the heights with the line-up;
+- each character with their animatic sheets: face, hair, eyes, proportions, outfit, and props, in line, with no shading; the expression with its panel; and the size with the level-of-detail figure named;
+- the heights with the line-up, when several characters share the frame;
 - the framing, angle, staging, and facing with the shot list, and with the keyframes of the shots before and after it: who is on which side, and which way they face across the cut;
-- the place with its views: what is where, and nothing it does not have;
+- the place with its layout drawing: what is where, and nothing it leaves out;
 - the look with the keyframe look's lines: no colour, texture, or background or prop detail crept in, and no shading crept in, beyond a shadow the staging names;
 - an end frame with its start keyframe: the same place and characters, moved only as the camera and the action move them.
 
@@ -154,7 +130,7 @@ A shot keeps its number once approved, and so does its keyframe, since the anima
 
 - A new take of a keyframe keeps the shot's number. The take the user approves replaces it; the earlier take is kept beside it.
 - A shot the shot list adds, such as `3-2A`, gets a keyframe of that number. A shot it cuts loses its keyframe, and its number is not used again.
-- When the shot list, a subject's A-pose views or sheets, or a place's views change, redo only the keyframes they touch, list what changed, and say which later work made from those keyframes is now out of date.
+- When the shot list, a character's animatic sheets, or a layout drawing change, redo only the keyframes they touch, list what changed, and say which later work made from those keyframes is now out of date.
 
 ## Staging
 
@@ -165,7 +141,6 @@ A shot keeps its number once approved, and so does its keyframe, since the anima
 Hand back to the caller:
 
 - the approved keyframes: each named by its shot number, with its end frame, named by the number and `-end`, when it has one, in the shot list's order;
-- the keyframe plan, with the keyframe look, each keyframe's references, anything left out to fit, and the take the user approved for each, with the date;
-- the approved keyframe that set the keyframe look, as the film's keyframe reference;
+- the keyframe plan, with each keyframe's references, anything left out to fit, and the take the user approved for each, with the date;
 - the differences the user accepted at review, by keyframe;
 - the prompts that made the keyframes, each beside its keyframe.

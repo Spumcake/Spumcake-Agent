@@ -13,7 +13,9 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | Skill | Does |
 |---|---|
 | [write-visual-identity-brief](skills/write-visual-identity-brief/SKILL.md) | drafts what a film should feel and look like, what its colours must achieve, and candidate palettes, from the brief, the mood brief, and the visual identity research |
-| [write-audio-identity-brief](skills/write-audio-identity-brief/SKILL.md) | drafts from the brief and the visual identity brief a film's sound design, music, voice direction, and voices, before any other research |
+| [write-audio-identity-brief](skills/write-audio-identity-brief/SKILL.md) | drafts from the brief and the visual identity brief what a film's sound is for, before any other research |
+| [write-voice-brief](skills/write-voice-brief/SKILL.md) | drafts one speaking character's voice and the delivery of each of their lines, the description voice generation is sent |
+| [write-sound-design-brief](skills/write-sound-design-brief/SKILL.md) | drafts every sound of a film cue by cue on its length, a spotting list, which sound generation and the audio cut are made from |
 | [check-canonical-consistency](skills/check-canonical-consistency/SKILL.md) | checks a film's written artifacts for drift: one home for every fact, the rest pointing to it |
 | [write-beat-sheet-prompt](skills/write-beat-sheet-prompt/SKILL.md) | plans a story's beat sheet and builds the prompt a language model writes it from |
 | [write-script-prompt](skills/write-script-prompt/SKILL.md) | plans a script from the approved beats and builds the prompt a language model writes it from |
@@ -22,7 +24,7 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | [write-image-prompt](skills/write-image-prompt/SKILL.md) | writes the words of any image prompt as visual, image-generator phrases, not prose |
 | [explore-concept](skills/explore-concept/SKILL.md) | explores what a subject or place could look like, with a brief, directions, text-to-image candidates, and refinements, before it is canonical |
 | [create-concept-reference](skills/create-concept-reference/SKILL.md) | turns a canonical reference into its concept art reference: a character's study, a place's view in each mood |
-| [create-detail-sheet](skills/create-detail-sheet/SKILL.md) | paints a character's or prop's level-of-detail sheet: the subject at four distances, one brush size, fewer strokes the further it is |
+| [create-detail-sheet](skills/create-detail-sheet/SKILL.md) | makes a character's or prop's level-of-detail sheet: the subject at four distances, painted for concept artwork or in line for the animatic, fewer strokes the further it is |
 | [create-concept-artwork](skills/create-concept-artwork/SKILL.md) | makes concept artwork from concept art references: a character staged into a place's painting, the look reference for first frames |
 | [create-colour-script](skills/create-colour-script/SKILL.md) | plans the colour and light of each beat, then a keyframe for each, in story order |
 | [research-references](skills/research-references/SKILL.md) | researches real places and character archetypes on the web, into a sourced reference board, and a film's mood into a mood brief, with frames from CG animated features read for their light |
@@ -32,9 +34,9 @@ The order the skills run in is in [the pipeline](docs/pipeline.md).
 | [make-canonical](skills/make-canonical/SKILL.md) | makes one recurring place, character, or prop canonical, step by step, from a story check through its neutral views, including its canonical images and their neutral passes |
 | [create-subject-reference](skills/create-subject-reference/SKILL.md) | builds a recurring subject's brief, reference sheets, and gallery; a character's A-pose views; a small prop's sheet |
 | [create-subject-dataset](skills/create-subject-dataset/SKILL.md) | makes a themed dataset of images of an existing subject |
-| [create-model-sheet](skills/create-model-sheet/SKILL.md) | makes a subject's expression sheet, pose sheet, mouth chart, and colour model |
+| [create-model-sheet](skills/create-model-sheet/SKILL.md) | makes a subject's expression sheet, pose sheet, mouth chart, and colour model, and a character's animatic expression sheet, acting sheet, and turnaround |
 | [create-line-up](skills/create-line-up/SKILL.md) | sets several subjects side by side at true relative scale, as a line-up or a height chart |
-| [create-keyframe](skills/create-keyframe/SKILL.md) | makes an on-model keyframe for each shot of an approved shot list, for the animatic |
+| [create-keyframe](skills/create-keyframe/SKILL.md) | makes each camera's animatic layout drawing, then an on-model keyframe in line for each shot of an approved shot list, for the animatic |
 | [create-background](skills/create-background/SKILL.md) | makes the background plates for each shot or camera setup, with no characters |
 | [review-continuity](skills/review-continuity/SKILL.md) | reviews an image, clip, lip-sync, final shot, or sound against its references and the shots around it, and reports every difference |
 | [create-board](skills/create-board/SKILL.md) | draws a rough layout frame for each shot of an approved shot list, or from the user's sketch |

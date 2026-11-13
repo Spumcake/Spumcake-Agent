@@ -10,7 +10,11 @@ The user gives a brief; the agent turns it into finished results, making every c
 2. **The mood brief** (`research-references`), from the brief; the agent chooses the direction that serves it best.
 3. **Visual identity research** (`research-references`), from the brief and the chosen mood; the agent keeps the frames that fit.
 4. **The visual identity brief** (`write-visual-identity-brief`), from the brief, the mood brief, and the visual identity research.
-5. **The audio identity brief** (`write-audio-identity-brief`), from the brief and the visual identity brief.
+5. **The audio identity brief** (`write-audio-identity-brief`), from the brief and the visual identity brief: what the sound is for.
+6. **A voice brief per speaking character** (`write-voice-brief`), from the audio identity brief and the beat sheet or script: what each voice sounds like and how each line is delivered.
+7. **The sound design brief** (`write-sound-design-brief`), from the audio identity brief, the beat sheet or script, and the voice briefs: every sound, cue by cue, timed on the film's length.
+
+The voice and sound design briefs are written once the beat sheet exists, and redone when the script changes a line or a moment.
 
 No other research begins until the identity briefs are written. Every later research question, for the canonical elements and for the mood, comes from them, so what is searched for serves what the film is meant to be.
 
@@ -47,7 +51,7 @@ Canonical reference, then concept art reference, then concept artwork, so concep
 
 ## 6. Staging and the shots
 
-1. **The animatic:** keyframes (`create-keyframe`), staged into the canonical views with the concept artwork as their look reference, timed (`create-animatic`), with voices made first, as the audio identity brief describes them.
+1. **The animatic:** the audio cut first, the voices and sounds made from the voice and sound design briefs and laid on one timeline; then each character's animatic sheets (`create-model-sheet`, `create-detail-sheet`) and each camera's layout drawing, then keyframes (`create-keyframe`) in partially completed line art with no shading, timed (`create-animatic`), with voices made first, as the audio identity brief describes them. Staging into the canonical views, with the concept artwork as the look reference, makes the first frames for video (`create-keyframe`'s staging).
 2. **Line-art animation,** lip-synced to the voices.
 3. **Final animation,** over background plates (`create-background`), and the cut.
 

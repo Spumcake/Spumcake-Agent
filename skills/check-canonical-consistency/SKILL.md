@@ -16,7 +16,9 @@ Each fact lives in one artifact, the one whose job it is:
 - **the brief:** the premise, the characters, the setting, the time of day, the length, every spoken line, and what the user fixed about tone;
 - **the mood brief:** the mood only: genre and tone, references, and how light, colour, and camera feel; never the story, the setting, or the sound;
 - **the visual identity brief:** what the picture must do: the feeling at each moment, the eye, the tension, what it must never be, the colour's intent, and the palette candidates;
-- **the audio identity brief:** everything heard: sound design, music, voice direction, and the voices;
+- **the audio identity brief:** what the sound is for: the feeling at each moment, silence, the turn, music, and what it must never sound like;
+- **each voice brief:** that character's voice, and the delivery of each of their lines and non-verbal sounds;
+- **the sound design brief:** every sound, cue by cue: its time, length, place, level, and what it does, the room tone, silence, and the mix;
 - **the beat sheet, script, and shot list:** what happens, in what order, in which shot;
 - **the style guide:** the look's rules;
 - **the breakdown:** which characters, places, and props recur;

@@ -11,6 +11,8 @@ Every canonical artifact the film needs, its status, and the full path of the on
 | Visual identity research | {{status}} | {{path}} |
 | Visual identity brief | {{status}} | {{path}} |
 | Audio identity brief | {{status}} | {{path}} |
+| Voice brief, per speaking character | {{status}} | {{path}} |
+| Sound design brief | {{status}} | {{path}} |
 
 ## 2. Story
 
@@ -57,6 +59,7 @@ One table for each place, character, and prop the breakdown names.
 | Staging, per shot | | |
 | Voices | | |
 | Sound | | |
+| Audio cut | | |
 | Keyframes | | |
 | Animatic | | |
 | Line-art animation | | |
