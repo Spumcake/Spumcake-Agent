@@ -117,8 +117,9 @@ def fill(root, n, chain, step, name=None):
         e, f = m.group(1).strip(), m.group(2).strip()
         v = db.execute("SELECT value FROM fact WHERE element=? AND name=?", (e, f)).fetchone()
         if not v: missing.append("%s: %s" % (e, f)); return m.group(0)
-        read.append({"name": "%s: %s" % (e, f), "value": v[0], "read_at": now(),
-                     "from": "pipeline/%03d/canon.sql" % int(n)})
+        if not any(r["name"] == "%s: %s" % (e, f) for r in read):
+            read.append({"name": "%s: %s" % (e, f), "value": v[0], "read_at": now(),
+                         "from": "pipeline/%03d/canon.sql" % int(n)})
         return v[0]
 
     prompt = PLACE.sub(value, template or "")
