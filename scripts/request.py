@@ -172,8 +172,10 @@ def fal(spec, root, tmp, key_file):
     for r in spec.get("references", []):
         field = r.get("field") or ep.get("reference_field", "image_urls")
         f = os.path.join(root, r["file"])
-        body.setdefault(field, []).append("data:%s;base64,%s" % (
-            mimetypes.guess_type(f)[0] or "application/octet-stream", base64.b64encode(open(f, "rb").read()).decode()))
+        uri = "data:%s;base64,%s" % (mimetypes.guess_type(f)[0] or "application/octet-stream",
+                                     base64.b64encode(open(f, "rb").read()).decode())
+        if field.endswith("_urls"): body.setdefault(field, []).append(uri)
+        else: body[field] = uri  # a single-file field, such as image_url or end_image_url
     req = urllib.request.Request("https://fal.run/" + ep["model"], json.dumps(body).encode(),
                                  {"Authorization": "Key " + key("fal", "FAL_KEY", r"[A-Za-z0-9\-]+:[A-Za-z0-9]+", key_file),
                                   "Content-Type": "application/json"})
@@ -195,7 +197,7 @@ def fal(spec, root, tmp, key_file):
     if ep.get("price_per_minute") and seconds:
         cost = "about $%.3f, from the price, not a bill" % (seconds / 60 * float(ep["price_per_minute"]))
     sent = {"service": "fal", "url": "https://fal.run/" + ep["model"], "model": ep["model"],
-            "settings": {k: v for k, v in body.items() if k != "prompt" and not str(v).startswith("['data:")},
+            "settings": {k: v for k, v in body.items() if k != "prompt" and not str(v).startswith(("['data:", "data:"))},
             "references_sent_as": "data URIs, in the order listed, in each reference's field"}
     return paths, sent, {"seconds": seconds, "cost": cost}
 
