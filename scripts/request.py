@@ -218,10 +218,35 @@ a{color:var(--accent)}
 """
 
 
-def media_tag(src, embed=None):
+_previews = {}
+
+
+def preview(path, width=480):
+    """A small JPEG of an image, as a data URI, so a page shows it even where it cannot load neighbouring files."""
+    if path in _previews: return _previews[path]
+    try:
+        from PIL import Image
+        import io
+        im = Image.open(path)
+        im.thumbnail((width, width * 4))
+        if im.mode not in ("RGB", "L"):
+            bg = Image.new("RGB", im.size, (255, 255, 255))
+            bg.paste(im.convert("RGBA"), mask=im.convert("RGBA").split()[-1]); im = bg
+        buf = io.BytesIO(); im.save(buf, "JPEG", quality=78)
+        uri = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        uri = None
+    _previews[path] = uri
+    return uri
+
+
+def media_tag(src, embed=None, local=None):
     e = os.path.splitext(src)[1].lower()
     s = html.escape(embed or src)
-    if e in MEDIA_IMAGE: return '<img src="%s" alt="">' % s
+    if e in MEDIA_IMAGE:
+        small = preview(local) if local and not (embed or "").startswith("data:") and os.path.exists(local) else None
+        if small: return '<a href="%s"><img src="%s" alt=""></a>' % (s, small)
+        return '<img src="%s" alt="">' % s
     if e in MEDIA_AUDIO: return '<audio controls src="%s"></audio>' % s
     if e in MEDIA_VIDEO: return '<video controls src="%s"></video>' % s
     return '<a href="%s">%s</a>' % (s, html.escape(os.path.basename(src)))
@@ -252,7 +277,7 @@ def render(root, data, path):
         for i, r in enumerate(data["references"], 1):
             src = r.get("embedded") or link(root, path, r["file"])
             parts.append("<figure>%s<figcaption>%d. %s<br>%s</figcaption></figure>" % (
-                media_tag(r.get("file") or "x.png", src), i, esc(r.get("role", "")), esc(r.get("file") or "kept only here")))
+                media_tag(r.get("file") or "x.png", src, os.path.join(root, r["file"]) if r.get("file") else None), i, esc(r.get("role", "")), esc(r.get("file") or "kept only here")))
         parts.append("</div>")
     if data.get("canon"):
         parts.append("<h2>Canon read</h2><table><tr><th>Name</th><th>Value</th><th>Read</th><th>From</th></tr>")
@@ -270,7 +295,7 @@ def render(root, data, path):
         parts.append("</table>")
     parts.append("<h2>Outputs</h2><div class='grid'>")
     for f in data.get("outputs", []):
-        parts.append("<figure>%s<figcaption>%s</figcaption></figure>" % (media_tag(f, link(root, path, f)), esc(f)))
+        parts.append("<figure>%s<figcaption>%s</figcaption></figure>" % (media_tag(f, link(root, path, f), os.path.join(root, f)), esc(f)))
     parts.append("</div>" if data.get("outputs") else "<p>none</p></div>")
     if data.get("shown"):
         parts.append("<h2>Comparisons and charts</h2><div class='grid'>")

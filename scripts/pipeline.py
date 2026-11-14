@@ -271,7 +271,7 @@ def render(root, n):
                 a = db.execute("SELECT file, published, note FROM artifact WHERE id=?", (art,)).fetchone()
                 if a:
                     parts.append("<figure>%s<figcaption><b>%s</b> · %s%s</figcaption></figure>" % (
-                        rq.media_tag(a[0], rel(a[0])), esc(art), ("published " + esc(a[1])) if a[1] else "waiting for the user",
+                        rq.media_tag(a[0], rel(a[0]), os.path.join(root, a[0])), esc(art), ("published " + esc(a[1])) if a[1] else "waiting for the user",
                         (" · " + esc(a[2])) if a[2] else ""))
                     srcs = db.execute("SELECT source, role FROM made_from WHERE artifact=?", (art,)).fetchall()
                     if srcs:
@@ -303,7 +303,7 @@ def render(root, n):
                 for i, r in enumerate(rs, 1):
                     f = (r["file"],) if r.get("file") else db.execute("SELECT file FROM artifact WHERE id=?", (r["artifact"],)).fetchone()
                     other = where.get(r.get("artifact"))
-                    tag = rq.media_tag(f[0], rel(f[0])) if f else "not in canon"
+                    tag = rq.media_tag(f[0], rel(f[0]), os.path.join(root, f[0])) if f else "not in canon"
                     parts.append("<figure>%s<figcaption>%d. %s<br>%s%s</figcaption></figure>" % (
                         tag, i, esc(r.get("role", "")), esc(r.get("artifact") or "a fixed input, not canon"),
                         (" · <a href='%s.html'>%s</a>" % (other, other)) if other and other != chain_slug(db, name) else ""))
