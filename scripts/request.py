@@ -165,21 +165,48 @@ def openai_image(spec, root, tmp, edit, key_file):
     return paths, sent, {"usage": r.get("usage"), "cost": "not returned by the endpoint"}
 
 
+def fal_upload(path, fal_key):
+    """Upload one file to fal's storage, as fal's own client does, and return its address."""
+    tok = json.load(urllib.request.urlopen(urllib.request.Request(
+        "https://rest.fal.ai/storage/auth/token?storage_type=fal-cdn-v3", b"{}",
+        {"Authorization": "Key " + fal_key, "Content-Type": "application/json", "Accept": "application/json"}), timeout=60))
+    req = urllib.request.Request("https://v3.fal.media/files/upload", open(path, "rb").read(),
+                                 {"Authorization": "%s %s" % (tok["token_type"], tok["token"]),
+                                  "Content-Type": mimetypes.guess_type(path)[0] or "application/octet-stream",
+                                  "X-Fal-File-Name": os.path.basename(path)})
+    return json.load(urllib.request.urlopen(req, timeout=300))["access_url"]
+
+
 def fal(spec, root, tmp, key_file):
     ep = spec["endpoint"]
     body = {"prompt": spec["prompt"]}
     body.update(ep.get("settings", {}))
+    fal_key = key("fal-ai", "FAL_KEY", r"[A-Za-z0-9_\-]+:[A-Za-z0-9_\-]+", key_file)
+    uploaded = {}
     for r in spec.get("references", []):
         field = r.get("field") or ep.get("reference_field", "image_urls")
         f = os.path.join(root, r["file"])
-        uri = "data:%s;base64,%s" % (mimetypes.guess_type(f)[0] or "application/octet-stream",
-                                     base64.b64encode(open(f, "rb").read()).decode())
-        if field.endswith("_urls"): body.setdefault(field, []).append(uri)
-        else: body[field] = uri  # a single-file field, such as image_url or end_image_url
-    req = urllib.request.Request("https://fal.run/" + ep["model"], json.dumps(body).encode(),
-                                 {"Authorization": "Key " + key("fal", "FAL_KEY", r"[A-Za-z0-9\-]+:[A-Za-z0-9]+", key_file),
-                                  "Content-Type": "application/json"})
-    r = json.load(urllib.request.urlopen(req, timeout=900))
+        url = uploaded.get(f) or fal_upload(f, fal_key)  # fal refuses large files sent inline; its storage takes them
+        uploaded[f] = url
+        if field.endswith("_urls"): body.setdefault(field, []).append(url)
+        else: body[field] = url  # a single-file field, such as image_url or end_image_url
+    # fal's queue: submit, wait for the request to finish, then fetch its result. A long render never holds a
+    # connection open, and the request ID is kept in the report, so fal's own record of the request can be found.
+    import time
+    head = {"Authorization": "Key " + fal_key, "Content-Type": "application/json"}
+    call = lambda url, data=None: json.load(urllib.request.urlopen(
+        urllib.request.Request(url, json.dumps(data).encode() if data is not None else None, head,
+                               method="POST" if data is not None else "GET"), timeout=300))
+    q = call("https://queue.fal.run/" + ep["model"], body)
+    print("fal request " + q["request_id"], file=sys.stderr, flush=True)
+    for _ in range(720):
+        s = call(q["status_url"])
+        if s.get("status") == "COMPLETED": break
+        if s.get("status") not in ("IN_QUEUE", "IN_PROGRESS"): sys.exit("fal: " + json.dumps(s)[:600])
+        time.sleep(5)
+    else:
+        sys.exit("fal: still not finished after an hour; request " + q["request_id"])
+    r = call(q["response_url"])
     urls = []
     for field in ("audio", "image", "video"):
         v = r.get(field)
@@ -196,7 +223,7 @@ def fal(spec, root, tmp, key_file):
     cost = "not returned by the endpoint"
     if ep.get("price_per_minute") and seconds:
         cost = "about $%.3f, from the price, not a bill" % (seconds / 60 * float(ep["price_per_minute"]))
-    sent = {"service": "fal", "url": "https://fal.run/" + ep["model"], "model": ep["model"],
+    sent = {"service": "fal", "url": "https://queue.fal.run/" + ep["model"], "model": ep["model"], "request_id": q["request_id"],
             "settings": {k: v for k, v in body.items() if k != "prompt" and not str(v).startswith(("['data:", "data:"))},
             "references_sent_as": "data URIs, in the order listed, in each reference's field"}
     return paths, sent, {"seconds": seconds, "cost": cost}
