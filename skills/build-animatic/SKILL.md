@@ -114,6 +114,10 @@ A length that differs from the approved shot list is a change to the shot list. 
 
 Revise until the user approves it. The approved sheet and clip are published by `project-pipeline`; a rejected one is never used as an input again. When the shot list or a board changes later, change only the rows it touches, count every in and out after them again, and list what changed. A shot keeps its number; a cut shot's row is removed, and its number is not used again.
 
+## The line-art shot in its place
+
+Once a shot's line-art animation is approved, lay it over the layout drawings of its moments with [scripts/composite.py](scripts/composite.py), so the character moves in the place, and the place changes with the moments, such as a door that opens at a bell. The character is made solid, so the place's lines do not show through: the page is every near-white pixel joined to the frame's edge, and the rest, the lines and what they enclose, is the character. Each background is a layout drawing, by its canonical artifact, held from its moment's start to the next; the shot's sound is kept. It is a build: no model, no cost, and the result, for the user's approval, is published as `<shot>: line-art shot in the layout`. It is also a continuity check: the character should sit where the staging floor plans put them, against what they touch.
+
 ## Hand back
 
 Hand back to [project-requests](../project-requests/SKILL.md):
