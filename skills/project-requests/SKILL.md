@@ -5,7 +5,7 @@ description: Run what the user asks for as requests - split the message into req
 
 # The request cycle
 
-Every request in a project runs through this skill, and only this skill writes `requests/`. A request is one call to one endpoint with one prompt: one cycle, one report. The skill a request uses builds its prompt and references and returns them; it saves nothing and records nothing. This skill runs it with [`scripts/request.py`](../../scripts/request.py), so the report holds exactly what was sent, and then says what the report says.
+Every request in a project runs through this skill, and only this skill writes `requests/`. A request is one call to a generative model's endpoint with one prompt: one cycle, one report. What the agent writes or draws itself, and what a builder makes, is not a request: `project-library` files it into `prompts/resources/` when it is canon or is sent to a model, and it is not kept otherwise. The skill a request uses builds its prompt and references and returns them; it saves nothing and records nothing. This skill runs it with [`scripts/request.py`](../../scripts/request.py), so the report holds exactly what was sent, and then says what the report says.
 
 A good cycle leaves a report that answers, without anyone's memory, what was asked, why, what was sent where, what canon it read, and what came back. A failed one has an output with no report, a prompt retyped into the report instead of the one sent, a reference left out, or a summary of the request in place of the request.
 
@@ -41,7 +41,7 @@ For each request, in order:
 1. **Build.** Have its skill build the prompt and references. When the request is a step of a pipeline's chain, start from `pipeline.py fill <n> <chain> <step>`, which fills the step's template from the canon and lists the canon it read; never copy a canonical value or a file name by hand. A reference is a file in `library/` or `sources/`, given with its role in the request, such as "image 1, the layout of the shot".
 2. **Write the spec** as `request.py`'s usage gives it, with what was asked and why in the user's terms.
 3. **Run it:** `request.py run <spec.json>`. Its outputs land in `library/`, or `sources/` for research, and its report in `requests/`. Never save, copy, rename, or move an output any other way.
-4. **Show it.** When results are easier to judge side by side, make a comparison or a chart and add it with `request.py attach <id> <file> --as comparison`.
+4. **Show it.** When results are easier to judge side by side, make a comparison or a chart and embed it in the report with `request.py attach <id> <file> --as comparison`; it is kept nowhere else.
 5. **Review it.** For an image, a clip, or a sound, run `review-continuity` on it as its own request, against the canon the request read.
 6. **Tell the user** what `request.py tell <id>` prints, word for word, then the review's findings. Add nothing to it and leave nothing out: it is the endpoint, the references in order, the canon read, the prompt as sent, the outputs, the cost, and the report's path.
 

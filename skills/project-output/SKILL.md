@@ -12,7 +12,7 @@ description: File a project's finished deliverables into output/ - flat, named <
 When the user calls a result finished:
 
 1. The result must be published canon in the pipeline it belongs to; if it is not, publish it first with `project-pipeline`.
-2. `pipeline.py deliver <n> <library file>` copies it to `output/<timestamp>-<pipeline>-<project>.<ext>`: the time in UTC as `YYYY-MM-DD_HH-MM`, the pipeline's number, and the project's folder name.
+2. `pipeline.py deliver <n> <library file>` copies it to `output/<timestamp>-<pipeline>-<project>.<ext>`: the user's local time as `YYYY-MM-DD_HH-MM`, the pipeline's number, and the project's folder name.
 3. Tell the user the file's name.
 
 ## The rules

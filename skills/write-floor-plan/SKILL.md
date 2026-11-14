@@ -21,7 +21,7 @@ Fill [the floor plan template](templates/floor-plan.md) from the layout's number
 
 ## 2. Draw it
 
-Draw the plan from above, from the same numbers, every wall, door, fixture, and camera labelled by its name, as a `build` request with the place's builder.
+Draw the plan from above, from the same numbers, every wall, door, fixture, and camera labelled by its name, as a build with the place's builder.
 
 ## 3. Check it
 
@@ -29,7 +29,7 @@ Every number in the plan is in the layout; every named thing in the key has its 
 
 ## Hand back
 
-To `project-requests`, as an `agent` request:
+To `project-library`, which files it into `prompts/resources/` as canon; it is the agent's own writing, not a request:
 
-- the floor plan, as a draft document, and the request for its drawing;
+- the floor plan, as a draft document, and the build for its drawing;
 - each fact it settles, by `<element>: <fact>`, for `project-pipeline` to publish with the plan as the artifact that settles it: for each door, `<door>: wall`, `<door>: leads to`, and `<door>: opens`; for each camera and each named thing in its frame, `<thing>: side in the <camera> frame`, as left, centre, right, or behind the camera; and for each character's mark, `<character>, <moment>: mark`, `: faces`, and `: looks at`.

@@ -10,8 +10,8 @@ assembly.json:
   "bed": {"audio": "bed.wav", "gain_db": 0},
   "clips": [{"audio": "take.wav", "from": 0.05, "to": 0.65, "at": 4.2, "gain_db": 0}, ...]
 }
-Frames must run on from 0 to length without a gap. Needs ffmpeg. Writes only the video; project-requests runs this
-as a script request, and the request's report says what it was made from.
+Frames must run on from 0 to length without a gap. Needs ffmpeg. Writes only the video; project-library runs this
+as a build (request.py build), which files the video into prompts/resources/.
 """
 import json, subprocess, sys, tempfile, os
 

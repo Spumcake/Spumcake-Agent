@@ -182,6 +182,34 @@ def rerun(root, n, fact, stand=False, only_next=False):
     import tempfile
     for chain, step in steps:
         spec = fill(root, n, chain, step)
+        kind = spec["endpoint"].get("kind")
+        if kind in ("script", "agent"):
+            db = load(root, n)
+            art, skill = db.execute("SELECT artifact, skill FROM step WHERE chain=? AND name=?", (chain, step)).fetchone()
+            if not stand and (kind == "agent" or not spec.get("scripts")):
+                sys.exit("%s is the agent's own work, not a request: make it again with %s, publish it, then run again"
+                         % (step, skill))
+            tmp = os.path.join(root, ".stand-in")
+            os.makedirs(tmp, exist_ok=True)
+            try:
+                if stand:
+                    made = rq.stand_in(spec, tmp)[0]
+                else:
+                    cmd = spec["scripts"][0]["command"]
+                    p = subprocess.run(cmd, shell=True, cwd=root, capture_output=True, text=True)
+                    if p.returncode: sys.exit(p.stdout + p.stderr)
+                    made = [os.path.join(root, o) for o in spec.get("outputs", [])]
+                os.makedirs(os.path.join(root, "prompts", "resources"), exist_ok=True)
+                filed = rq.file_into(root, "prompts/resources", "%s-%s" % (rq.stamp(), rq.slug(spec["name"])), made)
+            finally:
+                shutil.rmtree(tmp, ignore_errors=True)
+            print("%s: %s" % (step, ", ".join(filed)))
+            if art:
+                db.execute("UPDATE artifact SET file=?, request=NULL, published=?, note=? WHERE id=?",
+                           (filed[0], now() if stand else None, "stand-in, a dry run" if stand else "waiting for the user", art))
+                save(root, n, db)
+            if only_next: print("stopped after one step, for the user's approval"); return
+            continue
         spec["asked"] = "Run %s again in pipeline %03d" % (step, int(n))
         spec["why"] = "The brief changed %s; this step uses it, directly or through what it is made from." % fact
         with tempfile.NamedTemporaryFile("w", suffix=".json", dir=root, delete=False) as f:

@@ -32,11 +32,11 @@ The order the skills run in to make a film is in [the pipeline](pipeline.md).
 - **Its method,** in numbered steps, with the user's yes before anything that costs money.
 - **Its hand-back:** exactly what it returns to [project-requests](../skills/project-requests/SKILL.md), as its category below gives it.
 
-No skill saves, copies, renames, or moves a file, writes a record, names a project folder, or says where a result goes. It returns its result; `project-requests` runs it, files it, and reports it.
+No skill saves, copies, renames, or moves a file, writes a record, names a project folder, or says where a result goes. It returns its result: `project-requests` runs a request to a model and reports it; `project-library` files what no model made.
 
 ## What each category takes and returns
 
-- **build:** takes canon by name and the script to run. Returns the request: the script's command and the files it makes. A project's own script, such as a place's pre-vis builder, lives in its pipeline's folder, so the chain can run it again.
+- **build:** takes canon by name and the script to run. Returns the build, which is not a request: the script's command and the files it makes, which `project-library` files into `prompts/resources/` with `request.py build`. A project's own script, such as a place's pre-vis builder, is itself a resource, so the chain can run it again.
 - **fix:** takes a result and its review's findings. Returns one request per fix, each a removal at the source of its error: in the pre-vis or in the generation.
 - **generate:** takes canon by name. Returns the request: the endpoint kind it needs, the prompt as a template naming canon, `{{<element>: <fact>}}`, and the references by canonical artifact, each with its role, in the order to send them.
 - **make:** takes the thing to finish. Returns its plan: the requests it needs, in order, each with its skill, and where the user approves between them. It runs none itself.
@@ -44,8 +44,8 @@ No skill saves, copies, renames, or moves a file, writes a record, names a proje
 - **prompt:** returns nothing. Other skills follow its rules while building a prompt.
 - **research:** takes questions that come from the brief. Returns the research request: each file found, with its address, its page, and the use allowed, and its findings.
 - **review:** takes a result and the canon it must agree with. Returns its findings, in its template: each difference, where it is, which canon it breaks, what it should be, and whether it blocks approval. It never fixes, scores, or decides.
-- **write:** takes canon and intent by name. Returns the document as a draft, for the agent's own writing, or the prompt for a language model and the answer it gave, for a `-prompt` skill; and the facts the document settles, by `<element>: <fact>`, for `project-pipeline` to publish.
+- **write:** takes canon and intent by name. Returns the document as a draft, for the agent's own writing, which is not a request, or the prompt for a language model, which is; and the facts the document settles, by `<element>: <fact>`, for `project-pipeline` to publish. A section of the brief goes to `project-brief`; a canonical document, such as a floor plan or a style guide, to `project-library`, which files it into `prompts/resources/`.
 
 ## What the user is told
 
-When a request is done, `project-requests` tells the user what `request.py tell <id>` prints, the same for every category: what was asked and why, the endpoint, the references in the order sent, the canon read, the prompt as sent, the outputs, the cost, and the report. A review adds its findings; nothing else is added.
+When a request to a model is done, `project-requests` tells the user what `request.py tell <id>` prints, the same for every category: what was asked and why, the endpoint, the references in the order sent, the canon read, the prompt as sent, the outputs, the cost, and the report. A review adds its findings; nothing else is added.

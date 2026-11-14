@@ -30,7 +30,7 @@ Then choose the direction that serves the brief best, or a blend, with the reaso
 
 ## Hand back
 
-To `project-requests`, as an `agent` request, for `project-brief` to place as the brief page's mood section:
+To `project-brief`, to place as the brief page's mood section; it is the agent's own writing, not a request:
 
 - the mood brief, as a draft: its directions, each with its references and tone phrases, and the chosen direction with its reason;
 - the facts it settles: `<film>: mood`, the chosen direction's name, and `<film>: tone phrases`.

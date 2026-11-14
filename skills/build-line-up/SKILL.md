@@ -50,7 +50,7 @@ When every subject has a front view on a transparent background, the line-up or 
 3. Write each name beneath its subject, by its canonical name.
 4. On a height chart, draw the labelled grid of heights behind them: a line every `{{step}}`, as the templates' filling below gives it, numbered in the one unit, the bottom line the ground line, labelled "0".
 
-Make one chart for each kind of view the subjects have, such as the grey and the textured. The command is a `script` request: each subject's front view by its canonical artifact, with its role, such as "subject 2, Tom, 120 cm", in the planned order; and the file it makes, one image per chart. A script written for it belongs to the pipeline, as `project-pipeline` keeps it, so the chain can run it again.
+Make one chart for each kind of view the subjects have, such as the grey and the textured. The command is a build: each subject's front view by its canonical artifact, with its role, such as "subject 2, Tom, 120 cm", in the planned order; and the file it makes, one image per chart. A script written for it is a shared resource, filed into `prompts/resources/` by `project-library`, so the chain can run it again.
 
 Check the result against the plan: each subject unchanged from its front view, every foot on the ground line, and each height on its grid line.
 
@@ -114,6 +114,6 @@ Every later image with several of these subjects, a board or a shot, quotes thei
 
 Hand back to [project-requests](../project-requests/SKILL.md):
 
-- **the composite,** when every subject has a front view: its command, a `script` request, with each subject's front view by its canonical artifact and its role, in the planned order, and the files it makes, one chart per kind of view;
+- **the composite,** when every subject has a front view: its command, a build that `project-library` runs with `request.py build`, filing what it makes into `prompts/resources/`, with each subject's front view by its canonical artifact and its role, in the planned order, and the files it makes, one chart per kind of view;
 - or, when a subject has none, **the image-edit requests:** for each, the endpoint kind, the prompt as a template naming canon, `{{<subject>: height}}`, and the references by canonical artifact, each with its role, in the order to send them, one request per group;
 - the plan, with the heights and the anchor, as the facts it settles, `<subject>: height`, for the user to approve.

@@ -4,10 +4,16 @@ See docs/projects.md.
 
 Usage:
   request.py run <spec.json> [--stand-in] [--key-file F]
-                                      send the request, file its outputs into library/ (or sources/ for research),
-                                      and write requests/<id>.html; prints the report's path
+                                      send the request to its model endpoint, file what comes back into library/,
+                                      the prompt as sent into prompts/<id>.txt, and write requests/<id>.html;
+                                      a research request files into sources/
   request.py attach <id> <file> --as comparison|chart [--caption TEXT]
-                                      file an image the agent made to show the results, and add it to the report
+                                      embed an image the agent made to show the results in the request's report
+  request.py resource <file>... --name NAME
+                                      file shared material no model made, such as a canonical document, a pre-vis
+                                      render, or a builder, into prompts/resources/ as <time>-<name>.<ext>
+  request.py build "<command>" <output>... --name NAME
+                                      run a builder, and file each file it makes into prompts/resources/
   request.py note <id> [--asked TEXT] [--why TEXT] [--notes TEXT]
                                       set the agent's own words in the report
   request.py show <id | library file> the full record of the request that made a file, as JSON
@@ -20,15 +26,16 @@ Usage:
 A spec is JSON:
   {"name": "keyframe-the-line", "skill": "generate-keyframe", "asked": "...", "why": "...",
    "pipeline": "001", "chain": "the line", "step": "keyframe", "depends_on": ["<request id>"],
-   "endpoint": {"kind": "openai-image-edit" | "openai-image" | "fal" | "script" | "agent" | "research",
+   "endpoint": {"kind": "openai-image-edit" | "openai-image" | "fal" | "research",
                 "model": "...", "settings": {...}},
    "prompt": "the text exactly as sent",
    "references": [{"file": "library/<file>", "role": "image 1, the layout of the shot"}],
-   "canon": [{"name": "the front door: side in the far-end frame", "value": "left", "read_at": "<UTC>",
+   "canon": [{"name": "the front door: side in the far-end frame", "value": "left", "read_at": "<time>",
               "from": "pipeline/001/canon.sql"}],
-   "scripts": [{"file": "pipeline/001/build-previs.py", "command": "..."}],
-   "outputs": ["<file to file>", ...]          for script, agent, and research requests
+   "outputs": ["<file to file>", ...]          for research: the files found
    "sources": [{"file": "...", "address": "...", "page": "...", "use": "..."}]   for research}
+A request is one call to a model endpoint. What the agent or a builder makes is not a request: it goes into
+prompts/resources/ when it is canon or is sent to a model, and is not kept otherwise. Names use local time.
 The agent writes the spec; everything else in the report comes from what this script sent and received.
 """
 import sys, os, re, json, base64, hashlib, html, shutil, subprocess, urllib.request, mimetypes, wave, datetime, struct, zlib
@@ -55,7 +62,8 @@ def now():
 
 
 def stamp(t=None):
-    return (t or now()).strftime("%Y-%m-%d_%H-%M")
+    """A name's time: the user's local time, as the machine's clock gives it, so names read as the user's day."""
+    return (t or now()).astimezone().strftime("%Y-%m-%d_%H-%M")
 
 
 def slug(name):
@@ -192,19 +200,6 @@ def fal(spec, root, tmp, key_file):
     return paths, sent, {"seconds": seconds, "cost": cost}
 
 
-def script(spec, root, tmp):
-    ran = []
-    for s in spec.get("scripts", []):
-        if s.get("command"):
-            p = subprocess.run(s["command"], shell=True, cwd=root, capture_output=True, text=True, timeout=3600)
-            ran.append({"command": s["command"], "exit": p.returncode, "output": (p.stdout + p.stderr)[-4000:]})
-            if p.returncode: sys.exit("the script failed: " + s["command"] + "\n" + (p.stdout + p.stderr)[-2000:])
-    paths = [os.path.join(root, f) for f in spec.get("outputs", [])]
-    for p in paths:
-        if not os.path.exists(p): sys.exit("the script made no " + os.path.relpath(p, root))
-    return paths, {"service": "script", "ran": ran}, {"cost": "nothing; local"}
-
-
 # ---- the report --------------------------------------------------------------------------------
 
 STYLE = """
@@ -280,8 +275,9 @@ def render(root, data, path):
     if data.get("shown"):
         parts.append("<h2>Comparisons and charts</h2><div class='grid'>")
         for s in data["shown"]:
+            src = s.get("embedded") or link(root, path, s["file"])
             parts.append("<figure>%s<figcaption>%s</figcaption></figure>" % (
-                media_tag(s["file"], link(root, path, s["file"])), esc(s.get("caption") or s["file"])))
+                media_tag(s.get("file") or "x.png", src), esc(s.get("caption") or s.get("as") or "")))
         parts.append("</div>")
     parts.append("<h2>Result</h2><pre>%s</pre>" % esc(json.dumps(data.get("result", {}), indent=1)))
     if data.get("depends_on"):
@@ -316,11 +312,12 @@ def run(spec_file, stand=False, key_file=None):
         elif kind == "openai-image-edit": paths, sent, result = openai_image(spec, root, tmp, True, key_file)
         elif kind == "openai-image": paths, sent, result = openai_image(spec, root, tmp, False, key_file)
         elif kind == "fal": paths, sent, result = fal(spec, root, tmp, key_file)
-        elif kind == "script": paths, sent, result = script(spec, root, tmp)
-        elif kind in ("agent", "research"):
+        elif kind == "research":
             paths = [os.path.join(root, f) if not os.path.isabs(f) else f for f in spec.get("outputs", [])]
-            sent = {"service": "the agent" if kind == "agent" else "research", "model": spec["endpoint"].get("model")}
+            sent = {"service": "research"}
             result = {"cost": spec["endpoint"].get("cost", "not recorded")}
+        elif kind in ("script", "agent"):
+            sys.exit("not a request: what the agent or a builder makes goes into prompts/resources/ (request.py resource or build)")
         else: sys.exit("unknown endpoint kind: " + kind)
         if research:
             names = ["-" + slug(os.path.splitext(os.path.basename(p))[0]) for p in paths]
@@ -329,6 +326,11 @@ def run(spec_file, stand=False, key_file=None):
             outputs = file_into(root, "library", rid, paths)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+    if not research and spec.get("prompt"):
+        os.makedirs(os.path.join(root, "prompts"), exist_ok=True)
+        pp = os.path.join(root, "prompts", rid + ".txt")
+        if os.path.exists(pp): sys.exit("refusing to overwrite " + os.path.relpath(pp, root))
+        open(pp, "w").write(spec["prompt"])
     srcs = spec.get("sources", [])
     if research:
         by_name = {os.path.basename(s["file"]): s for s in srcs}
@@ -348,11 +350,26 @@ def attach(rid, f, as_, caption=None):
     root = project_root()
     path = find_report(root, rid)
     data = read_data(path)
-    n = sum(1 for s in data["shown"] if s["as"] == as_)
-    out = file_into(root, "library", rid, [f], ["-%s%s" % (as_, ("-%d" % (n + 1)) if n else "")])[0]
-    data["shown"].append({"file": out, "as": as_, "caption": caption})
+    uri = "data:%s;base64,%s" % (mimetypes.guess_type(f)[0] or "image/png", base64.b64encode(open(f, "rb").read()).decode())
+    data["shown"].append({"embedded": uri, "as": as_, "caption": caption})
     render(root, data, path)
-    print(out)
+    print("embedded in " + os.path.relpath(path, root))
+
+
+def resource(fs, name, date=None):
+    root = project_root()
+    os.makedirs(os.path.join(root, "prompts", "resources"), exist_ok=True)
+    rid = "%s-%s" % (stamp(date), slug(name))
+    for f in file_into(root, "prompts/resources", rid, fs): print(f)
+
+
+def build(command, outputs, name):
+    root = project_root()
+    p = subprocess.run(command, shell=True, cwd=root, capture_output=True, text=True, timeout=3600)
+    if p.returncode: sys.exit("the builder failed:\n" + (p.stdout + p.stderr)[-2000:])
+    missing = [o for o in outputs if not os.path.exists(os.path.join(root, o))]
+    if missing: sys.exit("the builder made no " + ", ".join(missing))
+    resource([os.path.join(root, o) for o in outputs], name)
 
 
 def note(rid, **kw):
@@ -368,7 +385,7 @@ def show(what):
     root = project_root()
     base = os.path.basename(what)
     for p, d in all_reports(root):
-        made = d.get("outputs", []) + [s["file"] for s in d.get("shown", [])]
+        made = d.get("outputs", [])
         if d["id"] == base or any(os.path.basename(f) == base for f in made):
             print(json.dumps(d, indent=1)); return
     sys.exit("no report names " + what)
@@ -392,7 +409,7 @@ def tell(rid):
         for c in d["canon"]: lines.append("  - %s = %s (%s, %s)" % (c["name"], c["value"], c.get("from", ""), c.get("read_at", "")))
     if d.get("scripts"): lines.append("- Scripts: " + "; ".join(s.get("command") or s.get("file", "") for s in d["scripts"]))
     lines.append("- Outputs: " + (", ".join(d.get("outputs", [])) or "none"))
-    for s in d.get("shown", []): lines.append("- Shown: %s%s" % (s["file"], (", " + s["caption"]) if s.get("caption") else ""))
+    for s in d.get("shown", []): lines.append("- Shown in the report: %s" % (s.get("caption") or s.get("as")))
     lines.append("- Cost: %s" % (d.get("result", {}).get("cost") or "not recorded"))
     lines.append("- Report: " + os.path.relpath(path, root))
     lines.append("- Prompt, as sent:")
@@ -423,7 +440,7 @@ def check():
         for r in d.get("references", []):
             if r.get("file") and not os.path.exists(os.path.join(root, r["file"])):
                 problems.append("%s: reference missing: %s" % (d["id"], r["file"]))
-        for o in d.get("outputs", []) + [s["file"] for s in d.get("shown", [])]:
+        for o in d.get("outputs", []):
             owned.add(o)
             if not os.path.exists(os.path.join(root, o)): problems.append("%s: output missing: %s" % (d["id"], o))
         for o, h in (d.get("output_sha256") or {}).items():
@@ -434,7 +451,7 @@ def check():
             rel = folder + "/" + f
             if f.endswith(".html") and folder == "sources": continue
             if rel not in owned: problems.append("no report made " + rel)
-    g = subprocess.run(["git", "status", "--porcelain", "--", "library", "sources"], cwd=root, capture_output=True, text=True)
+    g = subprocess.run(["git", "status", "--porcelain", "--", "library", "sources", "prompts"], cwd=root, capture_output=True, text=True)
     for line in g.stdout.splitlines():
         if set(line[:2]) & set("MDR"): problems.append("changed or removed in a folder that only grows: " + line[3:])
     for x in problems: print(x)
@@ -462,6 +479,8 @@ if __name__ == "__main__":
     elif cmd == "note": note(rest[0], asked=o.get("asked"), why=o.get("why"), notes=o.get("notes"))
     elif cmd == "show": show(rest[0])
     elif cmd == "tell": tell(rest[0])
+    elif cmd == "resource": resource(rest, o["name"])
+    elif cmd == "build": build(rest[0], rest[1:], o["name"])
     elif cmd == "list": listing(o.get("skill"), o.get("pipeline"))
     elif cmd == "check": check()
     elif cmd == "id": print("%s-%s" % (stamp(), slug(rest[0])))

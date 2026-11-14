@@ -1,6 +1,6 @@
 ---
 name: project-pipeline
-description: Publish and keep a project's canon - pipeline/<n>/canon.sql, the table of every published canonical element, artifact, fact, and what each image shows, with what each was made from and each chain's steps as templates that name canon; the chain pages written from it; and the scripts its chains run again - publish only what the user approved, list everything a change touches, and start and run again a new pipeline when a change contradicts canon. Use when the user approves a result, when a request needs canon, when the user asks what a change would affect, and when a brief change starts a new pipeline. Not for running a single request (project-requests) or for the brief (project-brief).
+description: Publish and keep a project's canon - pipeline/<n>/canon.sql, the table of every published canonical element, artifact, fact, and what each image shows, with what each was made from and each chain's steps as templates that name canon; and the chain pages written from it - publish only what the user approved, list everything a change touches, and start and run again a new pipeline when a change contradicts canon. Use when the user approves a result, when a request needs canon, when the user asks what a change would affect, and when a brief change starts a new pipeline. Not for running a single request (project-requests) or for the brief (project-brief).
 ---
 
 # The pipeline
@@ -9,10 +9,10 @@ The pipeline is what is canon. Each published result, each canonical fact, and e
 
 ## What it holds
 
-`pipeline/<n>/` holds `canon.sql`, one page per chain, `<nn>-<chain>.html`, and the scripts its chains run again, such as a pre-vis builder. The table holds:
+`pipeline/<n>/` holds `canon.sql` and one page per chain, `<nn>-<chain>.html`. What canon points at is in `library/`, when a model made it, or in `prompts/resources/`, when the agent or a builder did, such as a floor plan or a pre-vis render; a chain's builders are resources too. The table holds:
 
 - **elements:** each canonical place, character, prop, look, story, or sound, and parts of them, such as a door;
-- **artifacts:** each published result, named `<element>: <role>`, such as `the diner: primary canonical location`, with its library file, its request, when it was published, and what it was made from, each source with its role;
+- **artifacts:** each published result, named `<element>: <role>`, such as `the diner: primary canonical location`, with its file in `library/` or `prompts/resources/`, its request, when it was published, and what it was made from, each source with its role;
 - **facts:** each element's canonical facts, `<element>: <fact>`, such as `the front door: side in the far-end frame`, each with the artifact that settles it;
 - **contents:** what each published image shows: its camera, and each named thing in its frame, where it is, its state, and, for a character, its mark and what it looks at;
 - **chains and steps:** each chain, in order, and each step in it, approved or still waiting: its skill, its endpoint, its prompt as a template, its references by artifact, the request that last ran it, and the artifact it published.

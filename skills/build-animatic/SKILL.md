@@ -119,6 +119,6 @@ Revise until the user approves it. The approved sheet and clip are published by 
 Hand back to [project-requests](../project-requests/SKILL.md):
 
 - **the check request,** when the setup offers a language model: its endpoint, the prompt as built from the timing check template, naming canon, and the timing sheet and the script it carries;
-- **the assembly request,** a `script` request: the command above; its assembly JSON; each frame, the bed, and each take by its canonical artifact, with its role in the cut, in the order listed; and the file it makes, the animatic's video;
+- **the assembly,** a build that `project-library` runs with `request.py build`, filing the video into `prompts/resources/`: the command above; its assembly JSON; each frame, the bed, and each take by its canonical artifact, with its role in the cut, in the order listed; and the file it makes, the animatic's video;
 - the timing sheet, with its cue list and counted notes, for the user's approval;
 - each shot whose length now differs from the approved shot list.

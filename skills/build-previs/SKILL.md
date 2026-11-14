@@ -13,7 +13,7 @@ Keep to the place. No characters and no lighting: those come later, from the sto
 
 ## The builder
 
-The mock-up is built by a script, from the layout's numbers, never by an image model, which cannot keep measurements. The script belongs to the place: it lives in the pipeline's folder, so the chain can run it again whenever the layout changes. The setup's 3D tool, such as Blender run without its window, renders it. Each run is a `script` request that `project-requests` runs; for each render, the script also writes what is in its frame, as JSON: the camera, and each named piece by its key's name, with its box in the frame and whether it lies left, centre, or right.
+The mock-up is built by a script, from the layout's numbers, never by an image model, which cannot keep measurements. The script belongs to the place: it is a shared resource in `prompts/resources/`, so the chain can run it again whenever the layout changes. The setup's 3D tool, such as Blender run without its window, renders it. Each run is a build, not a request: `project-library` runs it with `request.py build`, which files every render into `prompts/resources/`; for each render, the script also writes what is in its frame, as JSON: the camera, and each named piece by its key's name, with its box in the frame and whether it lies left, centre, or right.
 
 ## What it needs
 
@@ -57,7 +57,7 @@ Once the views are approved, the place's floor plan is written from the layout's
 
 ## Hand back
 
-To `project-requests`, as a `script` request:
+To `project-library`, as a build:
 
 - the builder's command, and the files it makes: the layout drawing from above, with every camera marked; the key, each element named with the photograph it was built from; each shot and view, in plain greys for the model and colour-coded and labelled for the user; and, for each render, what is in its frame;
 - each camera's position, height, direction, and lens, with its reason or its move from the original camera, for the user's approval;
