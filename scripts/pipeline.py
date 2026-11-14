@@ -128,7 +128,7 @@ def fill(root, n, chain, step, name=None):
     for ref in json.loads(refs or "[]"):
         if ref.get("file"):
             references.append({"file": ref["file"], "role": ref.get("role", ""), "canon": None,
-                               "note": "a fixed input, not canon"})
+                               "note": "a fixed input, not canon", **({"field": ref["field"]} if ref.get("field") else {})})
             continue
         a = db.execute("SELECT file FROM artifact WHERE id=?", (ref["artifact"],)).fetchone()
         if not a: missing.append(ref["artifact"]); continue

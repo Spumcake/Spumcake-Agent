@@ -184,7 +184,9 @@ def fal(spec, root, tmp, key_file):
     fal_key = key("fal-ai", "FAL_KEY", r"[A-Za-z0-9_\-]+:[A-Za-z0-9_\-]+", key_file)
     uploaded = {}
     for r in spec.get("references", []):
-        field = r.get("field") or ep.get("reference_field", "image_urls")
+        field = r.get("field") or ep.get("reference_field")
+        if not field:  # never guess where a file goes: an audio file sent as an image is silently ignored
+            sys.exit("no field for %s: say which of the endpoint's fields it goes in" % r["file"])
         f = os.path.join(root, r["file"])
         url = uploaded.get(f) or fal_upload(f, fal_key)  # fal refuses large files sent inline; its storage takes them
         uploaded[f] = url
