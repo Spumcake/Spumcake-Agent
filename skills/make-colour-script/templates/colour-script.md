@@ -20,12 +20,6 @@ In story order, each with its line of colour logic beneath it.
 
 ### {{number}}. {{name}}
 
-![{{number}}. {{name}}]({{keyframe_path}})
+Keyframe: `beat {{number}}: colour key`
 
 {{colour_line}}
-
-## Approved
-
-The keyframes the user approved, and the date.
-
--

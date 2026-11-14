@@ -10,11 +10,10 @@ assembly.json:
   "bed": {"audio": "bed.wav", "gain_db": 0},
   "clips": [{"audio": "take.wav", "from": 0.05, "to": 0.65, "at": 4.2, "gain_db": 0}, ...]
 }
-Frames must run on from 0 to length without a gap. Needs ffmpeg. Writes the video's record (docs/records.md).
+Frames must run on from 0 to length without a gap. Needs ffmpeg. Writes only the video; project-requests runs this
+as a script request, and the request's report says what it was made from.
 """
 import json, subprocess, sys, tempfile, os
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "scripts"))
-import records
 
 spec = json.load(open(sys.argv[1])); out = sys.argv[2]
 L, fps = spec["length"], spec.get("fps", 24); W, H = spec.get("size", [1536, 864])
@@ -46,10 +45,4 @@ with open(lst, "w") as fh:
 subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", lst, "-i", mix,
                 "-vf", f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:white,fps={fps},format=yuv420p",
                 "-c:v", "libx264", "-crf", "18", "-c:a", "aac", "-b:a", "192k", "-t", str(L), "-shortest", out], check=True)
-records.write(out, "video", made_by={"tool": "build-animatic/scripts/assemble.py",
-              "settings": {"length": L, "fps": fps, "size": [W, H]}, "cost": "nothing; local"}, prompt=os.path.abspath(sys.argv[1]),
-              made_from=[{"file": os.path.abspath(f["image"]), "role": f"frame, {f['in']} to {f['out']} s"} for f in frames]
-              + [{"file": os.path.abspath(spec["bed"]["audio"]), "role": f"sound bed, at {spec['bed'].get('gain_db', 0)} dB"}]
-              + [{"file": os.path.abspath(c["audio"]), "role": f"clip {c['from']} to {c['to']} s, laid at {c['at']} s, at {c.get('gain_db', 0)} dB"}
-                 for c in spec.get("clips", [])])
-print("wrote", out, "with its record, and the mix", mix)
+print("wrote", out, "and the mix", mix)

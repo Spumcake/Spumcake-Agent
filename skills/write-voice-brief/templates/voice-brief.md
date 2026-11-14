@@ -1,6 +1,6 @@
-# Voice brief: {{character}}, {{film}}
+# {{character}}
 
-From: {{the audio identity brief's path}}, {{the beat sheet's or script's path}}, and {{the character's canonical images or brief}}. Anything marked *proposed* is the agent's, for the user to keep or change. Edited by the user on: {{dates, or none}}.
+From: the audio identity, {{the beat sheet or the script, by canonical name}}, and {{the character's published images by canonical name, or the brief}}. Anything marked *proposed* is the agent's, for the user to keep or change.
 
 ## The voice
 

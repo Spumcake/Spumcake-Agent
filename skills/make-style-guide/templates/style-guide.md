@@ -40,9 +40,3 @@ Drawn from: {{sources}}. A rule marked *proposed* is the agent's suggestion, wai
 ## Never
 
 {{never}}
-
-## Style references
-
-What the user chose, sent with every later prompt in the concept:
-
-{{references}}

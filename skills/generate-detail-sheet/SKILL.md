@@ -13,12 +13,14 @@ A good sheet keeps the subject's pose, colours, and shapes in all four figures, 
 
 ## The models and the route
 
-As `generate-concept-reference` says: an image-edit model that takes the prompt exactly as written, such as OpenAI's image edit with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio.
+As `generate-concept-reference` says: an image-edit model that takes the prompt exactly as written, such as OpenAI's image edit with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio. This skill builds the request and hands it back; [project-requests](../project-requests/SKILL.md) runs it with `scripts/request.py`, which sends it exactly as built. What a request costs comes from the setup, and nothing is paid before the user's yes.
 
 ## What it needs
 
-- the subject's concept art reference, from `generate-concept-reference`;
-- a folder for the prompt and the sheet.
+Each input by its canonical name, from the pipeline's table:
+
+- the subject's concept art reference, from `generate-concept-reference`, such as `<character>: concept study`;
+- for the animatic, the subject's animatic expression sheet, `<character>: animatic expression sheet`.
 
 ## Making it
 
@@ -30,9 +32,14 @@ Fill [the detail sheet template](templates/detail-sheet.md) and send the concept
 
 For the animatic, fill [the board-style detail sheet template](templates/detail-sheet-board.md) instead, sending the concept art reference first and the animatic expression sheet second, for its board look: the same four distances in partially completed line art with no shading, with one pen width, so the further the subject is, the fewer lines (the user, 2026-11-12).
 
-The figures stand on one ground line at halving heights, so concept artwork can match a figure to the subject's height in the frame. Make one; a second call is for a sheet that failed. Show it with its prompt and the reference sent.
+The figures stand on one ground line at halving heights, so concept artwork can match a figure to the subject's height in the frame. Make one; a second call is for a sheet that failed.
 
 ## Hand back
 
-- the sheet, with its prompt and the reference sent;
-- the film map, updated: the sheet sits beside the subject's concept art reference, and `generate-concept-artwork` sends it whenever the subject is staged.
+Hand back to `project-requests`:
+
+- the request: the image-edit endpoint; the prompt as a template naming canon, `{{<element>: <fact>}}`; and the references by canonical artifact, each with its role, in the order to send them: the concept art reference alone, or, for the animatic, the concept art reference first and the animatic expression sheet second;
+
+and, for the user to approve:
+
+- the sheet, which `project-pipeline` publishes as `<subject>: detail sheet`, or `<subject>: animatic detail sheet`; `generate-concept-artwork` sends it whenever the subject is staged.

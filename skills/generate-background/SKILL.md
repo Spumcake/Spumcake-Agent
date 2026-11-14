@@ -19,22 +19,23 @@ The keyframe is sent for its framing only: its camera, angle, and horizon, and w
 
 - **The workflow skill** of the model the request names, or that the user chooses, says how many references it takes, the sizes and the widest and tallest shapes it makes, and whether it extends an image past its edges. When the request names no model and more than one fits, ask.
 - **Its prompt skill** gives its syntax and limits.
-- **The execution skill** that implements `generate-background` in this setup renders it; when none does, the setup's renderer. It says what a request costs and where its output lands.
+- **Running it** is [project-requests](../project-requests/SKILL.md)': this skill builds each request and hands it back, and `project-requests` runs it with `scripts/request.py`, which sends it exactly as built. What a request costs comes from the setup, and nothing is paid before the user's yes.
 
-All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop.
+The model's specifics come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop.
 
 ## What it needs
 
-From the caller:
+Each input by its canonical name, from the pipeline's table:
 
-- an approved shot list, with each shot's number, framing, angle, camera move, and place;
-- the approved keyframes: one per shot, named by its shot number, and an end frame, named by the number and `-end`, for each camera move; with none, the keyframes are made and approved first;
-- each place's primary canonical location and its views, each named by its camera, with their neutral passes;
-- each place's mood reference from the concept art phase, named by its mood, for each mood its shots are in;
-- the colour script, with its line of colour logic for each beat, and which beat each shot falls in;
-- the concept's style guide: its written rules and its style sheet;
-- the film's aspect ratio;
-- a folder for the background plan, the prompts, and the plates, each plate saved beside its prompt.
+- the approved shot list, and each shot's facts: `<shot>: framing`, `<shot>: angle`, `<shot>: camera move`, and `<shot>: place`;
+- the approved keyframes: one per shot, `<shot>: keyframe`, and an end frame, `<shot>: end frame`, for each camera move; with none, the keyframes are made and approved first;
+- each place's primary canonical location, `<place>: primary canonical location`, and its views, `<place>: view <camera>`, with their neutral passes;
+- each place's mood reference from the concept art phase, `<place>: mood reference <mood>`, for each mood its shots are in;
+- the colour script, with its line of colour logic for each beat, `<beat>: colour logic`, and which beat each shot falls in, `<shot>: beat`;
+- the concept's style guide: its written rules, `<look>: style guide`, and its style sheet, `<look>: style sheet`;
+- the film's aspect ratio, `<film>: aspect ratio`.
+
+Before writing a prompt, read what each image to be sent shows from the pipeline's table with `pipeline.py`: its camera, and each named thing in its frame, where it is, and its state. Those contents are the agent's, never sent to the model.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a model new to this film is a short test of a few setups.
 
@@ -42,7 +43,7 @@ Characters who read as minors, and the art and photographs the user may use, are
 
 ## Setups
 
-A **camera setup** is one camera position, at one framing and angle, in one place. Every shot taken from the same setup, such as `3-1`, `3-3`, and `3-5` cutting back to the same wide shot, uses the same plate: one file, made once, never made again for each shot. That is what keeps plates of one setup identical.
+A **camera setup** is one camera position, at one framing and angle, in one place. Every shot taken from the same setup, such as `3-1`, `3-3`, and `3-5` cutting back to the same wide shot, uses the same plate: one plate, made once, never made again for each shot. That is what keeps plates of one setup identical.
 
 - A setup is named by its first shot's number, such as `bg-3-1`, and the plan lists every shot that uses it.
 - When a later shot of a setup is in another mood or beat, such as the lights going out, its plate is made from the setup's approved plate, changing only the light, and named by the setup and the mood, such as `bg-3-1-dark`. Nothing else in it may change.
@@ -56,7 +57,7 @@ The plate is as big as the move: the frame, and as far as the camera travels.
 - A pan or a truck sideways needs a plate wider than the frame; a tilt or a crane, taller. The start keyframe's framing sits at one end of the plate, and the end frame's at the other.
 - A push in or a pull out keeps the shape of the frame: the plate is the wider framing, at the largest size the model makes, so the tighter framing still holds its detail.
 - When the move needs a plate wider or taller than the model makes, make the start framing first. Then extend it a side at a time, each request sent the plate so far as its first reference, until it covers the move. Say in each prompt that nothing already drawn changes and no seam shows.
-- Record in the plan where the start and end framings sit on the plate, such as "start: the left 16:9 of the plate; end: the right 16:9".
+- Say in the plan where the start and end framings sit on the plate, such as "start: the left 16:9 of the plate; end: the right 16:9".
 
 ## What passes in front
 
@@ -97,6 +98,7 @@ The mood reference fixes how the place is lit; the colour script's line fixes th
 ### Filling the templates
 
 - Put each part into its field in the model's syntax, as its prompt skill says: the words in `prompt`, what to avoid in `negative` when the model takes it, and the images, in order, in `references`, by the [prompt roles](../../docs/prompt-roles.md). Write each prompt with the setup's prompt writer, naming the prompt skill the workflow skill gives.
+- Every placeholder that stands for a canonical value, such as the place, the view, the horizon, or what passes in front, is written in the step's template as `{{<element>: <fact>}}`, such as `{{<shot>: horizon}}`, and filled from the pipeline's table, never typed in by hand.
 - `{{references_list}}` names each attached image on its own line, in the order sent, with what it fixes.
 - `{{style_rules}}` is the style guide's written rules for environments, line, colour, light, and texture, quoted.
 - `{{colour_script_line}}` is the colour script's line for the shot's beat, quoted.
@@ -118,7 +120,7 @@ Use the names the script, the shot list, and the place's views use. Show the pla
 Choose two or three setups that differ, such as a still wide shot, a camera move, and a setup seen in two moods.
 
 - Fill [the plate template](templates/background-plate.md) for a still setup, [the wide plate template](templates/background-wide-plate.md) for a camera move, and [the relight template](templates/background-relight.md) for a setup in another mood.
-- Plan them, render them on the user's yes, and report each output's path.
+- Build their requests and hand them back; `project-requests` runs them on the user's yes.
 - Review each, as step 4 says, and report every difference honestly.
 
 The user chooses the plate whose finish sets the plates' finish, or asks for another take; never choose for them. From now on, that approved plate is sent with every plate of another setup.
@@ -128,7 +130,7 @@ The user chooses the plate whose finish sets the plates' finish, or asks for ano
 Make the rest a scene at a time, in shot order.
 
 - A setup's first plate comes before its plates in other moods.
-- Make each setup's plate once. Every shot of the setup uses that same file.
+- Make each setup's plate once. Every shot of the setup uses that same plate.
 - For a move wider than the model makes, make the start framing, show it, then extend it on the user's yes.
 - A new take is a new paid request, and needs the user's yes.
 
@@ -148,22 +150,25 @@ Report it honestly, such as "the horizon sits higher than in the keyframe, so Mi
 
 ## 5. The user's approval
 
-The user approves each plate, or asks for another take; never choose for them. Record the take the user approved for each setup in the plan, with the date.
+The user approves each plate, or asks for another take; never choose for them. An approved plate is published by `project-pipeline`, as `<setup>: background plate`, or `<setup>: background plate <mood>`. A rejected take is never used as an input again.
 
 ## 6. Revisions
 
 A setup keeps its name once approved, since its shots are composited over it by that name.
 
-- A new take of a plate keeps its name. The take the user approves replaces it, and every shot of the setup uses the new one; the earlier take is kept beside it.
+- A new take of a plate keeps its name. The take the user approves is published in its place, and every shot of the setup uses the new one.
 - When a keyframe's framing changes, redo the plate of its setup, and say which other shots of the setup it changes too. When a shot moves to another setup, the plan says so.
 - When a place's views, its mood reference, or a colour script line changes, redo only the plates it touches, and list what changed.
 
 ## Hand back
 
-Hand back to the caller:
+Hand back to `project-requests`, for each plate, in the plan's order:
 
-- the approved plates, each named by its setup, and by its mood when it has more than one;
-- the background plan: which shots use each plate, where a move's framings sit on its plate, what passes in front of the characters in each, the references each was made from, and the take the user approved, with the date;
-- the approved plate that set the plates' finish;
-- the differences the user accepted at review, by plate;
-- the prompts that made the plates, each beside its plate.
+- the request: the image-edit endpoint, the prompt as a template naming canon, `{{<element>: <fact>}}`, and the references by canonical artifact, each with its role, in the order to send them: the nearest view, the mood reference, the keyframe for framing only, and the rest as the order above gives;
+- for a wide plate made in parts, one request per extension, each sent the plate so far first;
+
+and, for the user to approve:
+
+- the background plan: which shots use each plate, where a move's framings sit on its plate, what passes in front of the characters in each, and the references each is made from;
+- each plate, and the plate that sets the plates' finish;
+- the differences the review found, by plate, for the user to accept or reject.

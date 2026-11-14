@@ -1,6 +1,6 @@
-# Audio identity brief: {{film}}
+# The audio identity
 
-From: {{the brief's path}}, and {{the other sources' paths}}. Drafted from them; anything marked *proposed* is the agent's, for the user to keep or change. What the brief fixes is not restated here. The voices are described in {{the voice briefs' paths}}, and every sound in {{the sound design brief's path}}. Edited by the user on: {{dates, or none}}.
+From: the brief, and {{the other sources, by section or canonical name}}. Drafted from them; anything marked *proposed* is the agent's, for the user to keep or change. What the brief fixes is not restated here. The voices are described in the voices section, and every sound in the sound design section.
 
 ## What the sound is for, moment by moment
 

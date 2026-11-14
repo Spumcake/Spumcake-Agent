@@ -1,5 +1,5 @@
 ---
-aspect_ratio: "{{aspect_ratio}}"
+aspect_ratio: "{{<film>: aspect ratio}}"
 quality: high
 ---
 ## Prompt

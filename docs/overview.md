@@ -11,7 +11,7 @@ A user will be able to ask an agent for a style guide for their show, choose a d
 ## What is always true
 
 - **Filmmaking skills that create prompts.** A skill belongs here when it plans a stage of making a film, from pre-production or one of the fundamental tasks a production is built from, and creates the prompts destined for the models that process them and return outputs, with any model. Skills fundamental to running models or workflows in particular, such as rendering a prompt, cleaning up images, or training a LoRA, live with whatever runs them. A skill that only makes sense for one model, one tool, or one project lives with that model, tool, or project.
-- **Running a model is the setup's.** A skill here says how to go about a task: the method, what a good result looks like, what the user approves, and when to stop and ask. It names no model, service, server, key, price, or command, and has no scripts, except a build skill's, which makes its result without a model. The setup it runs in provides the model's own documentation, a prompt writer, and a renderer, as [prompt-roles.md](prompt-roles.md) describes.
+- **Running a model is the setup's.** A skill here says how to go about a task: the method, what a good result looks like, what the user approves, and when to stop and ask. It names no model, service, server, key, price, or command, and has no scripts, except a build skill's, which makes its result without a model, and the project tools in `scripts/`. The setup it runs in provides the model's own documentation, a prompt writer, and a renderer, as [prompt-roles.md](prompt-roles.md) describes.
 - **Skills are sorted by category.** A skill's name starts with its category's word, and every skill in a category has the same parts, as [skill-categories.md](skill-categories.md) describes.
 - **A skill is a method.** Tasks that share a method, differing only in what the result shows, are one skill with one template per task.
 - **A skill holds its own prompt rules,** and builds every prompt its task needs: for a language model, an image model, or a video model.
@@ -24,7 +24,7 @@ A user will be able to ask an agent for a style guide for their show, choose a d
 ## What it will never be
 
 - Not documentation of any product, and not tied to one model, service, or setup.
-- Not a tool, and not a home for running models: it runs nothing itself. Rendering, cleanup, training, and the skills a tool needs live with whatever runs them.
+- Not a tool, and not a home for running models: its skills run nothing themselves; its one runner, `scripts/request.py`, sends a request exactly as a skill built it, so its report is true. Rendering, cleanup, training, and the skills a tool needs live with whatever runs them.
 - Not a judge of taste: it never scores or chooses results for the user.
 
 ## Words we use

@@ -19,19 +19,17 @@ The language model may be the agent itself, when the setup says so.
 
 ## Find the specifics
 
-The **workflow skill** of the model the request names, or that the user chooses, says whether it takes images, video, or audio, how many files one request takes, and the largest size it takes. **Its prompt skill** gives its syntax and limits. The **execution skill** that implements `review-continuity` in this setup renders it, taking a clip's frames and running the review; when none does, the setup's renderer. It says what a request costs.
+The **workflow skill** of the model the request names, or that the user chooses, says whether it takes images, video, or audio, how many files one request takes, and the largest size it takes. **Its prompt skill** gives its syntax and limits. The setup says what a request costs, and takes a clip's frames.
 
-All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop. When the request names no model and more than one fits, ask. When the setup cannot take frames from a clip, or has no model that takes the result's kind, say so and stop; never review by hand in its place.
+All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop. This skill builds the review's request and hands it back; `project-requests` runs it with `scripts/request.py`, which sends it exactly as built. When the request names no model and more than one fits, ask. When the setup cannot take frames from a clip, or has no model that takes the result's kind, say so and stop; never review by hand in its place.
 
 ## What it needs
 
-From the caller:
-
-- the result: its file, its kind, its name, such as its shot number or its sheet's name, and the step that made it;
-- the approved references it must agree with, as step 1 lists them for its kind; each by file, with what it fixes;
-- for a clip, a lip-synced shot, or a final shot, its length and frame rate, and the cuts in it, when it was assembled from several shots;
-- the neighbouring shots' results, when the result is a shot: the last frame of the shot before and the first frame of the shot after, or their sounds;
-- a folder for the samples, the prompts, and the findings, saved beside the result.
+- the result: the request that made it, its kind, its name, such as its shot number or its sheet's name, and the step that made it;
+- the published references it must agree with, by canonical name from the pipeline's table, such as `<character>: A-pose front` or `<place>: view <wall>`, as step 1 lists them for its kind, each with what it fixes;
+- what each of those images shows, and the facts the checks need, such as `<character>: mark in <frame>`, from the pipeline's table with `pipeline.py`;
+- for a clip, a lip-synced shot, or a final shot, its length and frame rate (`<film>: frame rate`), and the cuts in it, when it was assembled from several shots;
+- the neighbouring shots' published results, when the result is a shot, such as `<shot>: keyframe`: the last frame of the shot before and the first frame of the shot after, or their sounds.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first review on a new model is a short test, one result, before a batch.
 
@@ -43,18 +41,18 @@ A review prompt says what the result is, what each file is, what the written ref
 
 1. **What the result is:** its kind, its name, the film, and its job in one line, such as "the keyframe for shot 3-2, the first frame its clip is animated from". The job tells the model what matters most.
 2. **The files,** numbered in the order sent: the result's samples first, each with its frame number and time, or its word; then the references, each subject's together, a character's front A-pose view first, then its other A-pose views and sheets, or another subject's reference sheet first; then the place's, then the neighbouring shots', and the style sheet last. Say what each reference fixes, such as "Mira's front A-pose view: her face, hair, proportions, and outfit". A model cannot guess which reference is for what.
-3. **The written references,** quoted as approved, never reworded: the colour list's rows, the line-up's heights and landmarks, the style guide's rules, the colour script's line, the shot list's row, and the script's lines. Written values settle what an image leaves unclear.
+3. **The written references,** quoted from their published artifacts and facts, never reworded or typed by hand: the colour list's rows, the line-up's heights and landmarks, the style guide's rules, the colour script's line, the shot list's row, and the script's lines. In the prompt, each canonical value is written as `{{<element>: <fact>}}`, filled from the pipeline's table. Written values settle what an image leaves unclear.
 4. **The checks,** one short line each, each concrete enough to see or hear, and each against a named reference: "her jacket is Rust, #B5512C, as her colour list gives it", not "her colours are right". Leave out the checks the result has no reference for.
 5. **How to report:** every difference, however small; where; against what; what it should be; whether it blocks approval or is a note; and the evidence. No score, no verdict, no fix.
 6. **The answer's form:** [the findings template](templates/findings.md), exactly.
 
 Leave out praise, taste, and anything about how the result was made. Keep each check to a line; a long prompt with many images makes a model skip checks. When the samples and references are more than one request takes, split the samples across requests in time order, each sent with the same references and the same checks, and overlapping by one sample.
 
-Put the words in `prompt`, and the files, numbered as the prompt numbers them, in `references`, by the [prompt roles](../../docs/prompt-roles.md); or by the names the language model's workflow skill gives when it does not take roles. Write each prompt with the setup's prompt writer.
+Put the words in `prompt`, and the files, numbered as the prompt numbers them, in `references`, by the [prompt roles](../../docs/prompt-roles.md); or by the names the language model's workflow skill gives when it does not take roles. Each reference is named by its canonical artifact, with its role, such as "image 3, `<character>: A-pose front`, her face, hair, proportions, and outfit".
 
 ## 1. Gather the references
 
-First run `scripts/records.py check` on the result. A result with no record, a record pointing at a missing file, a copy with no source, or an image with no contents is not reviewed or shown until its record is fixed ([records](../../docs/records.md)).
+First run `request.py check`. A result with no report, a report pointing at a missing file, or a library file changed since it was made is not reviewed until `project-requests` sets it right. Gather every reference from the pipeline's table by its canonical name, never by a file name, and read what each published image shows, its camera, its named things, where each is, its state, and what it looks at, from the table with `pipeline.py`.
 
 Choose the template for the result's kind, and gather what it must agree with:
 
@@ -68,20 +66,20 @@ Choose the template for the result's kind, and gather what it must agree with:
 - **A sound,** a voice line, an effect, an ambience, or music, uses [the sound template](templates/review-sound.md). It agrees with the script's words and directions, the speaker's voice reference, the timing sheet's cue and the shot's length, the shot list's action, the place, and the beat's mood, and with the sounds on either side. Checks: the words and the voice for a voice line; the timing, the place and the mood, and across the cut for every sound.
 - **A sequence of shots** uses [the sequence template](templates/review-sequence.md), when the user asks for one, or once every shot of a scene has its own review. It agrees with the shot list's rows, the subjects' and the place's references, and the colour script. Every group of checks applies.
 
-**Space.** Every image with a character in a place is also checked against the place's floor plan and the timing reference's blocking: each character stands on their mark, faces the way it gives, and looks at the named object it gives, as this camera sees it; each named object is where the plan puts it, and in the state the blocking gives, such as a door open or closed. A look aimed at the wrong door is a finding, however good the frame (the user, 2026-11-13).
+**Space.** Every image with a character in a place is also checked against the place's floor plan (`<place>: floor plan`) and the blocking the timing settles, as the pipeline's table holds it, such as `<character>: mark in <frame>`: each character stands on their mark, faces the way it gives, and looks at the named object it gives, as this camera sees it; each named object is where the plan puts it, and in the state the blocking gives, such as a door open or closed. A look aimed at the wrong door is a finding, however good the frame.
 
 **A generated image's own sources.** Every image a model made from a request is also checked against what it descends from, which is how `fix-canonical-image` finds what to fix:
 
-- **its canonical prompt,** the text-to-image prompt it descends from, as sent, however many edits came after it: what the image has that a line rules out, such as many elements where the prompt asks for minimal ones, and what a line asks for that came out wrong, each finding quoting the line. The prompt is the only measure here: what it does not say, such as a number of stools, is not a finding;
-- **its pre-vis,** when it was made from one, as its inventory: anything the pre-vis does not represent, except the world seen through the windows; and for each such thing, whether it reads clearly as a thing the place needs, such as a door;
+- **its canonical prompt,** the text-to-image prompt it descends from, as sent, from its request's report with `request.py show`, however many edits came after it: what the image has that a line rules out, such as many elements where the prompt asks for minimal ones, and what a line asks for that came out wrong, each finding quoting the line. The prompt is the only measure here: what it does not say, such as a number of stools, is not a finding;
+- **its pre-vis,** when it was made from one, as what it was made from in the pipeline's table shows, as its inventory: anything the pre-vis does not represent, except the world seen through the windows; and for each such thing, whether it reads clearly as a thing the place needs, such as a door;
 - **each visible object, one by one:** an object that does not read clearly as any one thing, or a thing formed wrongly, such as a partition that could be a door, a window, or a cabinet;
 - **on a form pass,** a view with no textures: texture that shows through, such as lettering, or patterns on floors, walls, or upholstery;
 
 A style the model chose for something that was asked for, and a thing asked for that is right, are not findings.
 
-Send only approved references. When one is missing, say which, and ask whether to stop or to review without it; without it, its checks go under *Could not check*. When a reference has changed since the result was made, say so: the result is out of date, and is reviewed against the new version.
+Send only published references; a rejected result is never sent. When one is missing, say which, and ask whether to stop or to review without it; without it, its checks go under *Could not check*. When a reference was replaced by a later publish since the result was made, say so: the result is out of date, and is reviewed against the new version.
 
-Use the names of the script and the shot list for every character, place, prop, and shot, and the numbers the user approved.
+Use the canonical names the pipeline's table gives for every character, place, prop, and shot, and the numbers the user approved.
 
 ## 2. Sample the result
 
@@ -92,7 +90,7 @@ Use the names of the script and the shot list for every character, place, prop, 
 - **A sound** is sent whole, with its voice reference.
 - **A sequence** is sampled at each shot's first, middle, and last frames.
 
-The setup takes the frames. Name each by the result, its frame number, and its time, and save them in the review's folder.
+The setup takes the frames as part of the request. Label each in the request by the result, its frame number, and its time.
 
 ## 3. Build the prompt
 
@@ -110,15 +108,13 @@ Fill the kind's template, following the review prompts above:
 - In the sound template, `{{use}}` says where the sound goes, such as "the line of cue 12, in shot 3-2", and `{{timing}}` gives its cue, its start, and its shot's length.
 - `{{findings_template}}` is [the findings template](templates/findings.md), as the exact form of the answer.
 
-Save the prompt beside the samples, named for the result and the review's number.
+## 4. Hand it to be run
 
-## 4. Run it
-
-Plan the run: the model, the number of requests, and the cost when it bills. Run it on the user's yes when it costs anything, with the setup's renderer. Send it and its files as the [prompt roles](../../docs/prompt-roles.md) say. When the review was split across requests, merge the answers into one findings list, in order, and report a difference found in two overlapping requests once.
+Hand the request back: the model, the number of requests, and the cost from the setup when it bills. `project-requests` runs it on the user's yes when it costs anything, with its files sent as the [prompt roles](../../docs/prompt-roles.md) say, and its report holds the answer. When the review was split across requests, merge the answers into one findings list, in order, and report a difference found in two overlapping requests once.
 
 ## 5. Check the answer
 
-Before showing it, check that:
+Before handing it back, check that:
 
 - it is in the findings form, every section present;
 - every finding has a what, a where, an against, a should be, a serious of *blocks approval* or *note*, and evidence;
@@ -130,24 +126,21 @@ Before showing it, check that:
 
 When a check fails, correct the prompt as the [prompt roles](../../docs/prompt-roles.md) say.
 
-Then look at the sample each finding points to. When the difference cannot be seen there, say so beside the finding; never drop a finding, and never add one of your own to the model's list. A difference you see that the review missed is told to the user separately, as yours.
+Then look at the sample each finding points to. When the difference cannot be seen there, say so beside the finding; never drop a finding, and never add one of your own to the model's list. A difference you see that the review missed is handed back separately, as yours.
 
 ## 6. The user's decision
 
-Show the findings, those that block approval first, each with its sample beside the reference it breaks. Then what was checked and clear, and what could not be checked. Report honestly: a review that found nothing is not proof that nothing is wrong.
+The findings go in order, those that block approval first, each with its sample beside the reference it breaks; then what was checked and clear, and what could not be checked. A review that found nothing is not proof that nothing is wrong.
 
 The user decides each finding:
 
-- **accept it:** the result stands with that difference, recorded with the user's reason when they give one;
-- **remake:** the result goes back to the step that made it, with the finding as what to change.
+- **accept it:** the result stands with that difference, with the user's reason when they give one, and may be published by `project-pipeline`;
+- **remake:** the result goes back to the step that made it, as a new request, with the finding as what to change; the rejected result is never used as an input again.
 
-Never choose for them, never fix the result, and never remake it here. When `fix-canonical-image` called the review, its findings go to the cleanup instead, which fixes them as part of the step and shows the user the findings and the fixes together afterwards. Record each decision in the finding's "The user's decision" line, and the date in "Decided". When a remade result comes back, review it again from step 2 with the same references, and say which earlier findings are gone and which remain.
+Never choose for them, never fix the result, and never remake it here. When `fix-canonical-image` called the review, its findings go to its fixes instead. The findings form's "The user's decision" lines and "Decided" are left empty by the review, for the user's decisions. When a remade result comes back, review it again from step 2 with the same references, and say which earlier findings are gone and which remain.
 
 ## Hand back
 
-Hand back to the caller:
-
-- the continuity review: the findings, with the user's decision on each and the date;
-- the prompt that made it, its samples, and the model's answer;
-- whether the result's review is clear, with every finding accepted, or which findings send it back to be remade;
+- the review's request, for `project-requests`: the endpoint kind, a language model that takes the result's kind; the prompt, with each canonical value as `{{<element>: <fact>}}`; and the files in the order sent, the result's samples first, then each reference by its canonical artifact with its role;
+- once the answer is checked, the findings, in [the findings template](templates/findings.md): each difference, where it is, which canon it breaks, what it should be, and whether it blocks approval, with what was checked and clear;
 - each reference that was missing or out of date, and the checks that could not be made.

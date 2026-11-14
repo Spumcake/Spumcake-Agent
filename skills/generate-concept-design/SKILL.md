@@ -18,19 +18,18 @@ A good set gives the user real choices. Each direction answers the brief differe
 ## Find the specifics
 
 - **The workflow skill** of the model the request names, or that the user chooses, says which way of running it takes text alone and which takes references, how many references it takes, and the sizes it makes. **Its prompt skill** gives its syntax and limits.
-- **The execution skill** that implements `generate-concept-design` in this setup renders it; when none does, the setup's renderer. It says what a request costs and where its output lands.
+- **Running it** is [project-requests](../project-requests/SKILL.md)': this skill builds each request and hands it back, and `project-requests` runs it with `scripts/request.py`, which sends it exactly as built. What a request costs comes from the setup, and nothing is paid before the user's yes.
 
-All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop. When the request names no model and more than one fits, ask.
+The model's specifics come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop. When the request names no model and more than one fits, ask.
 
 ## What it needs
 
-From the caller:
+Each input by its canonical name, from the pipeline's table, where it has one:
 
 - the user's request: the subject, what it is for, and anything it must or must not be;
-- the subject's name as the script uses it, and the scenes it appears in, when there is a script;
-- the user's sketches or art of the subject, when there are any;
-- the concept's style guide, when it has one: its written rules and its style sheet;
-- a folder for the brief, the prompts, and the images, each image saved beside its prompt.
+- the subject's name as the script uses it, the element itself, and the scenes it appears in, from the script, `<film>: script`, when there is one;
+- the user's sketches or art of the subject, when there are any, such as `<subject>: sketch`;
+- the concept's style guide, when it has one: its written rules, `<look>: style guide`, and its style sheet, `<look>: style sheet`.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a new model is one image, as a test, before the rest.
 
@@ -80,7 +79,7 @@ First, explore. Concept art is created with a text-to-image workflow. A concept-
 
 Add nothing else. No style words, no description of the character or the place, no lighting or composition, and no negative prompt unless the user asks for one. The fewer words, the better, because the context template works best when the rest is left to the model's interpretation. Make many candidates, eight or more, each with a new seed, so each is a different interpretation, the way an artist explores. The point is to find what the concept should be, not to get an exact picture. Exact, consistent prompts come later, once a concept is chosen.
 
-For a character design, leave out the template's "rule of thirds" and its line on characters as minimal painted geometric masses: a character design is centred and clear. Fill [the concept context template](templates/concept-context.md) with the premise, such as "a tired diner cook" or "a roadside diner at night", and its purpose: "16:9 concept illustration" for a place or a moment, or "concept character design" for a subject. Plan the candidates, render them on the user's yes, and show them with the exact prompt sent. The user picks the candidates worth developing.
+For a character design, leave out the template's "rule of thirds" and its line on characters as minimal painted geometric masses: a character design is centred and clear. Fill [the concept context template](templates/concept-context.md) with the premise, such as "a tired diner cook" or "a roadside diner at night", and its purpose: "16:9 concept illustration" for a place or a moment, or "concept character design" for a subject. Build the candidates' request and hand it back; `project-requests` runs it on the user's yes, and shows them with the exact prompt sent. The user picks the candidates worth developing.
 
 **Text gives context only where no image does,** as the [prompt roles](../../docs/prompt-roles.md) say.
 
@@ -88,7 +87,7 @@ Then, for the picks, make one image per direction, to settle the design.
 
 - For a character, a creature, a prop, or a vehicle, fill [the design template](templates/concept-design.md); for a place, fill [the place template](templates/concept-place.md). Only the direction's lines change between them.
 - Send the user's sketches first, in the order the brief lists them, and the style sheet last, when there are any.
-- Plan the directions, render them on the user's yes, and report each output's path, named by its direction's letter.
+- Build the directions' requests, each named by its direction's letter, and hand them back; `project-requests` runs them on the user's yes.
 - Inspect each against the brief and the style guide's rules, and report honestly where it breaks them, or where two directions came out alike.
 
 The user chooses one direction, asks for a mix, or asks for new directions; never choose for them. New directions are a new plan.
@@ -103,14 +102,17 @@ When the user asks for a mix or changes, fill [the refine template](templates/co
 
 Each round is a new paid request, and needs the user's yes. Inspect it against what the user asked for, and report drift honestly. Repeat until the user says the design is settled.
 
-## 4. Hand back
+## Hand back
 
-Record in the brief's Chosen design section which image the user settled on, what they took from each direction, and the date.
+Fill in the brief's Chosen design section: which image the user settled on, and what they took from each direction. The settled design is published by `project-pipeline`; the other directions are never used as inputs again.
 
-Hand back to the caller:
+Hand back to `project-requests`, for each round:
 
-- the settled design, as the input images for the subject's reference, or the place's;
-- the brief, with the user's choice recorded;
-- the other directions, kept for the record, not as references.
+- the request: the endpoint kind, text-to-image for the candidates, or image-edit for directions with references and for every mix or refinement; the prompt as a template naming canon, `{{<element>: <fact>}}`; and the references by canonical artifact, each with its role, in the order to send them: the leading chosen direction first, then any other chosen direction, then the sketches, then the style sheet last;
+
+and, for the user to approve:
+
+- the concept brief and its directions, before anything is made;
+- the picks, the chosen direction, and each refinement, until the design is settled.
 
 A settled design goes on to be made canonical, through `make-canonical`. The subject's reference is drawn from the settled design, and holds it from then on; the concept art is not sent with later images once the reference exists.

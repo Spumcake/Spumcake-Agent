@@ -6,7 +6,7 @@ From the shot list approved on {{shot_list_date}} and its approved board. {{shot
 
 | Shot | Board | In | Out | Length | Camera move | Transition | Lines |
 |---|---|---|---|---|---|---|---|
-| {{shot}} | `{{board_file}}` | {{in}} | {{out}} | {{seconds}}s | {{camera_move}} | {{transition}} | {{cue}} {{speaker}}, {{on_or_off_screen}}: "{{line}}" |
+| {{shot}} | `{{board}}` | {{in}} | {{out}} | {{seconds}}s | {{camera_move}} | {{transition}} | {{cue}} {{speaker}}, {{on_or_off_screen}}: "{{line}}" |
 
 ## Cue list
 
@@ -25,7 +25,3 @@ Line cues, one per spoken line, in order, each with its recording. A cue starts 
 ## Changes
 
 Each revision, with the shots it touched: {{changes}}
-
-## Approved
-
-{{approved}}

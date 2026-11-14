@@ -11,14 +11,16 @@ A good concept art reference keeps everything that makes the element itself, its
 
 ## The models and the route
 
-An **image-edit model** that takes the prompt exactly as written, with no reasoning model rewriting it, such as OpenAI's image edit endpoint with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio. The execution skill that implements `generate-concept-reference` in this setup renders it; when none does, the setup's renderer. Whatever renders it writes the result's [record](../../docs/records.md); [`scripts/generate.py`](../../scripts/generate.py) renders it so. It comes from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe; if it is missing, say which and stop.
+An **image-edit model** that takes the prompt exactly as written, with no reasoning model rewriting it, such as OpenAI's image edit endpoint with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio. This skill builds the request and hands it back; [project-requests](../project-requests/SKILL.md) runs it with `scripts/request.py`, which sends it exactly as built. The model's workflow and prompt skills come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe, and give its specifics and limits; if one is missing, say which and stop. What a request costs comes from the setup, and nothing is paid before the user's yes.
 
 ## What it needs
 
-- the element's canonical images: a character's front A-pose and the sheets of the props it carries, or a place's views with their texture passes;
-- the visual identity brief, with its palette candidates and its research's readings (`write-visual-identity-brief`, `research-references`);
-- the film map, for which version of each counts;
-- a folder for the prompts and the images.
+Each input by its canonical name, from the pipeline's table, which holds only the approved version of each:
+
+- the element's canonical images: a character's front A-pose, `<character>: A-pose front`, and the sheets of the props it carries, `<prop>: reference sheet`; or a place's views with their texture passes, `<place>: view <camera> texture pass`;
+- the visual identity brief, `<film>: visual identity brief`, with its palette candidates and its research's readings (`write-visual-identity-brief`, `research-references`).
+
+Before writing a prompt, read what each image to be sent shows from the pipeline's table with `pipeline.py`: each named thing in its frame, where it is, and its state. Those contents are the agent's, never sent to the model. Every canonical value a slot holds, such as an object's name or the place's own colours, is written in the step's template as `{{<element>: <fact>}}`, never typed in by hand.
 
 **Concept art prompts are short.** A few lines: what to make, how it is painted, and the mood. A long prompt full of instructions overloads the model, which then copies details instead of interpreting; a block of lighting instructions makes it render every form. The light's opinion comes from the light palette and one sentence saying where light falls and what falls into shadow, never from instructions about how to render forms.
 
@@ -36,7 +38,7 @@ An **image-edit model** that takes the prompt exactly as written, with no reason
 - `{{world_palette}}`: the place's own colours, named from its canonical texture pass, such as "cream, diner red, warm wood brown, charcoal, steel grey, and red-and-cream tile"; the same in every mood, so no mood repaints the place.
 - `{{light_palette}}`: the colours of the light and the shadow only, from the visual identity brief's palette candidates and the readings of its research, such as "cool white lamplight, cold blue moonlight, and deep blue shadow"; this is where the mood's colour opinion goes.
 - `{{light_and_shadow}}`: one sentence saying where the light falls, what shape it makes, and what falls into shadow, from the readings, such as "Most of the room sinks into deep blue shadow; a single pool of cool white lamplight falls on the counter and the nearest stools, and cold moonlight lays pale window shapes across the floor." Naming light sources alone left the room evenly lit; describing the shadow is what made the light shape the picture (2026-11-11).
-- `{{objects}}`: every object the view holds, from the pre-vis key, each with its own colour and one simple form word, such as "A cream tiled counter with a red stripe and a black base, blocky dispensers, cake dome, receding red stools, dark tiled floor, three pendant lights with only the nearest glowing, wood-panelled walls, menu board, wooden back door with a grey glass panel, red booths, and dark blue moonlit windows". Besides the light palette and the shadow sentence, the mood enters only through the objects that carry light: the windows, by what is outside them ("dark blue moonlit windows"), the lamps, by which are on and their colour ("three pendant lights with only the nearest glowing", "cool white pendant lights"), and the floor, by the light on it ("sunlit tiled floor"). Name a menu or a sign without its words.
+- `{{objects}}`: every object the view holds, as the pipeline's table says the view shows it, each with its own colour and one simple form word, such as "A cream tiled counter with a red stripe and a black base, blocky dispensers, cake dome, receding red stools, dark tiled floor, three pendant lights with only the nearest glowing, wood-panelled walls, menu board, wooden back door with a grey glass panel, red booths, and dark blue moonlit windows". Besides the light palette and the shadow sentence, the mood enters only through the objects that carry light: the windows, by what is outside them ("dark blue moonlit windows"), the lamps, by which are on and their colour ("three pendant lights with only the nearest glowing", "cool white pendant lights"), and the floor, by the light on it ("sunlit tiled floor"). Name a menu or a sign without its words.
 
 Send the canonical angle as it is: never blurred, shrunk, or softened to reduce detail, which the user rejected (2026-11-11). Words that were tested in the template and taken out, and stay out: "impasto oil" and "visible paint ridges", which made every model paint thick oil; "digital painting", which confused the model; any length of brush stroke, long or short, since the model exaggerates either; "grain"; "volumetric haze" and "atmospheric depth", which filled the room with fog; and "volumetric light beams", which looked wrong. Add nothing else to the template. A block of lighting lines (key, secondary, rim light, lifted shadows, wide midtones) made the model render every form in detail, and words that describe execution are already in the template. Each further element is added only after a test shows it keeps the template's simplicity. The concept artwork's light rules (`generate-concept-artwork`: one light, values by depth, ambient light, shadows that follow the light) failed that test here on 2026-11-12: added to the place mood prompt, they made the painting more rendered, brighter, and flatter. They belong where a finished painting is relit, as in the concept staging template, never where the painting is first made.
 
@@ -44,5 +46,11 @@ Fill every slot from the visual identity brief and the readings of its research;
 
 ## Hand back
 
-- each concept art reference, with its prompt, the images sent, and the inspiration sheet;
-- the film map and the style guide's style references, updated with the references kept.
+Hand back to `project-requests`, for each concept art reference:
+
+- the request: the image-edit endpoint; the prompt as a template naming canon, `{{<element>: <fact>}}`; and the references by canonical artifact, each with its role, in the order to send them: for a character, the front A-pose first, then each prop's canonical sheet; for a place, the view's texture pass alone;
+
+and, for the user to approve:
+
+- the inspiration sheet, beside the results;
+- the candidate to publish, by `project-pipeline`, as the element's concept art reference, such as `<character>: concept study` or `<place>: concept painting <view> <mood>`, and as one of the style guide's style references.

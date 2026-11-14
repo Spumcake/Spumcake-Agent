@@ -9,17 +9,14 @@ A film's look serves an intent. Before any image is made, and before any researc
 
 A good brief draws everything it can from the user's own words, and proposes the rest, specific enough that a reference or an image can be judged against it: "the door behind him is the darkest shape in the frame, and the eye keeps going back to it" can be checked; "ominous" cannot. A failed brief is the agent's taste, a list of genres, or a mood board without a reason.
 
-This skill does not research, and it makes no images. It reads the user's brief, writes the whole visual identity brief as a finished draft, and stops at the user's edits and approval. It does not interview the user: the user gives a brief, and gets back something to edit.
+This skill does not research, and it makes no images. It reads the user's brief, drafts the whole visual identity as a finished draft of its section of the brief page, and hands it back; `project-brief` places it in the page once the user approves. It does not interview the user: the user gives a brief, and gets back something to edit.
 
 ## What it needs
 
-From the caller:
-
-- the concept: the user's brief, with its premise, characters, length, genre, and tone;
-- the mood brief, with its chosen direction (`research-references`);
-- the visual identity research: frames of CG animated features the user kept, each with its reading (`research-references`);
-- the beat sheet, when one already exists;
-- a folder for the brief.
+- the brief: the brief page's first section, with its premise, characters, length, genre, and tone;
+- the mood: the brief page's section, with its chosen direction;
+- the visual identity research: the frames of CG animated features its research request found and the user kept, each with its reading (`research-references`), named by that request;
+- the beat sheet (`<film>: beat sheet`), when it is already published.
 
 ## 1. Read the brief
 
@@ -36,17 +33,16 @@ Decide each of these, specifically enough to judge a picture by: not "tense", bu
 - **The colour's intent:** what the colours must achieve, before which colours they are: what colour carries safety and what carries threat, where warm and cool sit and why, how much contrast, how saturated, whether colour changes across the film and at which moment, and what the light does that the colour of the world does not.
 - **Palette candidates:** two to four palettes that serve the colour's intent, each named for its idea and taken from the kept research frames, each colour traced to the frame it came from; a palette no frame supports is a guess and is left out. Artificial light looks artificial: cool white, as fluorescent tubes and LEDs give, never warm like sunlight and never green or any colour that reads as unnatural or alien; warm light comes from the sun, a fire, or a candle. Keep the world's colours, the colours things are, apart from the light's colours, the colours light and shadow carry, so the light can be opinionated without repainting the world. Give each colour a name and a hex value, and say what each palette does for the intent. They stay candidates until research and concept art test them.
 
-## 2. Write the brief
+## 2. Write the section
 
-Fill [the brief template](templates/visual-identity-brief.md). Point to the brief for what it fixes, such as "the visitor stays unseen (the brief)", instead of restating it; keep every statement checkable against a picture, and mark everything the user did not say as *proposed*. Touchstones are a few named works, not a mood board: gathering images is research's job, from this brief.
+Fill [the section template](templates/visual-identity-brief.md). Point to the brief for what it fixes, such as "the visitor stays unseen (the brief)", instead of restating it; keep every statement checkable against a picture, and mark everything the user did not say as *proposed*. Touchstones are a few named works, not a mood board: gathering images is research's job, from this section. `review-consistency` checks the draft against the rest of the brief page, as its own request, before the user approves it.
 
-## 3. Hand it on
+## 3. Changes
 
-The brief is finished when it is written; the next step uses it at once. The user may edit it at any time, directly or by saying what to change; apply every edit, dated, and check what was built on it. A change of intent later goes into the brief, dated, before anything is built on it.
+The section is finished when it is drafted; the next step uses it once the user approves it. The user may change it at any time, directly or by saying what to change: draft the change as a new request, and `project-brief` places it, or starts the next pipeline when the change contradicts published canon. A change of intent goes into the brief page before anything is built on it.
 
 ## Hand back
 
-- the visual identity brief, with its colour intent and its palette candidates;
-- the questions research should answer, one line each, drawn from the brief, such as "how is the space behind a character made to feel occupied?".
-
-Run `review-consistency` on the brief before showing it.
+- the draft of the brief page's visual identity section, with its colour intent and its palette candidates, for the user's approval and for `project-brief` to place;
+- the facts it settles, by `<element>: <fact>`, if any, for `project-pipeline` to publish; intent stays in the brief page;
+- the questions research should answer, one line each, drawn from the section, such as "how is the space behind a character made to feel occupied?".

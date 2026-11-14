@@ -7,7 +7,7 @@ description: Write the words of any image prompt - concept art, a mood, a view, 
 
 An image model draws what words point at. A prompt works when every phrase names something visible: a light, a colour, a surface, a shape, a level of detail. It fails when it reads like a story: the model cannot draw a feeling, a sound, a time of night as a sentence, or a mood described as an idea, so those words either do nothing or are read wrongly.
 
-Use this skill every time an image prompt is written, and check the prompt against it before it is shown to the user.
+Use this skill every time an image prompt is written, and check the prompt against it before its request is handed back.
 
 ## How to write it
 
@@ -19,6 +19,7 @@ Use this skill every time an image prompt is written, and check the prompt again
 - **Say what each attached image is** and how it was made, in one plain sentence each, as the [prompt roles](../../docs/prompt-roles.md) say, and describe nothing the images already show.
 - **Group by kind:** what to make; the time and light; the colours; the paint or surface; the detail level; what to keep from the image.
 - **Name the detail level concretely:** `large flat shapes, no small objects, labels as blank shapes, no fine texture`, not only `minimal`.
+- **Canonical values by name.** A value the pipeline's table holds, such as a colour, a side of the frame, or a thing's position, is written in the template as `{{<element>: <fact>}}`, such as `{{the front door: side in the far-end frame}}`, and filled from the table; never typed in by hand.
 - **A few labelled lines in all,** about a hundred words at most beyond the fixed template text. Long prompts make models drop parts.
 
 ## What never goes in
@@ -29,6 +30,10 @@ Use this skill every time an image prompt is written, and check the prompt again
 - Novel prose: similes, metaphors, and sentences with clauses.
 - Text you do not want drawn: capitals, labels, and names, unless the image is meant to carry those words.
 
-## Check before showing
+## Check before handing back
 
-Read each phrase and ask: could a painter put this on the canvas? Cut every phrase that fails, or rewrite it as what shows it.
+Read each phrase and ask: could a painter put this on the canvas? Cut every phrase that fails, or rewrite it as what shows it. Then check that no canonical value is typed where a `{{<element>: <fact>}}` belongs.
+
+## Hand back
+
+Nothing of its own. The skill that builds the prompt follows these rules, and hands back its request.

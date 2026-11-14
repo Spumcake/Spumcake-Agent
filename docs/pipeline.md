@@ -1,13 +1,13 @@
 # The pipeline
 
-The order the skills run in to make one animated film, and what each step is made from. Each step is made only from the latest approved results of the steps before it; a rejected round is never an input to anything.
+The order the skills run in to make one animated film, and what each step is made from. Each step is made only from the canon the steps before it published; a rejected result is never an input to anything. Every step runs as requests through `project-requests`, in a project laid out as [projects.md](projects.md) describes.
 
 The user gives a brief; the agent turns it into finished results, making every choice the brief leaves open itself, from the brief, and saying why, and the user edits any result they want changed. No step waits for the user to choose. The point of the pipeline is the intermediate steps: every canonical element of a film, its places, characters, props, look, and sound, is made, shown, and open to the user's changes before any video is generated, so the user's intent survives to the final render.
 
 ## 1. Concept and intent
 
 1. **The concept:** the user's brief: premise, characters, length, genre, and tone.
-2. **The mood brief** (`research-references`), from the brief; the agent chooses the direction that serves it best.
+2. **The mood brief** (`write-mood-brief`), from the brief; the agent chooses the direction that serves it best.
 3. **Visual identity research** (`research-references`), from the brief and the chosen mood; the agent keeps the frames that fit.
 4. **The visual identity brief** (`write-visual-identity-brief`), from the brief, the mood brief, and the visual identity research.
 5. **The audio identity brief** (`write-audio-identity-brief`), from the brief and the visual identity brief: what the sound is for.
@@ -36,7 +36,7 @@ Each recurring element is made canonical, one at a time, before any concept art 
 
 Each through `make-canonical`, which holds each one's steps:
 
-- **A place,** from its research (`research-references`) and its pre-vis (`build-previs`), ending in its floor plan: where everything is and what each thing is called, which every later step that places or directs a character reads first.
+- **A place,** from its research (`research-references`) and its pre-vis (`build-previs`), ending in its floor plan (`write-floor-plan`): where everything is and what each thing is called, which every later step that places or directs a character reads first.
 - **A character,** from its research and the place's texture view.
 - **A small prop,** from its character's coloured A-pose and its photographs.
 - **Several characters** (`build-line-up`): a height chart composited from their A-pose fronts, not generated.
@@ -59,10 +59,10 @@ Canonical reference, then concept art reference, then concept artwork, so concep
 2. **Line-art animation,** lip-synced to the voices.
 3. **Final animation,** over background plates (`generate-background`), and the cut.
 
-Consistency is checked (`review-consistency`) at the end of every step that writes or changes a brief, a story document, the style guide, a prompt, or the film map: every fact has one home, and the rest point to it.
+Consistency is checked (`review-consistency`) at the end of every step that writes or changes a section of the brief, a story document, the style guide, or a step's template: every fact has one home, and the rest point to it.
 
 Continuity is reviewed (`review-continuity`) at the end of every step that makes an image, a clip, or a sound, before the user approves it.
 
-## The film map
+## The brief and the pipeline
 
-Every film keeps one map of its canonical artifacts, started with the concept and updated at the end of every step: each artifact the film needs, from the briefs and the research through the pre-vis, the canonical renders, the concept art's references and the concept art itself, to the keyframes, the animatic, the voices, and the cut; its status, as [the film map template](film-map-template.md) names them; and the full path of the one version that counts. Rejected rounds are not listed, only that they were rejected. The agent reads the map before every step, to know what the step is made from and what is still missing, and the user reads it to find any file. Fill [the film map template](film-map-template.md), and save it as `film-map.md` in the film's own folder, its root: every path in the map and in the film's records starts there.
+The identity briefs, the voices, the sound design, and the timing are sections of one brief page, which `project-brief` keeps. What is canon is the pipeline's table, which `project-pipeline` keeps: every published result, every canonical fact, what each published image shows, and each step as a template that names canon. The agent reads the table before every step, to know what the step is made from, and compares it with the brief to know what is still missing. Both are described in [projects.md](projects.md).

@@ -28,10 +28,10 @@ The label drawn on the chart, and the sounds it makes. One sheet per view: {{vie
 
 In the colour list, `{{colour_list}}`.
 
-## Kept sheets
+## Approved sheets
 
-The version of each sheet the user chose to keep, and the date.
+Each sheet the user approved, which `project-pipeline` publishes by its canonical name.
 
-| sheet | kept file | date |
-|---|---|---|
-| {{sheet}} | | |
+| sheet | published as |
+|---|---|
+| {{sheet}} | `{{name}}: {{sheet}}` |

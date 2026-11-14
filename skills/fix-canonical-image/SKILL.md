@@ -17,20 +17,17 @@ A good cleanup fixes every finding and changes nothing else. A failed one leaves
 ## Find the specifics
 
 - **The workflow skill** of the image model the request names, or that the user chooses, says how many images it takes and how to run it. **Its prompt skill** gives its syntax.
-- **The execution skill** that implements `fix-canonical-image` in this setup runs the edit; when none does, the setup's renderer. It says what a request costs and where its output lands.
+- **The setup** says what a request costs.
 
-All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop.
+All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop. This skill builds one request per fix and hands them back; `project-requests` runs each with `scripts/request.py`, which sends it exactly as built.
 
 ## What it needs
 
-From the caller:
+- the generated image, by the request that made it;
+- its canonical prompt: the text-to-image prompt the image descends from, as sent, however many image edits came after it, from that request's report with `request.py show`;
+- its pre-vis, when it was made from one, such as `<place>: pre-vis <camera>`, and the place's other views (`<place>: view <wall>`), by canonical name from the pipeline's table, with what each shows.
 
-- the generated image;
-- its canonical prompt: the text-to-image prompt the image descends from, as sent, however many image edits came after it;
-- its pre-vis, when it was made from one, and the place's other views;
-- a folder for the review, the fix plan, the prompts, and the images.
-
-The fixes are the agent's own work, made without asking the user. Cleanup is part of every step that makes an image: once the user has approved a step, run its cleanup edits as part of it, without asking again, and report what was found, what was fixed, the prompts, the images sent, and the cost afterwards. Ask only when a fix would change something the user chose, or would cost more than the step itself.
+The fixes are the agent's own work, made without asking the user. Cleanup is part of every step that makes an image: once the user has approved a step, its fixes run as part of it, each as its own request, without asking again. Ask only when a fix would change something the user chose, or would cost more than the step itself.
 
 ## 1. The review
 
@@ -41,28 +38,28 @@ Run `review-continuity` on the image, sending its canonical prompt and its pre-v
 Work out where each finding comes from. It is your job to trace it, not the user's. Compare the image with every input it was made from: when the input already has the fault, such as a pre-vis that holds twelve stools where the prompt asks for minimal elements, it is a fix for the pre-vis; when the generation added or changed it, such as a menu board the pre-vis does not have, it is a fix for the generation. Then:
 
 - **not in the pre-vis:** a fix for the generation: remove it;
-- **not in the pre-vis but needed:** do not remove it; a fix for the pre-vis: add it, with its shape, size, and place taken from the image, and to the pre-vis key. No new image is made for it;
-- **malformed:** do not repaint it in place; record it, and let the square-on view of its wall, made from the pre-vis, show what it is;
+- **not in the pre-vis but needed:** do not remove it; a fix for the pre-vis: add it, with its shape, size, and place taken from the image, and to the pre-vis's key. No new image is made for it;
+- **malformed:** do not repaint it in place; list it, and let the square-on view of its wall, made from the pre-vis, show what it is;
 - **texture on a form pass:** a fix for the generation: remove it, leaving each surface one plain colour.
 
 Decide every fix yourself, from the canonical prompt: how much fewer, where, which way. Fill [the fix plan](templates/fix-plan.md).
 
 ## 2. Fixes for the pre-vis
 
-When there is any fix for the pre-vis, return to the pre-vis first: change it, render the camera again, and show it. Then recreate the place's primary canonical location from the corrected pre-vis, by the same step that first made it, since every other image of the place is based on it. Review the new primary canonical location from step 1, then remake the images based on it. Fixes for the generation wait for that new image, since it may no longer need them.
+When there is any fix for the pre-vis, return to the pre-vis first: one `build-previs` request with the change, which renders the camera again. Once it is approved and published, `pipeline.py touches --artifact "<place>: pre-vis <camera>"` lists every step built on it, starting with the place's primary canonical location, since every other image of the place is based on it; each runs again as its own request, by the same step that first made it. Review the new primary canonical location from step 1, then remake the images based on it. Fixes for the generation wait for that new image, since it may no longer need them.
 
 ## 3. Fixes for the generation
 
-Fill [the cleanup template](templates/cleanup.md) and send the generated image alone. The prompt says what the image is, then lists each correction. Text fixes are for removing things, which works; counts and positions, such as the number of booths or the wall a door is on, do not change reliably by text, so fix them in the pre-vis and remake the image from it. Never inpaint: repainting a masked area changed little but surface materials and cost time and money. It describes nothing else, because the image carries it. Make two candidates.
+Fill [the cleanup template](templates/cleanup.md) as one image-edit request, with the generated image as its one reference, image 1, the image to correct. The prompt says what the image is, then lists each correction. Text fixes are for removing things, which works; counts and positions, such as the number of booths or the wall a door is on, do not change reliably by text, so fix them in the pre-vis and remake the image from it. Never inpaint: repainting a masked area changed little but surface materials and cost time and money. It describes nothing else, because the image carries it. The request asks for two candidates.
 
 ## 4. Check
 
-Run `review-continuity` on each candidate again, against the same canonical prompt and references, and check that nothing else changed. Say plainly when a candidate shows no visible change. Show both with the review and the fix plan. When an item is still wrong, fix it again once, and report what is still wrong after that. When the user prefers what the generation did over the pre-vis, change the pre-vis to match the image instead, so every later image of the place agrees with it.
+`review-continuity` reviews each candidate again, as its own request, against the same canonical prompt and references; check that nothing else changed. Say plainly when a candidate shows no visible change. When an item is still wrong, fix it again once, and list what is still wrong after that. The user chooses between the candidates; the chosen one is published by `project-pipeline` in place of the generated one, and the other is never used as an input again. When the user prefers what the generation did over the pre-vis, the fix is a `build-previs` request that changes the pre-vis to match the image instead, so every later image of the place agrees with it.
 
 ## Hand back
 
-- the continuity review, and the fix plan, with each fix filed for the pre-vis or the generation, and what was done;
-- the corrected pre-vis, when it was changed, with every new and needed object added to it and its key;
-- the malformed objects, each with the wall whose square-on view will show it;
-- the cleaned image the user chooses, which replaces the generated one for everything after it;
-- every prompt and image sent.
+One request per fix, at the source of its error, in the order to run them, with the fix plan that traces each:
+
+- **for the pre-vis:** one `build-previs` request with every change to the pre-vis and its key, each new and needed object added and each unwanted one removed; then the steps `pipeline.py touches` lists, each to run again as its own request;
+- **for the generation:** one image-edit request: the endpoint kind, image edit; the prompt from [the cleanup template](templates/cleanup.md), its corrections all removals; and its one reference, the generated image, image 1, the image to correct; two candidates;
+- the malformed objects, each with the wall whose square-on view will show it.

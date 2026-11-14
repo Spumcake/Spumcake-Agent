@@ -1,6 +1,6 @@
 # Fix plan: {{image}}
 
-From the continuity review: {{review_path}}. Canonical prompt: {{canonical_prompt}}. Inputs it was made from: {{inputs}}.
+From the continuity review: {{the review's request}}. Canonical prompt: {{canonical_prompt}}. Inputs it was made from: {{inputs, by canonical name}}.
 
 ## Fixes for the pre-vis
 

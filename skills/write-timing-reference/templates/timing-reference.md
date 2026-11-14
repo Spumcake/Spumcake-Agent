@@ -1,6 +1,6 @@
-# Timing reference: {{film}}
+# The timing
 
-From: {{the beat sheet's or script's path}}, {{the shot list's path, or none}}, {{the audio identity brief's path}}, and {{the voice briefs' paths}}. Anything marked *proposed* is the agent's, for the user to keep or change. Edited by the user on: {{dates, or none}}.
+From: {{the beat sheet or the script, by canonical name}}, {{the shot list, or none}}, the audio identity, and the voices. Anything marked *proposed* is the agent's, for the user to keep or change.
 
 Length: {{seconds}}. Camera: {{the shot or camera each frame uses}}.
 
@@ -24,7 +24,7 @@ Length: {{seconds}}. Camera: {{the shot or camera each frame uses}}.
 
 ## The blocking
 
-From the floor plan, `{{the floor plan's path}}`, in room terms, each object by its floor-plan name.
+From the floor plan, `{{place}}: floor plan`, in room terms, each object by its floor-plan name.
 
 | Frame | Character | Mark | Faces | Looks at | In this camera's frame | What changes in the place |
 |---|---|---|---|---|---|---|

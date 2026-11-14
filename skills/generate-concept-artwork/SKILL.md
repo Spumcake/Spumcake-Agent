@@ -11,14 +11,19 @@ Good concept artwork keeps the place's painting and objects exactly, relights it
 
 ## The models and the route
 
-As `generate-concept-reference` says: an image-edit model that takes the prompt exactly as written, such as OpenAI's image edit with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio. The execution skill that implements `generate-concept-artwork` in this setup renders it.
+As `generate-concept-reference` says: an image-edit model that takes the prompt exactly as written, such as OpenAI's image edit with gpt-image-2.6-sunburst, at high quality and the film's aspect ratio. This skill builds the request and hands it back; [project-requests](../project-requests/SKILL.md) runs it with `scripts/request.py`, which sends it exactly as built. The model's workflow and prompt skills give its specifics and limits; what a request costs comes from the setup, and nothing is paid before the user's yes.
 
 ## What it needs
 
-- the place's concept art reference, the painting of the view the moment uses, in the moment's mood;
-- each character's concept art reference, their study, and their level-of-detail sheet (`generate-detail-sheet`);
-- the beat, and what the visual identity brief asks of the moment;
-- a folder for the prompts and the images.
+Each input by its canonical name, from the pipeline's table:
+
+- the place's concept art reference, the painting of the view the moment uses, in the moment's mood, such as `<place>: concept painting <view> <mood>`;
+- each character's concept art reference, their study, `<character>: concept study`, and their level-of-detail sheet, `<character>: detail sheet` (`generate-detail-sheet`);
+- the place's floor plan, `<place>: floor plan`, and its facts, such as `<object>: position`, for where the character stands and what they face;
+- the beat, and what the visual identity brief asks of the moment, `<film>: visual identity brief`;
+- for coverage, the approved master shot, `<moment>: concept artwork`.
+
+Before writing a prompt, read what each image to be sent shows from the pipeline's table with `pipeline.py`: its camera, and each named thing in its frame, where it is, and its state. Those contents are the agent's, never sent to the model.
 
 ## What concept artwork is for
 
@@ -30,9 +35,9 @@ As the user set on 2026-11-11, concept artwork is experiment, not coverage:
 - **Not into the camera.** A character speaking to someone off frame speaks towards where that person is, never towards the camera, unless the purpose is to break the fourth wall: looking or speaking into the lens reads as addressing the audience (the user, 2026-11-11).
 - **Experiment with the camera.** The variations are different angles of that one action, each from a different one of the place's views, to find whether the shot reads better from another view than the one first planned. List every view the place has before choosing, and use each view once in a round; a later round returns to a view only when an image's purpose says why. The user rejected two rounds that kept reusing the same two views (2026-11-11).
 - **Close on what matters.** When the action turns on one canonical object, such as a door, a bell, or a light, one of the angles is a close-up on it, so it reads; a mood that grows colder at a door is shown close on the door, not across the room.
-- **A new angle needs its place first.** When no concept art reference of the place exists from the angle to test, such as a close-up, render the angle as a pre-vis camera, then make the place's painting from it with `make-canonical`'s new camera template: the nearest painted view's pre-vis shot, that painted view, and the new pre-vis shot, in that order. Then stage the character into it, or leave the character out of frame when the angle tests holding on the object.
+- **A new angle needs its place first.** When no concept art reference of the place exists from the angle to test, such as a close-up, render the angle as a pre-vis camera, then make the place's painting from it with `generate-canonical-image`'s new camera template: the nearest painted view's pre-vis shot, that painted view, and the new pre-vis shot, in that order. Then stage the character into it, or leave the character out of frame when the angle tests holding on the object.
 - **Fewer is better.** Make only the images that test a real choice, and say what each one tests.
-- **The limit of coverage by image edit.** As the user concluded on 2026-11-11, after six rounds on one action: an image-edit model does not hold a character's pose, or a place's objects, across a change of camera with the adherence coverage needs. It pasted the pose as drawn, or turned the body only as far as the pose's contact with objects allowed. Coverage that must keep continuity needs 3D models of the place and its props, or drawn references of the character in the pose; until then, the master shot is the concept artwork, and coverage is an experiment, kept only when it holds.
+- **The limit of coverage by image edit.** As the user concluded on 2026-11-11, after six rounds on one action: an image-edit model does not hold a character's pose, or a place's objects, across a change of camera with the adherence coverage needs. It pasted the pose as drawn, or turned the body only as far as the pose's contact with objects allowed. Coverage that must keep continuity needs 3D models of the place and its props, or drawn references of the character in the pose; until then, the master shot is the concept artwork, and coverage is an experiment, approved only when it holds.
 
 ## The purpose of each image
 
@@ -47,7 +52,7 @@ The angle is chosen for the purpose, and the prompt's `{{where_and_what}}` says 
 
 ## Making it
 
-To place a character into a place's concept painting, fill [the concept staging template](templates/concept-staging.md) and send the place's concept painting first, then each character's chosen study. Its "Filling it" section gives every slot with Last order's approved example.
+To place a character into a place's concept painting, fill [the concept staging template](templates/concept-staging.md) and send the place's concept painting first, then each character's chosen study. Its "Filling it" section gives every slot with Last order's approved example. Every canonical value a slot holds, such as a name, a position, a side of the frame, or a colour, is written in the step's template as `{{<element>: <fact>}}`, such as `{{the front door: side in the far-end frame}}`, and filled from the pipeline's table, never typed in by hand.
 
 ### What every concept artwork prompt carries
 
@@ -69,7 +74,7 @@ As the user set on 2026-11-12, every concept artwork request carries all of thes
 14. **Rim light on the character,** "not a soft light over" them: thin bright edges only along the outline that faces the light, each a brushed stroke, and everything inside the edges in shadow, dark but readable; "light comes from no other direction". Soft light flattened him; a rim from a light behind him with no direction rule lit edges the light could not reach (the user, 2026-11-12).
 15. **Nothing else changes and nothing is added:** the painting and its objects stay as they are; a short instruction alone let the model add detail and change the light (the user's test, 2026-11-11).
 
-Make two candidates, and keep the one that best holds the beat and the visual identity brief, with the reason. To test a change of wording, make one call, for the one image that failed, and nothing else: every call costs money, and rerunning what already worked, or the same prompt twice, tells nothing new (the user, 2026-11-11). Show each with its prompt and every image sent, beside the references it was made from.
+Make two candidates, and say which one best holds the beat and the visual identity brief, with the reason; the user approves one, which `project-pipeline` publishes, and the other is never used as an input again. To test a change of wording, make one call, for the one image that failed, and nothing else: every call costs money, and rerunning what already worked, or the same prompt twice, tells nothing new (the user, 2026-11-11). Show each with its prompt and every image sent, beside the references it was made from.
 
 ## Ideation, without references
 
@@ -79,5 +84,11 @@ The template stages the moment **planimetrically**, the film-studies term for a 
 
 ## Hand back
 
-- the concept artwork kept, with its prompt and the images sent;
-- the film map, updated; the artwork is the look reference `generate-keyframe` takes for the moment's first frames.
+Hand back to `project-requests`, for each image:
+
+- the request: the image-edit endpoint, or text-to-image for ideation; the prompt as a template naming canon, `{{<element>: <fact>}}`; and the references by canonical artifact, each with its role, in the order to send them: the place's painting first, then each study, then its level-of-detail sheet; for coverage, the master shot first, then the place's painting from the new angle;
+
+and, for the user to approve:
+
+- each image's purpose, beside its result;
+- the candidate to publish as the moment's concept artwork, the look reference `generate-keyframe` takes for the moment's first frames.

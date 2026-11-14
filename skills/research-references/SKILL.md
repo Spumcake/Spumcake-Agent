@@ -1,6 +1,6 @@
 ---
 name: research-references
-description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a pre-vis or concept art is made; and, right after a film's brief, for its mood brief - genre, literary and film references, directors, animation, painting, light, palette, camera, and presentation - and its visual identity research. Not for making images.
+description: Research the real world before anything is designed - search the web for the kind of place a scene happens in and for the closest real and screen analogues of each character archetype, then gather a reference board of how such places are laid out and shot and how such people look, dress, stand, and move, each reference with its source and licence - so later plans, concept art, and references rest on what is true. Use at the start of any new location or character, such as "a diner interior" or "a tired short-order cook", before a pre-vis or concept art is made; and, once a film's mood is chosen, for its visual identity research: frames from CG animated features read for their light. Not for writing the mood brief (write-mood-brief) or making images.
 ---
 
 # Research references
@@ -13,14 +13,13 @@ A good board answers the questions a designer would ask: what this kind of place
 
 From the caller:
 
-- the premise and the brief;
+- the brief and its chosen mood (`<film>: brief`, `<film>: mood`), from the brief page;
 - each location to research, in a few words, such as "roadside diner interior";
-- each character archetype to research, in a few words, such as "tired short-order cook";
-- a folder for the board.
+- each character archetype to research, in a few words, such as "tired short-order cook".
 
 References match the film's period and setting: a present-day diner is researched from present-day photographs, not from archives of another era.
 
-Search where a studio would, such as an image search on the web, as well as open collections. Ask before downloading any file: name each one, its source page, its licence when known, and its size. An image under copyright may be kept as internal reference when the user accepts it: it stays out of version control and out of anything published, with its address, source page, and allowed use in its [record](../../docs/records.md). When such images are sent to a model, send several for each element, so the model learns what the element is rather than copying one real place. Photographs of real, recognisable people are fine as references for a character's build, face, and dress: send several different people together, never one alone, so the character comes out as a stylised blend of the archetype, not one person's likeness.
+Search where a studio would, such as an image search on the web, as well as open collections. Ask before downloading any file: name each one, its source page, its licence when known, and its size. An image under copyright may be kept as internal reference when the user accepts it: it stays out of anything published, and its address, source page, and allowed use go with it into the research request. When such images are sent to a model, send several for each element, so the model learns what the element is rather than copying one real place. Photographs of real, recognisable people are fine as references for a character's build, face, and dress: send several different people together, never one alone, so the character comes out as a stylised blend of the archetype, not one person's likeness.
 
 ## 1. Search
 
@@ -48,24 +47,9 @@ Fill [the board template](templates/board.md):
 
 Show the board. List the files worth downloading, with their sources, licences, and sizes, and download only those the user approves.
 
-## 3. The mood brief
+## 3. Visual identity research
 
-Right after the film's brief, before any other research, draft its mood, as a film crew would: what the film should feel like, and how films, books, and pictures have made that feeling. Draft it from the brief alone, as a finished result the user edits. It holds the mood only: genre and tone, references, and how light, colour, camera, and pace feel. It never retells the story, the setting, the time of day, or the characters, which are the brief's, nor the sound, which is the audio identity brief's: it points to the brief, so a later change to the brief cannot leave it contradicting. Every direction stays within what the brief fixes: a brief set at night gets directions within night. `review-consistency` keeps it so. Draw on:
-
-- **genre and tone,** and the films, books, and animation that share it;
-- **literary references:** stories and authors whose situations or voice are close to the film's;
-- **film and television references,** by scene where one fits, and the directors and cinematographers whose way of seeing suits it;
-- **animation references** that show how such a mood is carried in animation;
-- **paintings and photographs** whose light, colour, or composition fit;
-- **light, palette, camera, presentation, and pace,** as consequences of the references, within what the brief fixes.
-
-Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then distil each direction into **tone phrases:** four to eight short phrases of a few words each, each drawn from one of its references and named beside it, such as "an ordinary room where something is slightly wrong" (Lynch). They say the direction's tone to the user and the style guide; they are not put into image prompts, where vague phrases are misread (see `prompt-image`).
-
-Then choose the direction that serves the brief best, or a blend, and record it in the brief with the reason, drawn from the brief's own words. The user may change it by editing; the next step does not wait for them. No images are collected yet: that is the visual identity research, built on the brief and the chosen mood.
-
-## 4. Visual identity research
-
-Built on the film's brief and its chosen mood, look at how films like it look and are lit, so the visual identity brief's touchstones and colour come from real work, not from the agent's taste. Search for moments like the film's, not only places like it: places like the film's, at the time the brief sets, in the chosen mood, and scenes whose situation is like the film's, such as a character alone at work after hours with a dark space behind him. The images are for light, colour, and composition. Choose each for how light and colour fill a space like the film's and where the eye goes in it: not close-ups of faces, which carry a scene's tension but no palette, and not tabletops or details, which show no room's light. Find:
+Built on the film's brief and its chosen mood, which `write-mood-brief` drafts, look at how films like it look and are lit, so the visual identity brief's touchstones and colour come from real work, not from the agent's taste. Search for moments like the film's, not only places like it: places like the film's, at the time the brief sets, in the chosen mood, and scenes whose situation is like the film's, such as a character alone at work after hours with a dark space behind him. The images are for light, colour, and composition. Choose each for how light and colour fill a space like the film's and where the eye goes in it: not close-ups of faces, which carry a scene's tension but no palette, and not tabletops or details, which show no room's light. Find:
 
 - **screencaps of feature CG animated films,** above all, never hand-drawn or stop-motion, wide enough to show the room and its light. They show how a studio's painters and lighters handle that light in a finished film. Libraries of screencaps, such as animationscreencaps.com, hold whole films frame by frame;
 - the art of those films, such as colour scripts and background paintings, when it shows a room's light;
@@ -77,9 +61,8 @@ Start from frames already kept for the film, and search only for what they do no
 
 ## Hand back
 
-- the approved board;
-- the downloaded references, each named for what it shows, with its source and licence beside it;
-- the conclusions a pre-vis, concept art, or a character's design should follow;
-- for each element of a place, the photograph a pre-vis builds it from;
-- the mood brief, with the user's chosen direction and its tone phrases;
-- the visual identity research: the kept frames, each with its reading.
+To `project-requests`, as a `research` request:
+
+- each file found and approved for download, named for what it shows, with its address, its source page, and the use allowed;
+- the board, or the visual identity research with each kept frame's reading, as the research's findings;
+- the conclusions a pre-vis, concept art, or a character's design should follow, and, for each element of a place, the photograph a pre-vis builds it from.

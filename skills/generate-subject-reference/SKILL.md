@@ -5,7 +5,7 @@ description: Build a recurring subject's full reference - a brief; its base refe
 
 # Subject reference
 
-A subject's reference is everything that fixes what it looks like: its brief, its base reference, its other sheets, and its reference gallery. A subject is anything that must look the same every time it appears: a character, a creature, a prop, or a vehicle. This skill makes the reference and stops at the user's choice. It hands the kept images and the brief back to the caller.
+A subject's reference is everything that fixes what it looks like: its brief, its base reference, its other sheets, and its reference gallery. A subject is anything that must look the same every time it appears: a character, a creature, a prop, or a vehicle. This skill builds the requests that make the reference, and stops at the user's choice. It hands the requests and the brief back to `project-requests`.
 
 A subject's **base reference** is what every later image of it is sent first:
 
@@ -20,22 +20,16 @@ Every image here comes from an **image-edit model**: one that takes reference im
 
 ## Find the specifics
 
-The **execution skill** that implements `generate-subject-reference` in this setup, or else the setup's renderer, says:
+- **The workflow skill** of the image-edit model the request names, or that the user chooses, says how many references it takes and the sizes it makes; read it, and **its prompt skill**, for how to prompt it. Both come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe.
+- **Running it** is [project-requests](../project-requests/SKILL.md)': this skill builds each request and hands it back, and `project-requests` runs it with `scripts/request.py`, which sends it exactly as built. What a request costs comes from the setup.
 
-- which image-edit model runs;
-- how a request is sent with its reference images;
-- what it costs;
-- where its output lands.
+## What it needs
 
-When that model has a workflow skill, read it for how to prompt it. Both come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe.
+Each input by its canonical name, from the pipeline's table:
 
-The caller gives:
-
-- the user's request and input images;
-- for a character, its approved primary canonical image, after canonical cleanup;
-- the concept's style guide, when it has one: its written rules and its style sheet;
-- an artifact folder, for prompts and images, each saved flat beside its prompt;
-- a work folder, for everything else: the brief, the dataset plan, and the model's records.
+- the user's request and input images, such as the subject's settled concept design, `<subject>: concept design`, or research photographs;
+- for a character, its approved primary canonical image, after canonical cleanup, `<character>: primary canonical image`;
+- the concept's style guide, when it has one: its written rules, `<look>: style guide`, and its style sheet, `<look>: style sheet`.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the number of requests and an estimate.
 
@@ -48,6 +42,7 @@ The templates are written for any subject. Fill their subject words from the bri
 - **For a character:** `{{character}}` is its name; `{{them}}` and `{{their}}` are its pronouns; `{{identity_features}}` is "face, hair, eyes, skin, and markings" as it has them; `{{expression_line}}` gives a gallery row's expression, as a new line, such as `- Expression: surprised.`.
 - **For a creature:** `{{identity_features}}` is the same; `{{stance}}` is "standing in a neutral relaxed pose"; `{{form_word}}` is "outfit"; `{{expression_line}}` gives a gallery row's expression.
 - **For any other subject,** such as a prop or a vehicle: `{{identity_features}}` is the shape, parts, and markings that make it recognisable; `{{stance}}` is "at rest on a level surface"; `{{form_word}}` is "variant"; `{{expression_line}}` is empty.
+- Every canonical value a slot holds, such as the character's name, a part's flat colour, or a prop's name, is written in the step's template as `{{<element>: <fact>}}`, filled from the pipeline's table, never typed in by hand.
 - `{{references_list}}` names each attached image in the order sent, as a sentence saying what it is and how it was made, such as "The first attached image is a generated concept design of a brass bell, made for an animated film. The second is a photograph of a real brass bell."
 - `{{style_source}}` is "the last attached image, the concept's style sheet" when one is sent; otherwise "the first attached image".
 - A detail sheet's `{{subject_image}}` names the attached image of the subject, such as "the third attached image, the front A-pose of Mira", and its `{{relation}}` says how the detail belongs to the subject, such as "the prop {{name}} carries" or "a part of {{name}}".
@@ -62,7 +57,7 @@ Fill [the brief template](templates/subject-brief.md) from the user's request an
 - a **Trigger word**;
 - **Fixed tags**, in the prompting style of the family a LoRA of the subject will be for.
 
-Show the brief to the user; their corrections win. The brief is a record for the user and for captions. Its descriptions of the look are not copied into a prompt that sends images showing that look.
+Show the brief to the user; their corrections win. The brief is for the user and for captions. Its descriptions of the look are not copied into a prompt that sends images showing that look.
 
 ## 2. Base reference
 
@@ -73,7 +68,7 @@ Once the character's primary canonical image is approved, make its A-pose set: t
 1. **The front A-pose, as a textured viewport view:** fill [the A-pose template](templates/a-pose.md) and send the primary canonical image alone. It asks for the character as a 3D model in a viewport's material preview, under neutral light: the mood and lighting are already held by the primary canonical image, so the A-pose starts neutral and is itself the texture view. An A-pose is symmetrical: upright with no lean, the head facing straight ahead, the arms at the same angle on both sides. It needs to be a good working map of the character, not a pose fit for rigging. Reject any view that turns the head, tilts the body, or poses the arms unevenly.
 2. **The other views:** fill [the A-pose view template](templates/a-pose-view.md) for the back, the left side, and the right side, each sent with the approved front alone.
 3. **Without outer layers:** when an outer layer, such as an apron or a coat, hides what is under it, fill [the layer template](templates/a-pose-layer.md) for the front without it, sent with the approved front alone, then its back and sides from that, as in step 2.
-4. **The form passes:** convert every view with `make-canonical`'s grey form and coloured form passes; the texture pass is not needed, since each view already is one. The form passes are the ones agents use most: with no texture, the character's contours and silhouette are clearest. For the coloured form, choose one flat colour per part, such as skin, shirt, apron, trousers, and shoes, and name them in every view's prompt, so the colours agree across views.
+4. **The form passes:** convert every view with `generate-canonical-image`'s grey form and coloured form passes; the texture pass is not needed, since each view already is one. The form passes are the ones agents use most: with no texture, the character's contours and silhouette are clearest. For the coloured form, choose one flat colour per part, such as skin, shirt, apron, trousers, and shoes, and name them in every view's prompt, so the colours agree across views.
 
 Keep each view whole, at one scale, on a plain background, cut away afterwards to a transparent one. The A-pose set is the character's base reference: every later image of the character is sent its textured front A-pose first, and its other views as the image needs them. It feeds the height chart and every model sheet, line-up, board, and shot.
 
@@ -120,15 +115,21 @@ Send each row with:
 
 Run a few rows first, and compare them with the base reference and the input images before asking to run the rest.
 
-Image-edit models leave grain in flat digital art. Say so when the gallery is done, so the caller can have it cleaned up before the user chooses. Never offer a redraw by a text-to-image model: one took a character's gallery off model.
+Image-edit models leave grain in flat digital art. Say so when the gallery is done, so a cleanup can be requested before the user chooses. Never offer a redraw by a text-to-image model: one took a character's gallery off model.
 
 ## 5. The user's choice
 
-Show the user the gallery, and any cleaned-up versions beside it, and point them to the full-size files. The user chooses which images to keep and which version of each; never choose yourself. Record each choice in the dataset plan's Kept images section.
+The user chooses which images to approve and which version of each, original or cleaned up; never choose yourself. Write each choice in the dataset plan's Approved images section. Each approved image, view, and sheet is published by `project-pipeline`, by its canonical name, such as `Mira: A-pose front apron texture`, `Mira: A-pose back apron grey form`, or `the bell: reference sheet`, and each gallery image by its row id. A rejected image is never used as an input again.
 
-Hand back to the caller:
+## Hand back
 
-- the kept images, each named by its row id;
+Hand back to `project-requests`, one request per sheet, view, or gallery row, in the order above, each step after the user's choice in the one before:
+
+- the request: the image-edit endpoint; the prompt as a template naming canon, `{{<element>: <fact>}}`; and the references by canonical artifact, each with its role, in the order to send them, as each step gives;
+
+and, for the user to approve:
+
 - the brief;
-- the base reference: for a character, its A-pose set in each outfit, every view named by its outfit, its side, and its pass; for any other subject, its reference sheet and each variant sheet;
-- each prop or detail sheet, and each small prop sheet.
+- each view of the base reference, for a character in each outfit, by its outfit, its side, and its pass; for any other subject, its reference sheet and each variant sheet;
+- each prop or detail sheet, and each small prop sheet;
+- the dataset plan, the first few gallery rows before the rest, and the gallery to choose from.

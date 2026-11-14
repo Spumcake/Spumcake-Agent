@@ -23,24 +23,24 @@ Every sheet comes from an **image-edit model** that takes the subject's referenc
 ## Find the specifics
 
 - **The workflow skill** of the model the request names, or that the user chooses, says how many references it takes, the sizes it makes, and how well it draws short labels. **Its prompt skill** gives its syntax and limits.
-- **The execution skill** that implements `generate-model-sheet` in this setup renders it; when none does, the setup's renderer. It says what a request costs and where its output lands.
+- **Running it** is [project-requests](../project-requests/SKILL.md)': this skill builds each request and hands it back, and `project-requests` runs it with `scripts/request.py`, which sends it exactly as built. What a request costs comes from the setup, and nothing is paid before the user's yes.
 
-All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop. When the request names no model and more than one fits, ask.
+The model's specifics come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop. When the request names no model and more than one fits, ask.
 
 ## What it needs
 
-From the caller:
+Each input by its canonical name, from the pipeline's table:
 
 - the subject's base reference; a subject without one needs its reference first:
-  - **for a character,** its textured A-pose views, in the outfit the sheet is for: the front, and the back for a colour model, or a side for a three-quarter sheet;
-  - **for any other subject,** its reference sheet, and the variant sheet when the model sheet is for another variant;
-- for the animatic sheets, the character's concept art reference, its study (`generate-concept-reference`), and the beat sheet and the character's voice brief (`write-voice-brief`), for the performance;
-- the subject's brief, when there is one: its personality, signature expression, and palette, for the plan and the colour list, never as words describing its look in a prompt;
-- the concept's style guide, when it has one: its written rules and its style sheet;
+  - **for a character,** its textured A-pose views, in the outfit the sheet is for, such as `<character>: A-pose front <outfit>`: the front, and the back for a colour model, or a side for a three-quarter sheet;
+  - **for any other subject,** its reference sheet, `<subject>: reference sheet`, and the variant sheet when the model sheet is for another variant;
+- for the animatic sheets, the character's concept art reference, its study, `<character>: concept study` (`generate-concept-reference`), and the beat sheet, `<film>: beat sheet`, and the character's voice brief, `<character>: voice brief` (`write-voice-brief`), for the performance;
+- the subject's brief, `<subject>: brief`, when there is one: its personality, signature expression, and palette, for the plan and the colour list, never as words describing its look in a prompt;
+- the concept's style guide, when it has one: its written rules, `<look>: style guide`, and its style sheet, `<look>: style sheet`;
 - the approved script or shot list, when there is one, for the expressions and poses the film needs;
+- for a look panel, the place's floor plan, `<place>: floor plan`, and the blocking's facts, such as `<character>: looks at in <shot>`;
 - for a mouth chart, the mouth shapes the user's lip-sync work reads, when it has its own set;
-- for a colour model, the colour values the user has, when they have them;
-- a folder for the plans, the prompts, and the sheets, each sheet saved beside its prompt.
+- for a colour model, the colour values the user has, when they have them, or the subject's published colours, `<subject>: colour <region>`.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a new model is one sheet, as a test, before the rest.
 
@@ -69,10 +69,10 @@ The templates are written for any subject. Fill their subject words from the bri
 - **For any other subject,** such as a prop or a vehicle: `{{identity_features}}` is its shape, parts, and markings; `{{form_word}}` is "variant". It has no expression sheet or mouth chart unless it has a face, and its pose sheet shows its states and positions, such as doors open or wheels turned.
 - `{{references_line}}` says what each attached image of the subject is and how it was made, in the order sent, then what to keep from them. It begins with a space. For a character: " The first attached image is a generated character model of {{name}} in a symmetrical A-pose, seen straight from the front, a textured viewport capture made for this film: keep its {{identity_features}}, proportions, colours, and style exactly.", with, for a colour model, "The second is the same model seen from the back.", or, for a three-quarter sheet, "The second is the same model seen from the side." For any other subject: " The first attached image is its reference sheet, a generated turnaround made for this film: keep its {{identity_features}}, proportions, colours, and art style exactly.", with, for a variant, "The second attached image is its {{form_word}} sheet: draw it in that {{form_word}}."
 - `{{style_sheet_line}}` is " The last attached image is the concept's style sheet: match its line, colour, and light." when one is sent; otherwise it is empty.
-- `{{outfit_sheet}}`, `{{form_note}}`, and `{{form_header}}` name the outfit or variant the sheet is for in the plan, the colour list, and the header, such as ", the raincoat sheet", ": raincoat", and ", raincoat", or are empty. `{{base_reference}}` names the files of the base reference the sheets are drawn from.
+- `{{outfit_sheet}}`, `{{form_note}}`, and `{{form_header}}` name the outfit or variant the sheet is for in the plan, the colour list, and the header, such as ", the raincoat sheet", ": raincoat", and ", raincoat", or are empty. `{{base_reference}}` names the base reference the sheets are drawn from, by its canonical artifacts.
 - `{{expressions}}`, `{{poses}}`, and `{{mouth_shapes}}` are one line per panel, in order, from the sheet plan: its label in quotes, then a few words, such as `"MBP": lips pressed together`.
 - `{{personality}}` is the brief's personality; for a subject without one, what its poses must show, such as "its weight and age".
-- `{{callouts}}` is one line per row of the colour list, such as `HAIR: "RUST #B5512C"`.
+- `{{callouts}}` is one line per row of the colour list, such as `HAIR: "RUST #B5512C"`. Once the colour list is approved, each name and value is a canonical fact, written in the step's template as `{{<subject>: colour <region>}}`, never typed in by hand; so is any other canonical value a slot holds, such as a character's name or the side of the page a look points to.
 
 ## 1. Choose the sheets
 
@@ -107,16 +107,19 @@ Fill the sheet's template:
 
 Send the subject's base reference first: for a character, its textured front A-pose in the sheet's outfit, then its back A-pose for a colour model, or a side A-pose for a three-quarter sheet; for any other subject, its reference sheet, then its variant sheet when the sheet is for one. Send the style sheet last. The animatic sheets are sent instead the character's concept art reference, and, for the turnaround and the acting sheet, the animatic expression sheet after it, which carries their line; their prompts describe nothing those images show but the line and the panels.
 
-Make one sheet per request. Plan it, render it on the user's yes, and report its path. Inspect it for drift from the base reference, wrong colours, broken anatomy or structure, panels that look alike, and labels that came out wrong, and report honestly. On a colour model, check every label against the colour list: the list is the record of the values, and an image that misprints one is reported, not trusted. A new version is a new paid request, and needs the user's yes.
+Make one sheet per request. Build its request and hand it back; `project-requests` runs it on the user's yes. Inspect it for drift from the base reference, wrong colours, broken anatomy or structure, panels that look alike, and labels that came out wrong, and report honestly. On a colour model, check every label against the colour list: the list is the record of the values, and an image that misprints one is reported, not trusted. A new version is a new paid request, and needs the user's yes.
 
-## 3. Hand back
+## Hand back
 
-Record in the sheet plan's Kept sheets section which version of each sheet the user chose to keep, and the date.
+Each sheet the user approves is published by `project-pipeline`, by its canonical name, such as `Mira: expression sheet` or `Mira: mouth chart front`, and the colour list's values as facts, `<subject>: colour <region>`. A version the user rejects is never used as an input again.
 
-Hand back to the caller:
+Hand back to `project-requests`, one request per sheet, in the plan's order:
 
-- each kept sheet, named for what it is, such as `mira-expressions` or `mira-mouth-chart-front`;
+- the request: the image-edit endpoint; the prompt as a template naming canon, `{{<element>: <fact>}}`; and the references by canonical artifact, each with its role, in the order to send them: the base reference first, then the back or side view or the variant sheet, then the style sheet last; for the animatic sheets, the concept art reference, then the animatic expression sheet;
+
+and, for the user to approve:
+
 - the sheet plan: the expressions, the poses, and the mouth shapes and their sounds; and the colour list with its values;
-- which sheets the user chose to keep as references for the subject.
+- each sheet, with what the inspection found.
 
-Later images of the subject are sent its base reference first and the kept sheet that fits after it: the expression or pose sheet for a board, the mouth chart for lip-sync, and the colour model, with its list quoted, for colouring. The animatic's keyframes are sent the animatic sheets instead, as `generate-keyframe` orders them.
+Later images of the subject are sent its base reference first and the approved sheet that fits after it: the expression or pose sheet for a board, the mouth chart for lip-sync, and the colour model, with its list quoted, for colouring. The animatic's keyframes are sent the animatic sheets instead, as `generate-keyframe` orders them.

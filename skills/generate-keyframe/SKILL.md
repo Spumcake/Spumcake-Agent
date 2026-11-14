@@ -18,22 +18,21 @@ A good keyframe shows the shot list's framing and angle, the shot's characters o
 
 - **The workflow skill** of the model the request names, or that the user chooses, says which way of running it takes references and which takes a structure image, how many references it takes, how closely it follows a structure image and how that is set, and the sizes it makes. When the request names no model and more than one fits, ask.
 - **Its prompt skill** gives its syntax and limits.
-- **The execution skill** that implements `generate-keyframe` in this setup renders it; when none does, the setup's renderer. It says what a request costs and where its output lands.
+- **Running it** is [project-requests](../project-requests/SKILL.md)': this skill builds each request and hands it back, and `project-requests` runs it with `scripts/request.py`, which sends it exactly as built. What a request costs comes from the setup, and nothing is paid before the user's yes.
 
-All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop.
+The model's specifics come from the setup, as the [prompt roles](../../docs/prompt-roles.md) describe. If one is missing, say which and stop.
 
 ## What it needs
 
-From the caller:
+Each input by its canonical name, from the pipeline's table:
 
-- an approved shot list; with none, one is planned and approved first;
-- for each camera, its pre-vis render, from which its animatic layout drawing is made;
-- each place's floor plan (`build-previs`) and the timing reference's blocking, for where each character stands, faces, and looks, by the plan's names;
-- each character's animatic expression sheet, acting sheet, and turnaround (`generate-model-sheet`), and board-style level-of-detail sheet (`generate-detail-sheet`), with their panel labels; the expression sheet holds a panel for each look a shot needs, drawn as that shot needs it;
-- the line-up, when several characters share a frame;
-- the shot's rough board, when there is one, or the user's sketch, each named by the shot it is for;
-- the film's aspect ratio;
-- a folder for the keyframe plan, the prompts, and the keyframes, each keyframe saved beside its prompt.
+- an approved shot list, and each shot's facts, such as `<shot>: framing`, `<shot>: angle`, and `<shot>: camera move`; with none, one is planned and approved first;
+- for each camera, its pre-vis render, `<place>: pre-vis <camera>`, from which its animatic layout drawing, `<place>: animatic layout <camera>`, is made;
+- each place's floor plan, `<place>: floor plan` (`build-previs`), and the timing reference's blocking, for where each character stands, faces, and looks, as facts such as `<character>: mark in <shot>` and `<character>: looks at in <shot>`, by the plan's names;
+- each character's animatic expression sheet, acting sheet, and turnaround, such as `<character>: animatic expression sheet` (`generate-model-sheet`), and board-style level-of-detail sheet, `<character>: animatic detail sheet` (`generate-detail-sheet`), with their panel labels; the expression sheet holds a panel for each look a shot needs, drawn as that shot needs it;
+- the line-up, `<film>: line-up`, when several characters share a frame;
+- the shot's rough board, `<shot>: board frame`, when there is one, or the user's sketch, `<shot>: sketch`;
+- the film's aspect ratio, `<film>: aspect ratio`.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a model new to this film is a short test of a few shots.
 
@@ -50,7 +49,7 @@ A keyframe is not the final look. The final look's light, shading, texture, and 
 
 These rules are what the layout drawing and the animatic sheets show; a keyframe prompt that sends them does not restate them, as `docs/prompt-roles.md` says.
 
-**The layout drawing.** Before any keyframe from a camera, make that camera's animatic layout drawing from its pre-vis render with [the animatic layout template](templates/animatic-layout.md): only what the characters touch or look at, outlined, with no walls, floor, ceiling, or grid. It is sent first to every keyframe from that camera, so every animatic frame draws the place the same way (the user, 2026-11-12; the template records how it was narrowed).
+**The layout drawing.** Before any keyframe from a camera, make that camera's animatic layout drawing from its pre-vis render with [the animatic layout template](templates/animatic-layout.md): only what the characters touch or look at, outlined, with no walls, floor, ceiling, or grid. It is sent first to every keyframe from that camera, so every animatic frame draws the place the same way (the user, 2026-11-12; the template says how it was narrowed).
 
 **The characters' sheets.** A character's references are their animatic expression sheet, acting sheet, and turnaround (`generate-model-sheet`) and their board-style level-of-detail sheet (`generate-detail-sheet`). Their size in the frame is a figure of the level-of-detail sheet, never a landmark in words: landmarks left Otis too big, and the sheet's figure brought him to scale (the user, 2026-11-12). Their look is an expression panel drawn for the shot; when no panel looks the way the shot needs, make that panel first, since text that contradicts a panel loses to the drawing.
 
@@ -74,7 +73,8 @@ Count the references each keyframe needs before planning it. When the model take
 
 - Put each part into its field in the model's syntax, as its prompt skill says, and name the inputs by the [prompt roles](../../docs/prompt-roles.md): the layout drawing, the sheets, and the keyframes as `references`, in the order above, and the board or the sketch as `structure`.
 - The keyframe template's "Filling it" gives every slot with Otis saying the line as its example.
-- **Read the records first.** Before writing the prompt, read the record of each image to be sent: the layout drawing's says which named objects are in the frame, where, and in what state; the floor plan and the blocking say which of them the character stands at and looks at. Write the prompt from that mapping. The keyframe's [record](../../docs/records.md) is written with the result: its sources with their roles, the layout's contents, and each character with their mark and what they look at, given to the renderer as its contents.
+- **Read what each image shows first.** Before writing the prompt, read from the pipeline's table, with `pipeline.py`, what each image to be sent shows: the layout drawing's camera, and which named objects are in its frame, where, and in what state; the floor plan's facts and the blocking say which of them the character stands at and looks at. Write the prompt from that mapping. Those contents are the agent's, never sent to the model. Once a keyframe is approved, what it shows, the layout's contents and each character with their mark and what they look at, is published with it by `project-pipeline`.
+- **Canonical values are never typed in.** Every name, position, or side of the frame a slot holds is written in the step's template as `{{<element>: <fact>}}`, such as `{{the front door: side in the far-end frame}}`, and filled from the pipeline's table.
 - **What a character looks at is named as it appears in the image,** never by a document's name the model cannot see, and never by the character's own left or right. The floor plan decides which object it is; the prompt points at it as drawn: "he turns his head away from the camera, back towards the door in image 1, the door that has just opened behind him, and looks at it". "The front door" is a name the model has never seen, and "over his right shoulder", meaning his own right, the frame's left, was read as the frame's right: four keyframes sent him staring away from the door that had just opened (the user, 2026-11-13). When the object is behind the character in this camera, the prompt says the head turns away from the camera; eyes alone cannot look behind a face turned to the lens.
 - `{{placement}}` comes from the timing reference's blocking, read against the floor plan, and names each object by its floor-plan name. For each thing a character touches, it says where they are against it: which side, how far along it, what it hides of them, and where their hands land. With the place reduced to what is touched, "behind the counter on the right" left the model to put him anywhere (the user, 2026-11-12).
 - From a board or a sketch, fill [the structure template](templates/keyframe-from-structure.md); for an end frame, [the end frame template](templates/keyframe-end-frame.md). Both follow the same rule: what each image is, and only what no image shows.
@@ -83,7 +83,7 @@ Count the references each keyframe needs before planning it. When the model take
 
 Fill [the keyframe plan template](templates/keyframe-plan.md):
 
-- **The keyframe look:** the fixed rule above, one look for the whole film, recorded in the plan; it is carried by the layout drawings and the animatic sheets, never quoted in a prompt.
+- **The keyframe look:** the fixed rule above, one look for the whole film, written in the plan; it is carried by the layout drawings and the animatic sheets, never quoted in a prompt.
 - **One row per keyframe,** in the shot list's order. Every shot has a start keyframe, named by its number, such as `3-1`. Every shot with a camera move also has an end frame, named by its number and `-end`, such as `3-1-end`: the last moment, once the move is done. A still shot has none.
 - **Its source:** the shot list, the shot's rough board, or the user's sketch.
 - **Its characters and props,** with the expression or pose label each takes, and **its place,** with the view nearest its camera.
@@ -96,7 +96,7 @@ Use the names the script and the shot list use for every character, prop, place,
 Choose two or three shots that differ, such as a wide shot that shows a place, a close-up with a strong expression, and a shot with several characters and a camera move.
 
 - Fill [the keyframe template](templates/keyframe.md) for a shot from the shot list, [the end frame template](templates/keyframe-end-frame.md) for an end frame, and [the structure template](templates/keyframe-from-structure.md) for a shot from its board or the user's sketch.
-- Plan them, render them on the user's yes, and report each output's path.
+- Build their requests and hand them back; `project-requests` runs them on the user's yes.
 - Review each against everything it must agree with, as step 4 says, and report every difference honestly.
 
 The user approves each test keyframe, or asks for another take; never choose for them. A fix to the look goes into the sheets or the layout drawing, never into a prompt.
@@ -126,13 +126,13 @@ Report it honestly, such as "Tom's jacket came out blue, not green" or "Mira fac
 
 ## 5. The user's approval
 
-The user approves each keyframe, or asks for another take; never choose for them. Record the take the user approved for each keyframe in the plan, with the date. A keyframe is ready for the animatic only once it is approved; the animatic waits for every keyframe of the shots it holds.
+The user approves each keyframe, or asks for another take; never choose for them. An approved keyframe is published by `project-pipeline`, as `<shot>: keyframe`, or `<shot>: end frame`; a rejected take is never used as an input again. A keyframe is ready for the animatic only once it is approved; the animatic waits for every keyframe of the shots it holds.
 
 ## 6. Revisions
 
 A shot keeps its number once approved, and so does its keyframe, since the animatic, the line art, and the shots after it are named by it.
 
-- A new take of a keyframe keeps the shot's number. The take the user approves replaces it; the earlier take is kept beside it.
+- A new take of a keyframe keeps the shot's number. The take the user approves is published in its place.
 - A shot the shot list adds, such as `3-2A`, gets a keyframe of that number. A shot it cuts loses its keyframe, and its number is not used again.
 - When the shot list, a character's animatic sheets, or a layout drawing change, redo only the keyframes they touch, list what changed, and say which later work made from those keyframes is now out of date.
 
@@ -142,9 +142,12 @@ A shot keeps its number once approved, and so does its keyframe, since the anima
 
 ## Hand back
 
-Hand back to the caller:
+Hand back to `project-requests`, in the shot list's order, each camera's layout drawing before its keyframes and a start keyframe before its end frame:
 
-- the approved keyframes: each named by its shot number, with its end frame, named by the number and `-end`, when it has one, in the shot list's order;
-- the keyframe plan, with each keyframe's references, anything left out to fit, and the take the user approved for each, with the date;
-- the differences the user accepted at review, by keyframe;
-- the prompts that made the keyframes, each beside its keyframe.
+- for each layout drawing, the request: the image-edit endpoint; the prompt as a template naming canon, `{{<element>: <fact>}}`; and the camera's pre-vis render as its one reference;
+- for each keyframe, the request: the image-edit endpoint, with the board or the sketch as `structure` when there is one; the prompt as a template naming canon; and the references by canonical artifact, each with its role, in the order to send them: the layout drawing first, then the approved start keyframe for an end frame, then each character's sheets, then the line-up;
+
+and, for the user to approve:
+
+- the keyframe plan, with each keyframe's references and anything left out to fit;
+- each layout drawing, and each keyframe, with the differences the review found, for the user to accept or reject.

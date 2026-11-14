@@ -1,6 +1,6 @@
-# Sound design brief: {{film}}
+# The sound design
 
-From: {{the audio identity brief's path}}, {{the beat sheet's or script's path}}, and {{the voice briefs' paths}}. Anything marked *proposed* is the agent's, for the user to keep or change. Edited by the user on: {{dates, or none}}.
+From: the audio identity, {{the beat sheet or the script, by canonical name}}, and the voices. Anything marked *proposed* is the agent's, for the user to keep or change.
 
 Length: {{seconds}}.
 

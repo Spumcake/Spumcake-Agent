@@ -11,20 +11,28 @@ A good take runs the scene's whole length as one continuous bed, with each effec
 
 ## The models and the route
 
-A text-to-audio model that makes sound effects and music in one pass from words, with a timeline in its prompt, such as Seed Audio 1.0 on fal (`bytedance/seed-audio-1.0`), the user's choice on 2026-11-13, at the film's sample rate in wav. The execution skill that implements `generate-sound` in this setup renders it. Whatever renders it writes the result's [record](../../docs/records.md); [`scripts/generate.py`](../../scripts/generate.py) renders it so.
+A text-to-audio model that makes sound effects and music in one pass from words, with a timeline in its prompt, such as Seed Audio 1.0 on fal (`bytedance/seed-audio-1.0`), the user's choice on 2026-11-13, at the film's sample rate in wav. The model's workflow and prompt skills give its specifics and limits. This skill builds the request and hands it back; [project-requests](../project-requests/SKILL.md) runs it with `scripts/request.py`, which sends it exactly as built. What a request costs comes from the setup, and nothing is paid before the user's yes.
 
 ## What it needs
 
-- the sound design brief, for each sound and the music;
-- the timing reference, for each cue's time;
-- a folder for the prompt and the takes.
+Each input by its canonical name, from the pipeline's table:
+
+- the sound design brief, `<film>: sound design brief`, for each sound and the music;
+- the audio identity brief, `<film>: audio identity brief`, for what the music does and its never list;
+- the timing reference, `<film>: timing reference`, for each cue's time, as facts such as `<cue>: start`.
 
 ## Making it
 
-Fill [the sound prompt template](templates/sound-prompt.md): what the scene is and that it has no voices, then the timeline in seconds, each cue at the timing reference's time, as the sound design brief describes it, then what must not be heard. Where a line or a voice sound will be laid over it, the timeline says only that no new sound comes, so the bed leaves room. Send nothing else.
+Fill [the sound prompt template](templates/sound-prompt.md): what the scene is and that it has no voices, then the timeline in seconds, each cue at the timing reference's time, as the sound design brief describes it, then what must not be heard. Where a line or a voice sound will be laid over it, the timeline says only that no new sound comes, so the bed leaves room. Every cue's time is written in the step's template as `{{<cue>: start}}` and `{{<cue>: end}}`, filled from the pipeline's table, never typed in by hand. Send nothing else.
 
-Make one take. Measure it before showing it: its length, and from its loudness over time whether it runs continuously and where its effects fall, since an agent cannot listen; say so, and let the user judge the sound. Show it with its prompt, its settings, and its cost.
+Make one take. Measure it before showing it: its length, and from its loudness over time whether it runs continuously and where its effects fall, since an agent cannot listen; say so, and let the user judge the sound.
 
 ## Hand back
 
-- the kept take, the scene's bed, which the mix lays the voices over.
+Hand back to `project-requests`:
+
+- the request: the text-to-audio endpoint, at the film's sample rate in wav; the prompt as a template naming canon, `{{<element>: <fact>}}`; and no references;
+
+and, for the user to approve:
+
+- the take, with its measured length and where its effects fall; once approved, `project-pipeline` publishes it as the scene's bed, `<scene>: sound bed`, which the mix lays the voices over. A rejected take is never used as an input again.

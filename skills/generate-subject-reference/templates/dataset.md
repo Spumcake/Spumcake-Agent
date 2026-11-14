@@ -1,6 +1,6 @@
 # Dataset plan: {{name}}
 
-The gallery a subject's LoRA is trained on. Every image is drawn from the approved base reference, a character's A-pose views or another subject's reference sheets, so identity stays fixed while framing, view, outfit or variant, expression or detail, and background vary. For a subject that is not a character or creature, replace the expression rows with close-ups of the details that make it recognisable, and the actions with the ways it is used or moves. Fill the matrix, then write one prompt file per row with the entry template below, filled as the skill's "Filling the templates" says.
+The gallery a subject's LoRA is trained on. Every image is drawn from the approved base reference, a character's A-pose views or another subject's reference sheets, so identity stays fixed while framing, view, outfit or variant, expression or detail, and background vary. For a subject that is not a character or creature, replace the expression rows with close-ups of the details that make it recognisable, and the actions with the ways it is used or moves. Fill the matrix, then write one prompt per row with the entry template below, filled as the skill's "Filling the templates" says.
 
 ## The matrix
 
@@ -40,7 +40,7 @@ For any other subject, about 36 images in four framings:
 
 ## Entry prompt
 
-One file per row, named for its id (for example `fb-front-hoodie.md`). A character's row is sent its textured front A-pose in the row's outfit first, then the A-pose view nearest the row's view when that is not the front; another subject's row is sent its reference sheet first, then the variant sheet when the row's variant is not the default. Then the prop sheet when the row has that prop, and the style sheet last.
+One prompt per row, named for its id (for example `fb-front-hoodie`). A character's row is sent its textured front A-pose in the row's outfit first, then the A-pose view nearest the row's view when that is not the front; another subject's row is sent its reference sheet first, then the variant sheet when the row's variant is not the default. Then the prop sheet when the row has that prop, and the style sheet last.
 
 The prompt says what each attached image is and how it was made, then only what no image gives: the framing, the view and pose, the expression, which prop, and the background. It never describes the subject's look, outfit, or prop in words.
 
@@ -67,10 +67,10 @@ quality: high
 One subject only. No text, labels, borders, or panels. The subject fills the frame as the framing says.
 ```
 
-## Kept images
+## Approved images
 
-The user's choice for each row, once the gallery is cleaned up: `original`, `cleanup`, or `dropped`. Only kept rows go into the subject's dataset.
+The user's choice for each row, once the gallery is cleaned up: `original`, `cleanup`, or `dropped`. Only approved rows are published into the subject's dataset.
 
-| id | keep |
+| id | choice |
 |---|---|
 | `fb-front-{{outfit}}` | |

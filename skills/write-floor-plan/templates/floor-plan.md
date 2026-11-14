@@ -1,6 +1,6 @@
 # Floor plan: {{place}}, {{film}}
 
-The one home for where everything in {{place}} is and what each thing is called, made from the pre-vis's numbers (`{{the builder's or layout's path}}`), with its drawing `{{the plan image's path}}`. Every skill that places or directs a character reads it first, and every document and prompt calls each thing by its name here. Made on {{date}}; marks added by {{the timing reference's path}}.
+The one home for where everything in {{place}} is and what each thing is called, made from the pre-vis layout's numbers. Every skill that places or directs a character reads it first, and every document and prompt calls each thing by its name here. Each character's marks come from the timing reference.
 
 The room: {{size, in metres}}. The grid: x along {{which wall}}, from {{the far end, 0}} to {{the near end}}; y from {{which wall, 0}} to {{which wall}}.
 
