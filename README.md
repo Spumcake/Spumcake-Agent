@@ -44,12 +44,12 @@ Each skill belongs to one category, the first word of its name, which says what 
 | write | [write-audio-identity-brief](skills/write-audio-identity-brief/SKILL.md) | drafts from the brief and the visual identity brief what a film's sound is for, before any other research |
 |  | [write-beat-sheet-prompt](skills/write-beat-sheet-prompt/SKILL.md) | plans a story's beat sheet and builds the prompt a language model writes it from |
 |  | [write-breakdown-prompt](skills/write-breakdown-prompt/SKILL.md) | plans a film's breakdown of every recurring character, place, and prop, and builds the prompt a language model writes it from |
-|  | [write-floor-plan](skills/write-floor-plan/SKILL.md) | writes a place's floor plan from its pre-vis numbers, every door named and every camera's frame given, as canonical facts |
 |  | [write-mood-brief](skills/write-mood-brief/SKILL.md) | drafts a film's mood: its references and directions, the chosen one, and its tone phrases |
 |  | [write-script-prompt](skills/write-script-prompt/SKILL.md) | plans a script from the approved beats and builds the prompt a language model writes it from |
 |  | [write-shot-list-prompt](skills/write-shot-list-prompt/SKILL.md) | plans a timed shot list from the script and builds the prompt a language model writes it from |
 |  | [write-skill](skills/write-skill/SKILL.md) | writes a new skill with every part its category requires |
 |  | [write-sound-design-brief](skills/write-sound-design-brief/SKILL.md) | drafts every sound of a film cue by cue on its length, a spotting list, which sound generation and the audio cut are made from |
+|  | [write-staging-plan](skills/write-staging-plan/SKILL.md) | writes a place's floor plan from its pre-vis numbers, every door named and every camera's frame given, as canonical facts |
 |  | [write-timing-reference](skills/write-timing-reference/SKILL.md) | works out every moment, sound cue, line, and animatic frame on one timeline before anything is made |
 |  | [write-visual-identity-brief](skills/write-visual-identity-brief/SKILL.md) | drafts what a film should feel and look like, what its colours must achieve, and candidate palettes, from the brief, the mood brief, and the visual identity research |
 |  | [write-voice-brief](skills/write-voice-brief/SKILL.md) | drafts one speaking character's voice and the delivery of each of their lines, the description voice generation is sent |

@@ -20,7 +20,7 @@ A skill does the work of one category. A task that needs two, such as writing a 
 | **prompt** | nothing of its own: the rules for wording a prompt for one kind of model, which other skills follow | `prompt-image` |
 | **research** | material gathered from outside, such as the web, photographs, and films, each item with its source and the use allowed | `research-references` |
 | **review** | a report of every difference between results or documents and what they must agree with; it never fixes, scores, or decides | `review-consistency`, `review-continuity` |
-| **write** | a document, such as a brief, a story document, or a floor plan, drafted by the agent, or by a language model from a prompt the skill builds; or, for `write-skill`, a skill | `write-audio-identity-brief`, `write-beat-sheet-prompt`, `write-breakdown-prompt`, `write-floor-plan`, `write-mood-brief`, `write-script-prompt`, `write-shot-list-prompt`, `write-skill`, `write-sound-design-brief`, `write-timing-reference`, `write-visual-identity-brief`, `write-voice-brief` |
+| **write** | a document, such as a brief, a story document, or a staging plan, drafted by the agent, or by a language model from a prompt the skill builds; or, for `write-skill`, a skill | `write-audio-identity-brief`, `write-beat-sheet-prompt`, `write-breakdown-prompt`, `write-mood-brief`, `write-script-prompt`, `write-shot-list-prompt`, `write-skill`, `write-sound-design-brief`, `write-staging-plan`, `write-timing-reference`, `write-visual-identity-brief`, `write-voice-brief` |
 
 The order the skills run in to make a film is in [the pipeline](pipeline.md).
 

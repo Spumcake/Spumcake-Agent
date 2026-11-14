@@ -1,6 +1,6 @@
 ---
-name: write-floor-plan
-description: Write a place's floor plan from its pre-vis layout's numbers - every wall, every door and opening named for what it is and where it leads, every fixture, every camera with what lies left, centre, and right in its frame, and each character's marks - as the place's one home for where everything is and what each thing is called, and hand back each of those as a canonical fact, so every prompt that places or directs a character takes them from the pipeline's table. Use once a place's pre-vis views are approved, and again when the layout changes or the timing reference adds marks. Not for building or rendering the mock-up (build-previs).
+name: write-staging-plan
+description: Write a place's staging plan, its floor plan from its pre-vis layout's numbers - every wall, every door and opening named for what it is and where it leads, every fixture, every camera with what lies left, centre, and right in its frame, and each character's marks - as the place's one home for where everything is and what each thing is called, and hand back each of those as a canonical fact, so every prompt that places or directs a character takes them from the pipeline's table. Use once a place's pre-vis views are approved, and again when the layout changes or the timing reference adds marks. Not for building or rendering the mock-up (build-previs).
 ---
 
 # The floor plan

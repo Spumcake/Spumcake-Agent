@@ -53,7 +53,7 @@ When a place goes into production, its neutral views carry enough to rebuild eac
 
 ## 7. The floor plan
 
-Once the views are approved, the place's floor plan is written from the layout's numbers with `write-floor-plan`: the one home for where everything is and what each thing is called.
+Once the views are approved, the place's floor plan is written from the layout's numbers with `write-staging-plan`: the one home for where everything is and what each thing is called.
 
 ## 8. A staging floor plan for each moment
 
@@ -65,5 +65,5 @@ To `project-library`, as a build:
 
 - the builder's command, and the files it makes: the layout drawing from above, with every camera marked; the key, each element named with the photograph it was built from; each shot and view, in plain greys for the model and colour-coded and labelled for the user; and, for each render, what is in its frame;
 - each camera's position, height, direction, and lens, with its reason or its move from the original camera, for the user's approval;
-- the layout's numbers, which `write-floor-plan` writes the floor plan from;
+- the layout's numbers, which `write-staging-plan` writes the floor plan from;
 - for each moment, its staging floor plan, for the user's approval before any frame of the moment.

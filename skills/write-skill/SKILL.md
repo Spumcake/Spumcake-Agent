@@ -15,7 +15,7 @@ From what the skill must produce, as the categories list it. When the work produ
 
 ## 2. Name it
 
-The category's word, then what it makes: `generate-keyframe`, `write-floor-plan`. Lowercase, joined by hyphens, British spelling. A `write` skill that builds a prompt for a language model ends in `-prompt`. Check the name against every skill's name in `skills/`. A new name waits for the user's yes before the skill is written.
+The category's word, then what it makes: `generate-keyframe`, `write-staging-plan`. Lowercase, joined by hyphens, British spelling. A `write` skill that builds a prompt for a language model ends in `-prompt`. Check the name against every skill's name in `skills/`. A new name waits for the user's yes before the skill is written.
 
 ## 3. Write it
 

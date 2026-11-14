@@ -36,7 +36,7 @@ Each recurring element is made canonical, one at a time, before any concept art 
 
 Each through `make-canonical`, which holds each one's steps:
 
-- **A place,** from its research (`research-references`) and its pre-vis (`build-previs`), ending in its floor plan (`write-floor-plan`): where everything is and what each thing is called, which every later step that places or directs a character reads first.
+- **A place,** from its research (`research-references`) and its pre-vis (`build-previs`), ending in its floor plan (`write-staging-plan`): where everything is and what each thing is called, which every later step that places or directs a character reads first.
 - **A character,** from its research and the place's texture view.
 - **A small prop,** from its character's coloured A-pose and its photographs.
 - **Several characters** (`build-line-up`): a height chart composited from their A-pose fronts, not generated.

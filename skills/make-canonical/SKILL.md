@@ -49,7 +49,7 @@ Run `research-references` for the element: a photograph of every item the story 
 4. **Canonical cleanup:** run `fix-canonical-image` on the chosen image, against its canonical prompt and the pre-vis. Fixes for the pre-vis go back to step 2, and the image is made again from the corrected shot. The user approves the cleaned image.
 5. **The views:** run `build-previs` for a camera square-on to each wall, and any other camera the user asks for and approves, and make each view from the primary canonical location with `generate-canonical-image`'s new camera. Run `fix-canonical-image` across the views, fixing only major inconsistencies. The user chooses each view.
 6. **The neutral passes:** `generate-canonical-image`'s grey form, coloured form, and texture passes on the primary canonical location and each view, then `fix-canonical-image` on the form passes. Surface changes, such as less gloss, are made on the texture passes; mood and light come in the concept art phase.
-7. **The floor plan:** run `write-floor-plan` from the pre-vis layout's numbers once the views are approved. Its facts, every door named and each camera's left, centre, and right, are published with it, and every later prompt that places or directs a character takes them from the pipeline's table.
+7. **The floor plan:** run `write-staging-plan` from the pre-vis layout's numbers once the views are approved. Its facts, every door named and each camera's left, centre, and right, are published with it, and every later prompt that places or directs a character takes them from the pipeline's table.
 
 ## A character
 
