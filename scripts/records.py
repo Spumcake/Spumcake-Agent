@@ -15,7 +15,8 @@ Usage:
   records.py find [--kind K] [--camera C] [--contains NAME]
   records.py check [<file>...]         problems in the records of these files and everything they trace back to;
                                        with no files, every record in the project
-The project's root is the nearest folder above the file holding .git, or the current folder.
+The project's root is the nearest folder above the file holding film-map.md, the film's map; else the nearest holding .git;
+else the current folder.
 """
 import json, os, sys, shutil, subprocess, datetime, hashlib
 
@@ -24,11 +25,13 @@ VERSION = 1
 
 
 def root_of(path):
-    p = os.path.abspath(path if os.path.isdir(path) else os.path.dirname(path) or ".")
-    while p != "/":
-        if os.path.exists(os.path.join(p, ".git")):
-            return p
-        p = os.path.dirname(p)
+    start = os.path.abspath(path if os.path.isdir(path) else os.path.dirname(path) or ".")
+    for marker in ("film-map.md", ".git"):
+        p = start
+        while p != "/":
+            if os.path.exists(os.path.join(p, marker)):
+                return p
+            p = os.path.dirname(p)
     return os.getcwd()
 
 

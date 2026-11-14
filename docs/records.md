@@ -7,7 +7,7 @@ Every file a film is made of keeps a **record**: a small file beside it that say
 A record sits beside its file, named for it: `layout-far-end-5.png` keeps `layout-far-end-5.record.json`. It is JSON:
 
 - **`record`:** the format's version, `1`.
-- **`file`:** the file's path from the project's root.
+- **`file`:** the file's path from the film's root, the folder that holds its film map, `film-map.md`; every other path in a record starts there too.
 - **`kind`:** what it is: `pre-vis render`, `research photo`, `concept design`, `canonical image`, `prop sheet`, `concept art`, `model sheet`, `layout drawing`, `keyframe`, `voice take`, `sound bed`, `video`, or `copy`.
 - **`date`:** when the file was made, in UTC.
 - **`made_by`:** the tool or model, its endpoint, its settings, and its cost when known.
