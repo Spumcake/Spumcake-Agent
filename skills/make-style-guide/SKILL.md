@@ -7,6 +7,8 @@ description: Plan a concept's style guide as requests - the written rules of its
 
 A style guide fixes how everything in a concept looks, so every later image, from a subject's sheet to a board to a shot, can be made and judged against it. It has two halves that must agree: the **written rules**, which a prompt can quote and the user can check against; and the **images**, which show what the words cannot. This skill plans both as requests, says what each request needs and how its prompt is built, and runs none of them: [project-requests](../project-requests/SKILL.md) runs each as its own cycle, and the user approves each before the next is built. The images the user approves become the concept's style references.
 
+**The final look comes first.** Before any other rule, and right after the brief, the guide settles how the finished film looks: the user chooses it by eye from a few test frames of the film's own subject. When the user gives no look, it is a feature 3D animated film look, as the canonical references' viewport shading shows things. Concept art's loose painting and the animatic's line art are working looks, never the final look.
+
 A good style guide has rules concrete enough to check a picture against, each drawn from the user's artwork or marked *proposed*, and a style sheet that matches the chosen frame and the rules in line, shape, palette, and light. A failed one has rules too vague to check, such as "bold lines", a sheet made from text alone that drifts from what the user chose, or a look that replaces the user's own artwork with a model's guess.
 
 ## The models

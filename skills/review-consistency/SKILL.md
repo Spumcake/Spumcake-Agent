@@ -30,6 +30,8 @@ Each fact lives in one place, the one whose job it is:
 
 When the setup has its own homes for some facts, use them, and name them in the report.
 
+**The final look.** Every canonical image and every final frame is checked against the style guide's final look: one whose look contradicts it, such as a CG-shaded reference under a 2D final look, is a finding, taken to the user before anything more is built on it.
+
 ## What may repeat
 
 A prompt as sent restates what the model needs, since a model cannot follow a pointer. Its template does not: a step's template names each canonical value as `{{<element>: <fact>}}`, filled from the pipeline's table, and each reference by its artifact. A statement in a prompt template that types a canonical value, such as a name, a side of the frame, or a colour, instead of `{{<element>: <fact>}}`, is a finding, even when the value agrees. Everything else points: "the visitor stays unseen (the brief)", not the brief's sentence copied.

@@ -141,7 +141,7 @@ A shot keeps its number once approved, and so does its keyframe, since the anima
 
 ## Staging
 
-**Staging into a canonical view.** A keyframe's characters and props are placed into the canonical view of the place its shot uses, so the first frames for video hold the same canon the concept artwork does; the moment's concept artwork is sent as the look reference. Fill [the staging template](templates/staging.md): the view first, then each canonical character's A-pose views or prop's sheet, in order, each named in `{{references_list}}` as a sentence saying what it is and how it was made. Say only what no attached image gives: who goes where in the view, and what they are doing, from the shot list. Make several candidates, and run canonical cleanup on the one the user chooses.
+**Staging into a canonical view.** A keyframe's characters and props are placed into the canonical view of the place its shot uses, or into its plate, lit for the final look (`generate-background`), for a final frame. They are drawn from their own canonical images, a character's primary canonical image and A-pose views, never a concept study or the animation's sheets, which are working looks; so the first frames for video hold the same canon the concept artwork does; the moment's concept artwork is sent as the look reference. Fill [the staging template](templates/staging.md): the view first, then each canonical character's A-pose views or prop's sheet, in order, each named in `{{references_list}}` as a sentence saying what it is and how it was made. Say only what no attached image gives: who goes where in the view, and what they are doing, from the shot list. Make several candidates, and run canonical cleanup on the one the user chooses.
 
 ## Hand back
 

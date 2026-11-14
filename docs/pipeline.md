@@ -7,6 +7,7 @@ The user gives a brief; the agent turns it into finished results, making every c
 ## 1. Concept and intent
 
 1. **The concept:** the user's brief: premise, characters, length, genre, and tone.
+1. **The final look** (`make-style-guide`), right after the brief and before anything else is made: how the finished film looks, chosen by the user by eye from test frames. When the user gives no look, it is a feature 3D animated film look, as the canonical references' viewport shading already shows things. Every canonical reference, and every final frame, is made toward it.
 2. **The mood brief** (`write-mood-brief`), from the brief; the agent chooses the direction that serves it best.
 3. **Visual identity research** (`research-references`), from the brief and the chosen mood; the agent keeps the frames that fit.
 4. **The visual identity brief** (`write-visual-identity-brief`), from the brief, the mood brief, and the visual identity research.
@@ -24,7 +25,9 @@ No other research begins until the identity briefs are written. Every later rese
 2. **Script** (`write-script-prompt`), from the beat sheet.
 3. **Shot list** (`write-shot-list-prompt`), from the script.
 
-The look's style guide (`make-style-guide`) is made alongside the story, from the visual identity brief.
+The style guide's rules beyond the final look (`make-style-guide`) are filled in alongside the story, from the visual identity brief.
+
+**Working looks are never the final look.** Concept art is painted loosely so colour, light, and shape can be judged without detail; the animatic and the line-art animation are line art so staging and acting can be judged without light or shading. Neither is a style for the finished film, and neither is ever sent as one.
 
 ## 3. Breakdown
 
@@ -58,6 +61,7 @@ Canonical reference, then concept art reference, then concept artwork, so concep
    4. **Assembly** (`build-animatic`): the frames held on their times over the mixed audio, rendered as one video. Staging into the canonical views, with the concept artwork as the look reference, makes the first frames for video (`generate-keyframe`'s staging).
 2. **Line-art animation,** lip-synced to the voices.
 3. **Final animation,** over background plates (`generate-background`), and the cut.
+   Its first and last frames are made in two steps. First the plate (`generate-background`): the place's canonical view from the shot's camera, in its neutral viewport shading, lit the way the concept artwork lights the place, in the final look, with no one in it; one plate for each state of the place the shot needs, such as a door closed and a door open. Then the staging (`generate-keyframe`): the canonical characters, from their own canonical images, never a concept study or the animation's sheets, placed into the plate where the shot's line-art frame puts them, lit by the plate's light as the concept artwork lights them. The final shot is made from those frames, the line-art shot's motion, and the characters' canonical references.
 
 Consistency is checked (`review-consistency`) at the end of every step that writes or changes a section of the brief, a story document, the style guide, or a step's template: every fact has one home, and the rest point to it.
 
