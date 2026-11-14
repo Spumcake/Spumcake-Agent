@@ -49,6 +49,8 @@ A keyframe is not the final look. The final look's light, shading, texture, and 
 
 These rules are what the layout drawing and the animatic sheets show; a keyframe prompt that sends them does not restate them, as `docs/prompt-roles.md` says.
 
+**The staging floor plan.** Before any keyframe of a moment, the moment's staging floor plan, `<moment>: staging floor plan`, is drawn with `build-previs` and approved by the user: the place from above, the shot's camera with the edges of its frame, and each character's mark, which way they face, and what they look at, from the canonical facts. It settles where each character is in the frame and which way their look runs before any image is generated, and every keyframe of the moment is checked against it. `pipeline.py` refuses to fill a keyframe of a moment whose staging floor plan is not approved.
+
 **The layout drawing.** Before any keyframe from a camera, make that camera's animatic layout drawing from its pre-vis render with [the animatic layout template](templates/animatic-layout.md): only what the characters touch or look at, outlined, with no walls, floor, ceiling, or grid. It is sent first to every keyframe from that camera, so every animatic frame draws the place the same way (the user, 2026-11-12; the template says how it was narrowed).
 
 **The characters' sheets.** A character's references are their animatic expression sheet, acting sheet, and turnaround (`generate-model-sheet`) and their board-style level-of-detail sheet (`generate-detail-sheet`). Their size in the frame is a figure of the level-of-detail sheet, never a landmark in words: landmarks left Otis too big, and the sheet's figure brought him to scale (the user, 2026-11-12). Their look is an expression panel drawn for the shot; when no panel looks the way the shot needs, make that panel first, since text that contradicts a panel loses to the drawing.
@@ -81,7 +83,7 @@ Count the references each keyframe needs before planning it. When the model take
 
 ## 1. Plan the keyframes
 
-Fill [the keyframe plan template](templates/keyframe-plan.md):
+First, for each moment the keyframes show, have its staging floor plan drawn and approved; nothing below starts for a moment without one. Then fill [the keyframe plan template](templates/keyframe-plan.md):
 
 - **The keyframe look:** the fixed rule above, one look for the whole film, written in the plan; it is carried by the layout drawings and the animatic sheets, never quoted in a prompt.
 - **One row per keyframe,** in the shot list's order. Every shot has a start keyframe, named by its number, such as `3-1`. Every shot with a camera move also has an end frame, named by its number and `-end`, such as `3-1-end`: the last moment, once the move is done. A still shot has none.

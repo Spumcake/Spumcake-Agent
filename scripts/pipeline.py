@@ -104,6 +104,13 @@ def fill(root, n, chain, step, name=None):
                    (chain, step)).fetchone()
     if not r: sys.exit("no step %s in chain %s" % (step, chain))
     skill, endpoint, template, refs, script, _ = r
+    if skill == "generate-keyframe" and step.startswith("keyframe, "):
+        # A moment's staging floor plan comes first: no frame of a moment is made until its plan is approved.
+        moment = step[len("keyframe, "):]
+        plan = db.execute("SELECT published FROM artifact WHERE id=?", ("%s: staging floor plan" % moment,)).fetchone()
+        if not plan or not plan[0]:
+            sys.exit("no approved staging floor plan for %s: draw it with build-previs, have the user approve it, "
+                     "and publish it as \"%s: staging floor plan\" before any keyframe of the moment" % (moment, moment))
     read, missing = [], []
 
     def value(m):

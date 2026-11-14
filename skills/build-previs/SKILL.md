@@ -55,10 +55,15 @@ When a place goes into production, its neutral views carry enough to rebuild eac
 
 Once the views are approved, the place's floor plan is written from the layout's numbers with `write-floor-plan`: the one home for where everything is and what each thing is called.
 
+## 8. A staging floor plan for each moment
+
+Before any frame of a moment is made, draw its staging floor plan with [scripts/staging-floor-plan.py](scripts/staging-floor-plan.py): the place from above, from the builder's exported geometry (`<builder> <folder> --geometry`); the shot's camera and the edges of its frame, labelled left and right as the camera sees them; and each character's mark, the way their body faces, and their look, drawn to the named thing they look at, which is shown in red. Every position and look comes from the canonical facts, `<character>: mark position`, `<character>: faces`, and `<character>, <moment>: looks at` and `: head turn`, written into the step's command as `{{<element>: <fact>}}`, so a changed fact redraws the plan. The caption names no file. The user approves it, and `project-pipeline` publishes it as `<moment>: staging floor plan`; no keyframe of the moment is made before that.
+
 ## Hand back
 
 To `project-library`, as a build:
 
 - the builder's command, and the files it makes: the layout drawing from above, with every camera marked; the key, each element named with the photograph it was built from; each shot and view, in plain greys for the model and colour-coded and labelled for the user; and, for each render, what is in its frame;
 - each camera's position, height, direction, and lens, with its reason or its move from the original camera, for the user's approval;
-- the layout's numbers, which `write-floor-plan` writes the floor plan from.
+- the layout's numbers, which `write-floor-plan` writes the floor plan from;
+- for each moment, its staging floor plan, for the user's approval before any frame of the moment.

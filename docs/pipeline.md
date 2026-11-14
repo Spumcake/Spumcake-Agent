@@ -54,7 +54,7 @@ Canonical reference, then concept art reference, then concept artwork, so concep
 1. **The animatic,** in the order the user set on 2026-11-13:
    1. **Timing** (`write-timing-reference`): every moment, sound cue, line, and frame on one timeline, before anything is made; the sound and the frames are both made to it.
    2. **Audio:** the voices (`generate-voice`), voice only, and the sound effects and music together as one bed with no voices (`generate-sound`), made apart and laid together in the mix.
-   3. **Frames:** each character's animatic sheets (`generate-model-sheet`, `generate-detail-sheet`), each camera's layout drawing, then the keyframes the timing reference lists (`generate-keyframe`), in partially completed line art with no shading.
+   3. **Frames:** each character's animatic sheets (`generate-model-sheet`, `generate-detail-sheet`); each moment's staging floor plan (`build-previs`), approved before any frame of the moment; each camera's layout drawing; then the keyframes the timing reference lists (`generate-keyframe`), in partially completed line art with no shading.
    4. **Assembly** (`build-animatic`): the frames held on their times over the mixed audio, rendered as one video. Staging into the canonical views, with the concept artwork as the look reference, makes the first frames for video (`generate-keyframe`'s staging).
 2. **Line-art animation,** lip-synced to the voices.
 3. **Final animation,** over background plates (`generate-background`), and the cut.

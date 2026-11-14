@@ -32,6 +32,8 @@ Publish only what the user approved, right after their yes:
 
 A result the user has not approved is never published; its step is recorded as waiting.
 
+A keyframe step is named `keyframe, <moment>`, and the moment's staging floor plan is published as `<moment>: staging floor plan`. `pipeline.py fill` refuses a keyframe step until that plan is approved and published, so no frame of a moment is ever made without its staging.
+
 ## What a change touches
 
 `pipeline.py touches <n> --fact "<element>: <fact>"` or `--artifact "<element>: <role>"` lists every published artifact and step the change reaches: the artifact that settles the fact, every image that shows the element, everything made from those, and every step whose template or references use any of them. Show the user the list before anything is made again.
