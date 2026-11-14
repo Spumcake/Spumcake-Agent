@@ -38,4 +38,4 @@ Fill [the voice brief template](templates/voice-brief.md), one brief per charact
 - the voice brief;
 - its lines and non-verbal sounds, one per line, each to be recorded or generated as its own take.
 
-Run `check-canonical-consistency` on the brief before showing it.
+Run `review-consistency` on the brief before showing it.

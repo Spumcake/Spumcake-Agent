@@ -236,7 +236,7 @@ def adopt(file, moved=(), kind=None, copies=False):
         mf.append({"file": R(s["bed"]["audio"]), "role": "sound bed, at %s dB" % s["bed"].get("gain_db", 0)})
         mf += [{"file": R(c["audio"]), "role": "clip %s to %s s, laid at %s s, at %s dB" % (c["from"], c["to"], c["at"], c.get("gain_db", 0))}
                for c in s.get("clips", [])]
-        return write(file, kind or "video", {"tool": "create-animatic/scripts/assemble.py", "settings":
+        return write(file, kind or "video", {"tool": "build-animatic/scripts/assemble.py", "settings":
                      {k: s[k] for k in ("length", "fps", "size") if k in s}, "cost": "nothing; local"},
                      rel(spec, root), mf, root=root, **keep)
     if os.path.exists(stem + ".source.txt"):

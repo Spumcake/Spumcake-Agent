@@ -50,7 +50,7 @@ Show the board. List the files worth downloading, with their sources, licences, 
 
 ## 3. The mood brief
 
-Right after the film's brief, before any other research, draft its mood, as a film crew would: what the film should feel like, and how films, books, and pictures have made that feeling. Draft it from the brief alone, as a finished result the user edits. It holds the mood only: genre and tone, references, and how light, colour, camera, and pace feel. It never retells the story, the setting, the time of day, or the characters, which are the brief's, nor the sound, which is the audio identity brief's: it points to the brief, so a later change to the brief cannot leave it contradicting. Every direction stays within what the brief fixes: a brief set at night gets directions within night. `check-canonical-consistency` keeps it so. Draw on:
+Right after the film's brief, before any other research, draft its mood, as a film crew would: what the film should feel like, and how films, books, and pictures have made that feeling. Draft it from the brief alone, as a finished result the user edits. It holds the mood only: genre and tone, references, and how light, colour, camera, and pace feel. It never retells the story, the setting, the time of day, or the characters, which are the brief's, nor the sound, which is the audio identity brief's: it points to the brief, so a later change to the brief cannot leave it contradicting. Every direction stays within what the brief fixes: a brief set at night gets directions within night. `review-consistency` keeps it so. Draw on:
 
 - **genre and tone,** and the films, books, and animation that share it;
 - **literary references:** stories and authors whose situations or voice are close to the film's;
@@ -59,7 +59,7 @@ Right after the film's brief, before any other research, draft its mood, as a fi
 - **paintings and photographs** whose light, colour, or composition fit;
 - **light, palette, camera, presentation, and pace,** as consequences of the references, within what the brief fixes.
 
-Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then distil each direction into **tone phrases:** four to eight short phrases of a few words each, each drawn from one of its references and named beside it, such as "an ordinary room where something is slightly wrong" (Lynch). They say the direction's tone to the user and the style guide; they are not put into image prompts, where vague phrases are misread (see `write-image-prompt`).
+Fill [the mood brief template](templates/mood-brief.md) with two or three distinct directions, each a whole answer, with what each reference gives the film and the clichés each direction falls into. Then distil each direction into **tone phrases:** four to eight short phrases of a few words each, each drawn from one of its references and named beside it, such as "an ordinary room where something is slightly wrong" (Lynch). They say the direction's tone to the user and the style guide; they are not put into image prompts, where vague phrases are misread (see `prompt-image`).
 
 Then choose the direction that serves the brief best, or a blend, and record it in the brief with the reason, drawn from the brief's own words. The user may change it by editing; the next step does not wait for them. No images are collected yet: that is the visual identity research, built on the brief and the chosen mood.
 

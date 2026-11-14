@@ -45,31 +45,31 @@ Run `research-references` for the element: a photograph of every item the story 
 
 ## A place
 
-2. **Pre-vis:** run `create-previs` from the approved research: the layout, the mock-up with its key, and one good shot. The user approves the shot.
+2. **Pre-vis:** run `build-previs` from the approved research: the layout, the mock-up with its key, and one good shot. The user approves the shot.
 3. **The primary canonical location:** make it as below: the grey shot, the research photographs, the names from the key, and the concept context template for the place. The user chooses one.
-4. **Canonical cleanup:** run `canonical-cleanup` on the chosen image, against its canonical prompt and the pre-vis. Fixes for the pre-vis go back to step 2, and the image is made again from the corrected shot. The user approves the cleaned image.
-5. **The views:** run `create-previs` for a camera square-on to each wall, and any other camera the user asks for and approves, and make each view from the primary canonical location with the new camera template below. Run `canonical-cleanup` across the views, fixing only major inconsistencies. The user chooses each view.
-6. **The neutral passes:** make the grey form, coloured form, and texture passes below on the primary canonical location and each view, then `canonical-cleanup` on the form passes. Surface changes, such as less gloss, are made on the texture passes; mood and light come in the concept art phase.
+4. **Canonical cleanup:** run `fix-canonical-image` on the chosen image, against its canonical prompt and the pre-vis. Fixes for the pre-vis go back to step 2, and the image is made again from the corrected shot. The user approves the cleaned image.
+5. **The views:** run `build-previs` for a camera square-on to each wall, and any other camera the user asks for and approves, and make each view from the primary canonical location with the new camera template below. Run `fix-canonical-image` across the views, fixing only major inconsistencies. The user chooses each view.
+6. **The neutral passes:** make the grey form, coloured form, and texture passes below on the primary canonical location and each view, then `fix-canonical-image` on the form passes. Surface changes, such as less gloss, are made on the texture passes; mood and light come in the concept art phase.
 
 ## A character
 
 2. **The primary canonical character:** make it as below: one front view, from several research photographs and the place's texture view, so the character is drawn in the place's design style. The user chooses one.
-3. **Canonical cleanup:** run `canonical-cleanup` against its canonical prompt; the story check's list is its inventory.
-4. **The A-pose views:** run `create-subject-reference`'s A-pose views: the front as a textured viewport view, then the back and both sides from it, then the same without outer layers, such as an apron, then their grey and coloured form passes, with one fixed colour per part.
-5. **The props they carry:** make each small prop the story check lists, as below. With several characters, composite their height chart with `create-line-up`.
+3. **Canonical cleanup:** run `fix-canonical-image` against its canonical prompt; the story check's list is its inventory.
+4. **The A-pose views:** run `generate-subject-reference`'s A-pose views: the front as a textured viewport view, then the back and both sides from it, then the same without outer layers, such as an apron, then their grey and coloured form passes, with one fixed colour per part.
+5. **The props they carry:** make each small prop the story check lists, as below. With several characters, composite their height chart with `build-line-up`.
 
 ## A prop
 
-2. **A small prop,** with few details, such as a rag, a mug, or a bell: run `create-subject-reference`'s small prop sheet, one coloured, non-textured sheet of the prop alone and in its character's hand, from the character's coloured A-pose and the prop's photographs.
+2. **A small prop,** with few details, such as a rag, a mug, or a bell: run `generate-subject-reference`'s small prop sheet, one coloured, non-textured sheet of the prop alone and in its character's hand, from the character's coloured A-pose and the prop's photographs.
 3. **A large prop,** such as a vehicle or a piece of furniture a character uses: make it as a character is made, with a primary canonical image, cleanup, and views from the front, back, and both sides, then their form passes.
 
 As the user judged on 2026-11-11, an element's views drift from each other, and image edits cannot make them agree: cleaning several canonical images against each other was tried on a diner and failed. Views are made once and not cleaned against each other; keeping every view of an element consistent needs the element built as a full 3D model, when the setup has a way to make one.
 
 ## The canonical images
 
-These make the images the steps above name. The concept context template is `explore-concept`'s.
+These make the images the steps above name. The concept context template is `generate-concept-design`'s.
 
-**The primary canonical location.** The first image of a place made from its pre-vis is its primary canonical location: the image every other image of the place is based on. It shows the place only. When the concept is of a place, made from its pre-vis, send the pre-vis shot in grey, as `create-previs` renders it for the model. Say what it is for: a mock-up for positioning only, telling where things are, not the design, shape, colour, or style of anything. Send the research photographs of the place's elements with the pre-vis, and say what they are: photographs of real places that show what the mock-up's shapes are. Name the mock-up's shapes from its key, since grey shapes do not say what they are. Add "Do not add anything that is not in the mock-up." Leave out every mention of people or characters, including the context template's lines about characters, figures, and skin: an empty place needs none, and naming them invites them. Ask for low detail, since the place becomes a background for animation: change the context template's "medium detail" to "low detail" and add that detail is low and minimal, broad simple shapes with only the detail an animation background needs. The premise and purpose stay short, as the context template needs.
+**The primary canonical location.** The first image of a place made from its pre-vis is its primary canonical location: the image every other image of the place is based on. It shows the place only. When the concept is of a place, made from its pre-vis, send the pre-vis shot in grey, as `build-previs` renders it for the model. Say what it is for: a mock-up for positioning only, telling where things are, not the design, shape, colour, or style of anything. Send the research photographs of the place's elements with the pre-vis, and say what they are: photographs of real places that show what the mock-up's shapes are. Name the mock-up's shapes from its key, since grey shapes do not say what they are. Add "Do not add anything that is not in the mock-up." Leave out every mention of people or characters, including the context template's lines about characters, figures, and skin: an empty place needs none, and naming them invites them. Ask for low detail, since the place becomes a background for animation: change the context template's "medium detail" to "low detail" and add that detail is low and minimal, broad simple shapes with only the detail an animation background needs. The premise and purpose stay short, as the context template needs.
 
 **The primary canonical character.** A character's primary canonical image is one front view, the whole figure, in a neutral pose on a plain background, under neutral light. Fill the concept context template without its "rule of thirds" and its line on characters as geometric masses, with the purpose "concept character design", one view only. Send several research photographs of the archetype and its clothing, then the place's texture view, so the character is drawn in the place's design style; say what each image is, and only what no image gives: the build, the face, and anything the story names about the character. State every wanted trait positively, such as "a bare, balding head with no cap", since a negative cannot remove what the archetype brings with it. Reject a candidate that adds turnarounds, close-ups, or lettering.
 
@@ -92,4 +92,4 @@ In each, `{{what_stays}}` says what must not change: for a place, "the same obje
 - for a prop, its sheet or its views;
 - every continuity review, fix plan, prompt, and image sent, and what the user chose at each step.
 
-The element is then ready for its concept art reference (`create-concept-reference`), and for keyframes.
+The element is then ready for its concept art reference (`generate-concept-reference`), and for keyframes.

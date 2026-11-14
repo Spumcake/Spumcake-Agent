@@ -49,4 +49,4 @@ The brief is finished when it is written; the next step uses it at once. The use
 - the visual identity brief, with its colour intent and its palette candidates;
 - the questions research should answer, one line each, drawn from the brief, such as "how is the space behind a character made to feel occupied?".
 
-Run `check-canonical-consistency` on the brief before showing it.
+Run `review-consistency` on the brief before showing it.

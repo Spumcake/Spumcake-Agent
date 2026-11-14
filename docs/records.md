@@ -24,7 +24,7 @@ Status, whether a file is approved, waiting, or rejected, is not in the record: 
 
 [`scripts/records.py`](../scripts/records.py) is the only way records are written and files are copied or moved:
 
-- `write` makes a record. [`scripts/generate.py`](../scripts/generate.py), which sends a prompt to an image or audio model exactly as written, calls it for every result; so do the pre-vis builder and the animatic's [assembly script](../skills/create-animatic/scripts/assemble.py). Any other renderer must too. An image made from others takes image 1's camera and contents unless the request changed what is in the frame, when the new contents are given.
+- `write` makes a record. [`scripts/generate.py`](../scripts/generate.py), which sends a prompt to an image or audio model exactly as written, calls it for every result; so do the pre-vis builder and the animatic's [assembly script](../skills/build-animatic/scripts/assemble.py). Any other renderer must too. An image made from others takes image 1's camera and contents unless the request changed what is in the frame, when the new contents are given.
 - `copy` and `move` copy or move a file with its record; a copy records its source, and a move rewrites every record that points at the old path.
 - `trace <file>` draws and lists the file's whole paper trail.
 - `children <file>` lists what was made from a file, so a change to it says what must be made again.

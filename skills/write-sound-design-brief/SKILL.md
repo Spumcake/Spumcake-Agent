@@ -17,7 +17,7 @@ This skill makes no sound. It writes the brief as a finished draft and stops at 
 - the beat sheet or the script, for what happens and when, and the film's length;
 - the place's pre-vis key and canonical images, for what can make a sound;
 - the voice briefs, for where each line and non-verbal sound falls, so the cues leave room for them;
-- the timing reference (`timing-reference`), once it exists, whose cue times the brief takes rather than setting its own;
+- the timing reference (`write-timing-reference`), once it exists, whose cue times the brief takes rather than setting its own;
 - a folder for the brief.
 
 ## 1. Decide
@@ -25,7 +25,7 @@ This skill makes no sound. It writes the brief as a finished draft and stops at 
 From the sources, and from what the scene needs where they are silent, marking each decision *proposed*:
 
 - **The length,** from the beat sheet or the script.
-- **The sources:** every sound comes from something the canonical place holds, as its pre-vis key and canonical images show it, or from what the beat sheet or script names, on screen or off. A sound with no source there is not added: report it as missing from the canon, for `check-canonical-consistency`. A refrigerator heard in a diner that has none carried from a first draft into the brief, with a cue of its own (the user, 2026-11-12).
+- **The sources:** every sound comes from something the canonical place holds, as its pre-vis key and canonical images show it, or from what the beat sheet or script names, on screen or off. A sound with no source there is not added: report it as missing from the canon, for `review-consistency`. A refrigerator heard in a diner that has none carried from a first draft into the brief, with a cue of its own (the user, 2026-11-12).
 - **The room tone:** the layers heard when nothing happens, each with its level and closeness, running the whole length unless a cue changes it.
 - **Each cue,** in order: its time and length, in seconds; what it is and where it comes from in the room; how loud and how close; and what it does. The voice briefs' lines and sounds are cues too, by name, so the timeline is whole; how they sound stays in the voice briefs.
 - **Silence:** where everything but the room tone stops, and for how long.
@@ -41,4 +41,4 @@ Fill [the sound design brief template](templates/sound-design-brief.md). Times a
 - the sounds to find or make, each to be made as its own take;
 - the cue times, for the audio cut and for timing the animatic.
 
-Run `check-canonical-consistency` on the brief before showing it.
+Run `review-consistency` on the brief before showing it.

@@ -55,4 +55,4 @@ The brief is finished when it is written; the voice briefs and the sound design 
 - the audio identity brief;
 - the speaking characters, each to get a voice brief.
 
-Run `check-canonical-consistency` on the brief before showing it.
+Run `review-consistency` on the brief before showing it.

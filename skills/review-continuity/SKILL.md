@@ -70,7 +70,7 @@ Choose the template for the result's kind, and gather what it must agree with:
 
 **Space.** Every image with a character in a place is also checked against the place's floor plan and the timing reference's blocking: each character stands on their mark, faces the way it gives, and looks at the named object it gives, as this camera sees it; each named object is where the plan puts it, and in the state the blocking gives, such as a door open or closed. A look aimed at the wrong door is a finding, however good the frame (the user, 2026-11-13).
 
-**A generated image's own sources.** Every image a model made from a request is also checked against what it descends from, which is how `canonical-cleanup` finds what to fix:
+**A generated image's own sources.** Every image a model made from a request is also checked against what it descends from, which is how `fix-canonical-image` finds what to fix:
 
 - **its canonical prompt,** the text-to-image prompt it descends from, as sent, however many edits came after it: what the image has that a line rules out, such as many elements where the prompt asks for minimal ones, and what a line asks for that came out wrong, each finding quoting the line. The prompt is the only measure here: what it does not say, such as a number of stools, is not a finding;
 - **its pre-vis,** when it was made from one, as its inventory: anything the pre-vis does not represent, except the world seen through the windows; and for each such thing, whether it reads clearly as a thing the place needs, such as a door;
@@ -141,7 +141,7 @@ The user decides each finding:
 - **accept it:** the result stands with that difference, recorded with the user's reason when they give one;
 - **remake:** the result goes back to the step that made it, with the finding as what to change.
 
-Never choose for them, never fix the result, and never remake it here. When `canonical-cleanup` called the review, its findings go to the cleanup instead, which fixes them as part of the step and shows the user the findings and the fixes together afterwards. Record each decision in the finding's "The user's decision" line, and the date in "Decided". When a remade result comes back, review it again from step 2 with the same references, and say which earlier findings are gone and which remain.
+Never choose for them, never fix the result, and never remake it here. When `fix-canonical-image` called the review, its findings go to the cleanup instead, which fixes them as part of the step and shows the user the findings and the fixes together afterwards. Record each decision in the finding's "The user's decision" line, and the date in "Decided". When a remade result comes back, review it again from step 2 with the same references, and say which earlier findings are gone and which remain.
 
 ## Hand back
 
