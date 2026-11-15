@@ -24,19 +24,20 @@ This skill makes no sound. It drafts the brief page's sound design section as a 
 From the sources, and from what the scene needs where they are silent, marking each decision *proposed*:
 
 - **The length,** from the beat sheet or the script.
+- **The events,** first, before any cue: every physical event in the scene, on screen or off, from the beat sheet or script, the staging plans, and the animatic once it exists, each with what causes it, and the causes' own events in turn. Each event makes its sound, and becomes a cue with its time, unless the user has chosen that it is silent. Being out of frame, or unseen, never makes an event silent: the off-screen sound is often the point. A bell over a door rings because the door opened, so the latch and the door's swing are events too. Last order's brief (2026-11-12) gave the bell over the front door and wrote "no door creak, draught, or footsteps around it", because the doorway was out of frame and the visitor unseen; the user called it a major oversight, and the door's missing sound later cost several renders of the final shot, which had nothing to time the door by.
 - **The sources:** every sound comes from something the canonical place holds, as its floor plan and published views show it, or from what the beat sheet or script names, on screen or off. A sound with no source there is not added: report it as missing from the canon, for `review-consistency`. A refrigerator heard in a diner that has none once carried from a first draft into the brief, with a cue of its own.
 - **The room tone:** the layers heard when nothing happens, each with its level and closeness, running the whole length unless a cue changes it.
 - **Each cue,** in order: its time and length, in seconds; what it is and where it comes from in the room; how loud and how close; and what it does. The voices' lines and sounds are cues too, by name, so the timeline is whole; how they sound stays in the voices section.
-- **Silence:** where everything but the room tone stops, and for how long.
+- **Silence:** where everything but the room tone stops, and for how long. A silence is a choice the user makes. An event's sound is never left out, or put on a never list, as a *proposed* line: it is asked as a question, naming the event, and stays a cue until the user says otherwise. A never list holds only sounds no event in the scene makes, such as a horror sting.
 - **The mix:** what is loudest, what sits under what, and what must never be covered.
 
 ## 2. Write the section
 
-Fill [the sound design brief template](templates/sound-design-brief.md). Times are in seconds from the start, such as "4.0 to 5.6". The last section lists each sound to find or make, one line each, which is what sound generation is sent. `review-consistency` checks the draft against the rest of the brief page, as its own request, before the user approves it.
+Fill [the sound design brief template](templates/sound-design-brief.md). Times are in seconds from the start, such as "4.0 to 5.6". Before handing it back, check the events table against the cues: every event has a cue, or a silence the user chose, and every cue's time is its event's time. The last section lists each sound to find or make, one line each, which is what sound generation is sent. `review-consistency` checks the draft against the rest of the brief page, as its own request, before the user approves it.
 
 ## Hand back
 
 - the draft of the brief page's sound design section, for the user's approval and for `project-brief` to place;
-- the facts it settles, by `<element>: <fact>`, for `project-pipeline` to publish: each sound to find or make as `<sound>: description`, which `generate-sound` sends as `{{<sound>: description}}`;
+- the facts it settles, by `<element>: <fact>`, for `project-pipeline` to publish: each sound to find or make as `<sound>: description`, which `generate-sound` sends as `{{<sound>: description}}`, and each event's time as `<event>: start`, from the same fact a picture step times it by where one exists, such as `the front door: opens at`, so a change to the event's time reaches the sound as it reaches the frames;
 - the sounds to find or make, each to be made as its own take;
 - the cue times, for the audio cut and for timing the animatic.

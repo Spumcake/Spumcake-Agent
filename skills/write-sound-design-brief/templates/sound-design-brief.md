@@ -4,6 +4,14 @@ From: the audio identity, {{the beat sheet or the script, by canonical name}}, a
 
 Length: {{seconds}}.
 
+## The events
+
+Every physical event in the scene, on screen or off, with what causes it; each has a cue below, or a silence the user chose.
+
+| Time | Event | On screen or off | Caused by | Its sound |
+|---|---|---|---|---|
+| {{start}} | {{event}} | {{on or off}} | {{cause, or "the scene"}} | {{its cue, or "silent: the user, <date>"}} |
+
 ## The room tone
 
 - **{{layer}}:** {{what it is, where it comes from, level and closeness; when it changes}}

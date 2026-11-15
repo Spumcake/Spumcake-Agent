@@ -6,7 +6,7 @@ Nothing else: no voices, no breathing, {{never}}.
 
 ## Filling it
 
-- `{{timeline}}`: one line per cue or stretch, from the timing reference and the sound design brief, such as "0.0 to 3.0: a cloth wipes the counter slowly twice, damp and close. Under everything, the whole time: the thin hum of a lamp overhead with an irregular crackle, and the faint tick of a wall clock across the room. A sparse, slow ambient piece, soft electric piano chords over a quiet pad, tired and melancholic, very low, starts at 0.0." Where a line will be laid over the bed: "3.0 to 6.3: no new sound; the room and the music only."
-- `{{never}}`: the audio identity brief's never list, such as "no footsteps, no door creak, no horror sting, no rising drone, and no echo".
+- `{{timeline}}`: one line per cue or stretch, from the timing reference and the sound design brief, with a line for every event in its events table, on screen or off, such as "0.0 to 3.0: a cloth wipes the counter slowly twice, damp and close. Under everything, the whole time: the thin hum of a lamp overhead with an irregular crackle, and the faint tick of a wall clock across the room. A sparse, slow ambient piece, soft electric piano chords over a quiet pad, tired and melancholic, very low, starts at 0.0." Where a line will be laid over the bed: "3.0 to 6.3: no new sound; the room and the music only."
+- `{{never}}`: the audio identity brief's never list, such as "no horror sting, no rising drone, and no echo". It never names a sound an event in the scene makes.
 
-The example is Last order's approved bed (2026-11-13), `prompts/scene-3.txt` in its benchmark.
+The example is Last order's approved bed (2026-11-13), `prompts/scene-3.txt` in its benchmark, with one fault the user found later: its bell over the front door rang with "no door creak" on its never list, so the door that rang it made no sound. Written now, its 3.0 s line would carry the door: "3.0: the front door's push bar clicks and its latch gives, the small brass bell over it rings once, bright and clean, with a short ring-out, and the door swings open with a short, low creak of its hinge."
