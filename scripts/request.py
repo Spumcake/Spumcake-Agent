@@ -20,7 +20,7 @@ Usage:
   request.py tell <id>                what the agent says when the request is done, word for word
   request.py list [--skill S] [--pipeline P]
   request.py check                    every report's files exist, every library file has its report, nothing in
-                                      library/ or sources/ was changed or removed since it was committed
+                                      library/, sources/, prompts/, or working/ was changed or removed since it was committed
   request.py id <name>                the ID a request named <name> would get now
 
 A spec is JSON:
@@ -35,7 +35,8 @@ A spec is JSON:
    "outputs": ["<file to file>", ...]          for research: the files found
    "sources": [{"file": "...", "address": "...", "page": "...", "use": "..."}]   for research}
 A request is one call to a model endpoint. What the agent or a builder makes is not a request: it goes into
-prompts/resources/ when it is canon or is sent to a model, and is not kept otherwise. Names use local time.
+prompts/resources/ when it is canon or is sent to a model, and into working/ otherwise: nothing made for a project
+is thrown away or left in a scratch folder. Names use local time.
 The agent writes the spec; everything else in the report comes from what this script sent and received.
 """
 import sys, os, re, json, base64, hashlib, html, shutil, subprocess, urllib.request, mimetypes, wave, datetime, struct, zlib
@@ -513,7 +514,8 @@ def check():
             rel = folder + "/" + f
             if f.endswith(".html") and folder == "sources": continue
             if rel not in owned: problems.append("no report made " + rel)
-    g = subprocess.run(["git", "status", "--porcelain", "--", "library", "sources", "prompts"], cwd=root, capture_output=True, text=True)
+    g = subprocess.run(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "working", ":!working/index.md"],
+                       cwd=root, capture_output=True, text=True)
     for line in g.stdout.splitlines():
         if set(line[:2]) & set("MDR"): problems.append("changed or removed in a folder that only grows: " + line[3:])
     for x in problems: print(x)

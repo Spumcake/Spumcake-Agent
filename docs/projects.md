@@ -13,9 +13,11 @@ A project, such as one film, is a folder that says what it holds through its fol
   brief/      the intent, one page per pipeline, <pipeline>-<project>.html
   pipeline/   one folder per pipeline, 001/: its published canon, canon.sql, and a page per chain, <nn>-<chain>.html
   output/     finished deliverables, flat, <timestamp>-<pipeline>-<project>.<ext>
+  working/    everything else the agent makes for the project, flat, <time>-<name>.<ext>: checks, comparisons,
+              frame strips, overlays, specs, test builds, scripts, and screenshots the user pastes; only added to
 ```
 
-Each folder is owned by one skill, which alone writes there: `requests/` by [project-requests](../skills/project-requests/SKILL.md), `library/`, `prompts/`, and `sources/` by [project-library](../skills/project-library/SKILL.md), `brief/` by [project-brief](../skills/project-brief/SKILL.md), `pipeline/` by [project-pipeline](../skills/project-pipeline/SKILL.md), and `output/` by [project-output](../skills/project-output/SKILL.md). Every other skill returns its result to `project-requests` and writes nothing itself. Everything in a project is versioned in git, the library included.
+Each folder is owned by one skill, which alone writes there: `requests/` by [project-requests](../skills/project-requests/SKILL.md), `library/`, `prompts/`, `sources/`, and `working/` by [project-library](../skills/project-library/SKILL.md), `brief/` by [project-brief](../skills/project-brief/SKILL.md), `pipeline/` by [project-pipeline](../skills/project-pipeline/SKILL.md), and `output/` by [project-output](../skills/project-output/SKILL.md). Every other skill returns its result to `project-requests` and writes nothing itself. Everything in a project is versioned in git, the library included.
 
 ## Names
 
@@ -25,11 +27,12 @@ Each folder is owned by one skill, which alone writes there: `requests/` by [pro
 - **A resource** is the time it was filed and what it is: `2026-11-13_19-02-floor-plan.md`, `2026-11-11_22-20-previs-far-end-wall-grey.png`.
 - **A source** is its research request's ID and what it is: `2026-11-09_14-07-diner-research-1939-route-40-diner.jpg`.
 - **An output** is its local time, its pipeline, and the project: `2026-11-14_13-30-001-last-order.mp4`.
+- **A working file** is the local time it was made and what it is: `2026-11-14_21-12-door-21-08-fine.png`. `working/index.md` says what each is. Nothing made for a project is thrown away or left in a scratch folder: the agent writes working files here from the start (the user, 2026-11-14).
 - No folder holds a single file.
 
 ## Requests
 
-A request is one call to a generative model's endpoint, such as an image, a sound, or a language model's answer, with one prompt, as one cycle. What the agent writes or draws itself, and what a builder makes, is not a request: it is kept in `prompts/resources/` when it is canon or is sent to a model, and is not kept otherwise. A user's message can hold several; `project-requests` names each, orders them by what each needs from another, and runs them in that order. A `make` skill is not a request: it plans the requests its steps need, and each runs as its own cycle.
+A request is one call to a generative model's endpoint, such as an image, a sound, or a language model's answer, with one prompt, as one cycle. What the agent writes or draws itself, and what a builder makes, is not a request: it is kept in `prompts/resources/` when it is canon or is sent to a model, and in `working/` otherwise. Nothing made for a project is thrown away or left in a scratch folder (the user, 2026-11-14). A user's message can hold several; `project-requests` names each, orders them by what each needs from another, and runs them in that order. A `make` skill is not a request: it plans the requests its steps need, and each runs as its own cycle.
 
 [`scripts/request.py`](../scripts/request.py) is the one runner. It sends the request exactly as its skill built it, files every output into `library/`, writes the prompt as sent into `prompts/<request id>.txt`, and writes the report from what it sent and received: the endpoint and its settings; every reference in the order sent, with its role; the prompt as sent; the canon read, and when; the scripts run; the cost; and the outputs. The agent adds only its own words, what was asked and why, and the comparisons and charts it makes to show the results, which are embedded in the report and kept nowhere else. The same data sits in the report as JSON, so `request.py show <file>` answers what made any file. Any other input a request sends, such as a pre-vis render, is a resource in `prompts/resources/`.
 
