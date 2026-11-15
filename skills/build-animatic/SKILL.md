@@ -118,6 +118,10 @@ Revise until the user approves it. The approved sheet and clip are published by 
 
 Once a shot's line-art animation is approved, lay it over the layout drawings of its moments with [scripts/composite.py](scripts/composite.py), so the character moves in the place, and the place changes with the moments, such as a door that opens at a bell. The character is made solid, so the place's lines do not show through: the page is every near-white pixel joined to the frame's edge, and the rest, the lines and what they enclose, is the character. Each background is a layout drawing, by its canonical artifact, held from its moment's start to the next; the shot's sound is kept. It is a build: no model, no cost, and the result, for the user's approval, is published as `<shot>: line-art shot in the layout`. It is also a continuity check: the character should sit where the staging floor plans put them, against what they touch.
 
+## The animatic over the final render
+
+Once a final shot is rendered, lay its animatic over it with [scripts/overlay.py](scripts/overlay.py): the line-art animation's lines in white, and the pre-vis's edges, the place and anything moving in it, such as a door, in a second colour. It shows at a glance whether the render keeps the animatic's acting and timing, and whether the two share a camera. It is a comparison, embedded in the final shot's report.
+
 ## Hand back
 
 Hand back to [project-requests](../project-requests/SKILL.md):
