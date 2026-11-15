@@ -180,7 +180,7 @@ def fal_upload(path, fal_key):
 
 def fal(spec, root, tmp, key_file):
     ep = spec["endpoint"]
-    body = {"prompt": spec["prompt"]}
+    body = {"prompt": spec["prompt"]} if spec.get("prompt") else {}  # an endpoint with no prompt, such as frame interpolation
     body.update(ep.get("settings", {}))
     fal_key = key("fal-ai", "FAL_KEY", r"[A-Za-z0-9_\-]+:[A-Za-z0-9_\-]+", key_file)
     uploaded = {}
