@@ -400,6 +400,9 @@ def run(spec_file, stand=False, key_file=None):
             "shown": [], "result": result, "notes": spec.get("notes"), "stand_in": bool(stand)}
     render(root, data, rpath)
     print(os.path.relpath(rpath, root))
+    # What the user is told, word for word: printed with every request, so it is never left out of the reply.
+    print("\n--- tell the user, word for word ---", file=sys.stderr)
+    _tell_to(root, rpath, sys.stderr)
 
 
 def attach(rid, f, as_, caption=None):
@@ -449,7 +452,10 @@ def show(what):
 
 def tell(rid):
     root = project_root()
-    path = find_report(root, rid)
+    _tell_to(root, find_report(root, rid), sys.stdout)
+
+
+def _tell_to(root, path, out):
     d = read_data(path)
     sent = d.get("sent", {})
     lines = ["**%s** (%s)" % (d["id"], d.get("skill") or "no skill named"),
@@ -470,7 +476,7 @@ def tell(rid):
     lines.append("- Report: " + os.path.relpath(path, root))
     lines.append("- Prompt, as sent:")
     lines.append("```text\n%s\n```" % (d.get("prompt") or "none"))
-    print("\n".join(lines))
+    print("\n".join(lines), file=out)
 
 
 def all_reports(root):

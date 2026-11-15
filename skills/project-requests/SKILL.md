@@ -43,7 +43,9 @@ For each request, in order:
 3. **Run it:** `request.py run <spec.json>`. Its outputs land in `library/`, or `sources/` for research, and its report in `requests/`. Never save, copy, rename, or move an output any other way.
 4. **Show it.** When results are easier to judge side by side, make a comparison or a chart and embed it in the report with `request.py attach <id> <file> --as comparison`; it is kept nowhere else.
 5. **Review it.** For an image, a clip, or a sound, run `review-continuity` on it as its own request, against the canon the request read.
-6. **Tell the user** what `request.py tell <id>` prints, word for word, then the review's findings. Add nothing to it and leave nothing out: it is the endpoint, the references in order, the canon read, the prompt as sent, the outputs, the cost, and the report's path.
+6. **Tell the user** what `request.py tell <id>` prints, word for word, then the review's findings. `request.py run` prints it at the end of every request; it goes into the reply every time, for every request, whether or not the user asks. Add nothing to it and leave nothing out: it is the endpoint, the references in order, the canon read, the prompt as sent, the outputs, the cost, and the report's path.
+
+**One change at a time.** When a request is made again to fix something, change one thing: one reference, one setting, or one part of the prompt. Two changes at once leave no way to tell which did what.
 
 ## 4. The user's approval
 
