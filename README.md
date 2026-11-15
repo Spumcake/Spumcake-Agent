@@ -1,10 +1,12 @@
-# Spumcake Agent
+# Spumcake-Skills
 
-An agnostic, open-source collection of pre-made skills for animated filmmaking from [Spumcake](https://spumcake.tv), an AI-native entertainment and technology company. Spumcake Studio imports them when it is installed, and any agent with access to its own execution stack can use them. The skills are about creative tasks, not about any one product: how Spumcake Studio or the platform works is described in their own documents, never here.
+A skills collection for creating AI-assisted animated films, from [Spumcake](https://spumcake.tv), an AI-native entertainment and technology company. It is agnostic and open source. Spumcake Studio imports them when it is installed, and any agent with access to its own execution stack can use them. The skills are about creative tasks, not about any one product: how Spumcake Studio or the platform works is described in their own documents, never here.
 
-Skills for general AI animated filmmaking, with the user directing every step: planning a story from beat sheet to shot list, setting a concept's style and colour, designing and referencing its subjects and places, and boarding and timing its shots. Each skill plans its task and creates the prompts destined for the models that make its results; the setup it runs in renders them.
+Its method exists to make AI-assisted animated filmmaking as deterministic, and as much under the user's control, as it can be. A model asked for a whole shot at once decides too much on its own, and decides it differently each time. So the skills follow the workflow animation studios already use: pre-vis, floor plans, model sheets, a colour script, layouts, keyframes, an animatic, and timing. Each stage is a small, checkable step, and its approved result is fixed as canon, so every later step is made from it and nothing drifts unseen. Every request is sent exactly as its skill built it, and recorded, so any result can be traced to what made it and made again. The method was worked out on [Last order](https://github.com/Spumcake/spumcake-benchmarks), an eight-second film taken from brief to final render over about a week.
 
-[docs/overview.md](docs/overview.md) says what Spumcake Agent is and where it is going. [docs/projects.md](docs/projects.md) describes a project's folders, how requests are run and reported, and how results are published as canon; [scripts/request.py](scripts/request.py) runs each request and writes its report, and [scripts/pipeline.py](scripts/pipeline.py) keeps a pipeline's canon. [docs/prompt-roles.md](docs/prompt-roles.md) describes the roles a prompt is filled by, and what a setup provides to run it.
+The skills take a film from a brief to a final render, with the user directing every step: planning its story from beat sheet to shot list; setting its look; finding its places, props, and staging in concept art and designing its characters by hand; making them canonical so every shot holds together; its voices and sound; staging, timing, and assembling its animatic; and its line-art and final animation. Each skill plans its task and creates the prompts destined for the models that make its results; the setup it runs in renders them.
+
+[docs/overview.md](docs/overview.md) says what Spumcake-Skills is and where it is going. [docs/projects.md](docs/projects.md) describes a project's folders, how requests are run and reported, and how results are published as canon; [scripts/request.py](scripts/request.py) runs each request and writes its report, and [scripts/pipeline.py](scripts/pipeline.py) keeps a pipeline's canon. [docs/prompt-roles.md](docs/prompt-roles.md) describes the roles a prompt is filled by, and what a setup provides to run it.
 
 ## Skills
 
@@ -18,9 +20,9 @@ Each skill belongs to one category, the first word of its name, which says what 
 | fix | [fix-canonical-image](skills/fix-canonical-image/SKILL.md) | fixes a generated image from its continuity review: traces each finding to the pre-vis or the generation, and fixes it there, across every view |
 | generate | [generate-background](skills/generate-background/SKILL.md) | makes the background plates for each shot or camera setup, with no characters |
 |  | [generate-board](skills/generate-board/SKILL.md) | draws a rough layout frame for each shot of an approved shot list, or from the user's sketch |
-|  | [generate-canonical-image](skills/generate-canonical-image/SKILL.md) | makes an element's canonical images: a place's primary canonical location, a character's primary canonical image, a new camera, and the neutral passes |
-|  | [generate-concept-artwork](skills/generate-concept-artwork/SKILL.md) | makes concept artwork from concept art references: a character staged into a place's painting, the look reference for first frames |
-|  | [generate-concept-design](skills/generate-concept-design/SKILL.md) | explores what a subject or place could look like, with a brief, directions, text-to-image candidates, and refinements, before it is canonical |
+|  | [generate-canonical-image](skills/generate-canonical-image/SKILL.md) | makes an element's canonical images: a place's primary canonical location, a character's primary canonical image built from its hand-drawn designs, a new camera checked against its pre-vis, the neutral passes, and a character's pose references for the final render |
+|  | [generate-concept-artwork](skills/generate-concept-artwork/SKILL.md) | makes concept artwork: first, planimetric ideation from text, which a film's places, props, and staging are derived from; then a character staged into a place's painting, the look reference for first frames |
+|  | [generate-concept-design](skills/generate-concept-design/SKILL.md) | explores what a subject or place could look like, with a brief, directions, candidates, and refinements, before it is canonical; a character is designed by hand first |
 |  | [generate-concept-reference](skills/generate-concept-reference/SKILL.md) | turns a canonical reference into its concept art reference: a character's study, a place's view in each mood |
 |  | [generate-detail-sheet](skills/generate-detail-sheet/SKILL.md) | makes a character's or prop's level-of-detail sheet: the subject at four distances, painted for concept artwork or in line for the animatic, fewer strokes the further it is |
 |  | [generate-keyframe](skills/generate-keyframe/SKILL.md) | makes each camera's animatic layout drawing, then an on-model keyframe in line for each shot of an approved shot list, for the animatic |
@@ -58,4 +60,4 @@ Every skill keeps the user in charge. Nothing renders, downloads, or spends mone
 
 ## Licence
 
-Spumcake Agent is licensed under the [Apache License 2.0](LICENSE).
+Spumcake-Skills is licensed under the [Apache License 2.0](LICENSE).

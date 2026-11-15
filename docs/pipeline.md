@@ -2,7 +2,7 @@
 
 The order the skills run in to make one animated film, and what each step is made from. Each step is made only from the canon the steps before it published; a rejected result is never an input to anything. Every step runs as requests through `project-requests`, in a project laid out as [projects.md](projects.md) describes.
 
-The user gives a brief; the agent turns it into finished results, making every choice the brief leaves open itself, from the brief, and saying why, and the user edits any result they want changed. No step waits for the user to choose. The point of the pipeline is the intermediate steps: every canonical element of a film, its places, characters, props, look, and sound, is made, shown, and open to the user's changes before any video is generated, so the user's intent survives to the final render.
+The user gives a brief; the agent turns it into finished results, making every choice the brief leaves open itself, from the brief, and saying why, and the user edits any result they want changed. No step waits for the user to make a choice the agent can make from the brief, but each result waits for the user's approval before a later step builds on it, as the [overview](overview.md) says. The point of the pipeline is the intermediate steps: every canonical element of a film, its places, characters, props, look, and sound, is made, shown, and open to the user's changes before any video is generated, so the user's intent survives to the final render.
 
 ## 1. Concept and intent
 

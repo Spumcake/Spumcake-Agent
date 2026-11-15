@@ -1,6 +1,6 @@
 ---
 name: write-skill
-description: Write a new skill for Spumcake Agent, or rewrite an old one, with every part its category requires - its category and name, its front matter, what a good and a failed result are, what it needs by canonical name, its method, and its hand-back to project-requests - from docs/skill-categories.md, so every skill in a category covers its ground the same way. Use when the user asks for a new skill, or for a skill to be rewritten, split, or moved to another category. Not for changing a category itself, which the user decides.
+description: Write a new skill for Spumcake-Skills, or rewrite an old one, with every part its category requires - its category and name, its front matter, what a good and a failed result are, what it needs by canonical name, its method, and its hand-back to project-requests - from docs/skill-categories.md, so every skill in a category covers its ground the same way. Use when the user asks for a new skill, or for a skill to be rewritten, split, or moved to another category. Not for changing a category itself, which the user decides.
 ---
 
 # Writing a skill
