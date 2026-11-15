@@ -139,6 +139,7 @@ Make the rest a scene at a time, in shot order.
 Before showing a plate, compare it with what it must agree with, and list every difference:
 
 - with its keyframe, laid over it: the horizon, the floor line, the angle, and each wall, opening, and piece of furniture in the same place; and clear room where each character stands;
+- with the shot's pre-vis render, its edges laid over the plate: the camera the animatic and the line art follow is the camera the plate must share. A plate made from a canonical view that is not registered to that camera fails, however good it looks: Last order's plates came from a view an image model drew lower and wider than the pre-vis, and its final render never lined up with its animatic;
 - with the place's primary canonical location and its views: everything where they put it, and nothing they do not have;
 - with the mood reference and the colour script's line: the light's direction, colour, and shadows;
 - with the style guide's rules and the approved finish plate: the line, colour, and texture;

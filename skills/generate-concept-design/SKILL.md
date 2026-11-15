@@ -9,6 +9,12 @@ Concept art finds what one subject looks like before anything fixes it. It answe
 
 A good set gives the user real choices. Each direction answers the brief differently in its silhouette, proportions, costume, parts, or materials, and all of them are in the concept's look, clear enough to be drawn again from any side. A failed set is one design repeated with different colours, a design off the style guide, or a design that ignores the user's own sketch.
 
+## A character is designed by hand first
+
+As the user set on 2026-11-15, after Last order, a character is designed by hand before any CG version exists: hand-drawn designs, made here or drawn by the user, a character artist, settle its forms, proportions, silhouette, and appeal, front and in the poses the story needs. The approved drawings are what `make-canonical` builds the CG character from, keeping their forms. Last order's Otis was designed in CG first, from photographs of cooks; the drawings made afterwards, as restyles of the CG figure, had more character and more appealing forms, and the CG design never took them in.
+
+For a character, the directions and refinements below are drawings, in the concept look's line and shape, never a rendered or photographic figure; the design the user approves is published as `<character>: hand-drawn design`. When the user brings their own drawings, they are the design, and this skill only cleans them up or completes the views the story needs.
+
 ## The models
 
 - **With nothing to send,** no sketch, no art, and no style sheet, use a **text-to-image model**. The words carry the whole design and the whole look, so the brief and the style must be concrete.

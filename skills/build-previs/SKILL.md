@@ -11,6 +11,10 @@ A good pre-vis reads as that kind of place from every camera: each piece is a sh
 
 Keep to the place. No characters and no lighting: those come later, from the story.
 
+As the user set on 2026-11-15, after Last order, a pre-vis is built to the approved concept art's staging, not only to the research: its layout puts each piece where the art puts it, and its one good shot takes the art's camera, square-on to the scene with a long lens where the art is staged planimetrically. Last order's pre-vis came first, before any concept art, and its deep, diagonal staging fixed the canon; the planimetric concept art painted later read better, and came too late.
+
+Each camera's render is the structure every image from that camera is made from: a canonical view, a layout, a plate, a final frame. One camera stays one camera, checked by laying its render's edges over each image made from it.
+
 ## The builder
 
 The mock-up is built by a script, from the layout's numbers, never by an image model, which cannot keep measurements. The script belongs to the place: it is a shared resource in `prompts/resources/`, so the chain can run it again whenever the layout changes. The setup's 3D tool, such as Blender run without its window, renders it. Each run is a build, not a request: `project-library` runs it with `request.py build`, which files every render into `prompts/resources/`; for each render, the script also writes what is in its frame, as JSON: the camera, and each named piece by its key's name, with its box in the frame and whether it lies left, centre, or right.
@@ -35,7 +39,7 @@ Render two versions of every shot. For the user, colour-code each kind of thing,
 
 ## 3. One good shot
 
-Place one camera where the research says this kind of place is best shown, so the shot shows as much of the place as reads clearly. Render it at the film's aspect ratio. Show it with the camera's position marked on the layout, and its reason in a sentence. The user approves it, or asks for the camera moved. The primary canonical location is painted from this shot.
+Place one camera where the approved concept art shows the place, or, for a place no concept art shows, where the research says this kind of place is best shown, so the shot shows as much of the place as reads clearly. Render it at the film's aspect ratio. Show it with the camera's position marked on the layout, and its reason in a sentence. The user approves it, or asks for the camera moved. The primary canonical location is painted from this shot.
 
 ## 4. The views of the place
 

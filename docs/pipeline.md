@@ -31,28 +31,37 @@ The style guide's rules beyond the final look (`make-style-guide`) are filled in
 
 ## 3. Breakdown
 
-Every recurring character, place, and prop the script needs, what each must be in general, and the shots it appears in (`write-breakdown-prompt`). Concept candidates from the concept context template (`generate-concept-design`) may explore what an element could look like before it is made canonical.
+Every recurring character, place, and prop the script needs, what each must be in general, and the shots it appears in (`write-breakdown-prompt`).
 
-## 4. Canonical elements
+## 4. Concept art and hand-drawn designs, before canon
 
-Each recurring element is made canonical, one at a time, before any concept art with characters. A place's primary canonical location is its canonical angle: every later step that returns to the place starts from it and its passes.
+As the user set on 2026-11-15, after Last order, the film's places, props, and staging are found in concept art, and its characters are designed by hand, before anything is made canonical. Last order made its canon first, from a grey mock-up, and its CG character first, from photographs; its better-staged concept art and its more appealing drawings came after, when the canon was already fixed.
+
+1. **Concept ideation** (`generate-concept-artwork`'s concept ideation template, from text alone, staged planimetrically): the film's moments, painted, until the user approves their staging, places, and props. The canonical places and props are derived from the approved paintings.
+2. **Hand-drawn character designs** (`generate-concept-design`'s hand-drawn route, or the user's own drawings): each character's forms, proportions, and appeal, front and in the poses the story needs. The CG character is built from the approved drawings, keeping their forms.
+
+## 5. Canonical elements
+
+Each recurring element is made canonical, one at a time, from its approved concept art or drawings, before any concept art reference or staging uses it. A place's primary canonical location is its canonical angle: every later step that returns to the place starts from it and its passes.
 
 Each through `make-canonical`, which holds each one's steps:
 
-- **A place,** from its research (`research-references`) and its pre-vis (`build-previs`), ending in its floor plan (`write-staging-plan`): where everything is and what each thing is called, which every later step that places or directs a character reads first.
-- **A character,** from its research and the place's texture view.
+- **A place,** from its approved concept art, its research (`research-references`), and its pre-vis (`build-previs`), built to the concept art's staging, ending in its floor plan (`write-staging-plan`): where everything is and what each thing is called, which every later step that places or directs a character reads first.
+- **A character,** from its approved hand-drawn designs, its research, and the place's texture view; the CG character keeps the drawings' forms.
+
+**One camera per view.** A canonical view of a place is made from its camera's pre-vis render as structure, and approved only when the pre-vis's edges, laid over it, line up. Every later image from that camera, the layouts, the plates, and the final frames, then shares one camera. Last order's canonical far-end view was an image model's guess at the pre-vis camera, drawn lower and wider; its animatic followed the pre-vis and its final render the view, and the two never lined up.
 - **A small prop,** from its character's coloured A-pose and its photographs.
 - **Several characters** (`build-line-up`): a height chart composited from their A-pose fronts, not generated.
 
-## 5. Concept art
+## 6. Concept art from canon
 
-Canonical reference, then concept art reference, then concept artwork, so concept artwork and the images for video rest on the same canon. Before any canon exists, concept artwork can also be made from text alone, for ideation (`generate-concept-artwork`'s concept ideation template, staged planimetrically); it is not canon.
+Canonical reference, then concept art reference, then concept artwork, so concept artwork and the images for video rest on the same canon. The concept ideation that came before the canon (section 4) is not canon itself; the canon was derived from it.
 
 1. **Concept art references** (`generate-concept-reference`): each canonical element repainted in the concept look: a character's front study from its A-pose and its props' sheets; each view of a place in each mood, from its texture pass and the visual identity brief.
 2. **Level-of-detail sheets** (`generate-detail-sheet`): each character and prop to be staged, painted at four distances with one brush size, so concept artwork paints it with the detail its distance allows.
 3. **Concept artwork** (`generate-concept-artwork`): characters' studies placed into a place's painting, for a moment of the film; it visualises the mood and look design, and is the look reference for the first frames.
 
-## 6. Staging and the shots
+## 7. Staging and the shots
 
 1. **The animatic,** in the order the user set on 2026-11-13:
    1. **Timing** (`write-timing-reference`): every moment, sound cue, line, and frame on one timeline, before anything is made; the sound and the frames are both made to it.
@@ -62,6 +71,8 @@ Canonical reference, then concept art reference, then concept artwork, so concep
 2. **Line-art animation,** lip-synced to the voices.
 3. **Final animation,** over background plates (`generate-background`), and the cut.
    Its first and last frames are made in two steps. First the plate (`generate-background`): the place's canonical view from the shot's camera, in its neutral viewport shading, lit the way the concept artwork lights the place, in the final look, with no one in it; one plate for each state of the place the shot needs, such as a door closed and a door open. Then the staging (`generate-keyframe`): the canonical characters, from their own canonical images, never a concept study or the animation's sheets, placed into the plate where the shot's line-art frame puts them, lit by the plate's light as the concept artwork lights them. The final shot is made from those frames, the line-art shot's motion, and the characters' canonical references.
+   **The characters' pose references** (`generate-canonical-image`), before the final render: each character's canonical CG image at each of the animatic's key poses and expressions, made from their CG canon and approved; they are the character's references in every final request, with the turnaround views. Last order sent two standing front views, and nothing of Otis in any pose from the shot.
+   **No motion blur** in any CG render: blur is added in post, after any retime or upscale. Last order's blur, rendered in, broke into artifacts under frame interpolation and upscaling.
 
 Consistency is checked (`review-consistency`) at the end of every step that writes or changes a section of the brief, a story document, the style guide, or a step's template: every fact has one home, and the rest point to it.
 

@@ -1,6 +1,6 @@
 ---
 name: make-canonical
-description: Make one recurring element of a film canonical - a place, a character, or a prop - one step at a time, so every later image of it holds together - a story check against the breakdown, research, then for a place a pre-vis, its primary canonical location, canonical cleanup, its views, and their neutral passes; for a character its primary canonical image, canonical cleanup, and its A-pose views with their form passes; for a prop its sheet - each step made only from the latest approved result of the one before. Use when the breakdown names a recurring element, before any concept art or staging uses it, and whenever an element's images stop agreeing with each other. Not for exploring a film's look, or its mood.
+description: Make one recurring element of a film canonical - a place, a character, or a prop - one step at a time, so every later image of it holds together - a story check against the breakdown, research, then for a place a pre-vis, its primary canonical location, canonical cleanup, its views, and their neutral passes; for a character its primary canonical image, canonical cleanup, and its A-pose views with their form passes; for a prop its sheet - each step made only from the latest approved result of the one before. Use when the breakdown names a recurring element, once its concept art or hand-drawn designs are approved, and before any concept art reference or staging uses it, and whenever an element's images stop agreeing with each other. Not for exploring a film's look, or its mood.
 ---
 
 # Make canonical
@@ -23,6 +23,7 @@ A good result reads as that kind of thing in every view, holds everything the st
 From the caller:
 
 - the element, by the name the script uses, and its entry in the approved breakdown (`<film>: breakdown`);
+- for a place or a prop, the approved concept art it is derived from (`<film>: concept ideation <moment>`); for a character, its approved hand-drawn designs (`<character>: hand-drawn design`). As the user set on 2026-11-15, after Last order, nothing is made canonical before these exist: the canon is derived from them, never from a mock-up or photographs alone;
 - the period and setting of the film, from the brief (`<film>: brief`);
 - the film's style guide (`<film>: style guide`), when there is one;
 - for a character, the canonical place they are first seen in, when there is one, for its texture view (`<place>: texture pass`);
@@ -44,19 +45,20 @@ Run `research-references` for the element: a photograph of every item the story 
 
 ## A place
 
-2. **Pre-vis:** run `build-previs` from the approved research: the layout, the mock-up with its key, and one good shot. The user approves the shot.
-3. **The primary canonical location:** `generate-canonical-image`'s primary canonical location: the grey shot, the research photographs, the names from the key, and the concept context template for the place. The user chooses one.
+2. **Pre-vis:** run `build-previs` from the approved concept art and research: the layout, the mock-up with its key, and one good shot, built to the concept art's staging, square-on with a long lens where the art is planimetric. The user approves the shot.
+3. **The primary canonical location:** `generate-canonical-image`'s primary canonical location: the grey shot, the approved concept art, the research photographs, the names from the key, and the concept context template for the place. The user chooses one.
 4. **Canonical cleanup:** run `fix-canonical-image` on the chosen image, against its canonical prompt and the pre-vis. Fixes for the pre-vis go back to step 2, and the image is made again from the corrected shot. The user approves the cleaned image.
-5. **The views:** run `build-previs` for a camera square-on to each wall, and any other camera the user asks for and approves, and make each view from the primary canonical location with `generate-canonical-image`'s new camera. Run `fix-canonical-image` across the views, fixing only major inconsistencies. The user chooses each view.
+5. **The views:** run `build-previs` for a camera square-on to each wall, and any other camera the user asks for and approves, and make each view from the primary canonical location with `generate-canonical-image`'s new camera, with the camera's pre-vis render as its structure. Before the user sees a view, lay the pre-vis render's edges over it (`build-animatic`'s `overlay.py`, or the same check on a still) and show the overlay with it: a view that does not line up with its camera is made again, never published. Last order's canonical far-end view, an image model's guess at the pre-vis camera, was published without this check; its animatic followed the pre-vis and its final render the view, and they never lined up. Run `fix-canonical-image` across the views, fixing only major inconsistencies. The user chooses each view.
 6. **The neutral passes:** `generate-canonical-image`'s grey form, coloured form, and texture passes on the primary canonical location and each view, then `fix-canonical-image` on the form passes. Surface changes, such as less gloss, are made on the texture passes; mood and light come in the concept art phase.
 7. **The floor plan:** run `write-staging-plan` from the pre-vis layout's numbers once the views are approved. Its facts, every door named and each camera's left, centre, and right, are published with it, and every later prompt that places or directs a character takes them from the pipeline's table.
 
 ## A character
 
-2. **The primary canonical character:** `generate-canonical-image`'s primary canonical character: one front view, from several research photographs and the place's texture view, so the character is drawn in the place's design style. The user chooses one.
+2. **The primary canonical character:** `generate-canonical-image`'s primary canonical character: one front view, built from the approved hand-drawn designs, keeping their forms, proportions, and appeal, with research photographs only for materials and the place's texture view for the place's design style. The user chooses one, side by side with the drawings.
 3. **Canonical cleanup:** run `fix-canonical-image` against its canonical prompt; the story check's list is its inventory.
 4. **The A-pose views:** run `generate-subject-reference`'s A-pose views: the front as a textured viewport view, then the back and both sides from it, then the same without outer layers, such as an apron, then their grey and coloured form passes, with one fixed colour per part.
 5. **The props they carry:** each small prop the story check lists, as a prop is, below. With several characters, composite their height chart with `build-line-up`.
+6. **Pose references, before the final render:** once the animatic is approved, `generate-canonical-image`'s pose references: the character's CG image at each of the animatic's key poses and expressions, from the CG canon. They are the character's references in every final render, with the A-pose views.
 
 ## A prop
 
