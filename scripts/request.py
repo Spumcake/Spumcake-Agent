@@ -7,6 +7,10 @@ Usage:
                                       send the request to its model endpoint, file what comes back into library/,
                                       the prompt as sent into prompts/<id>.txt, and write requests/<id>.html;
                                       a research request files into sources/
+  request.py collect <id>             finish a fal request that was accepted and paid for but not yet collected, such
+                                      as one still running after an hour or one whose connection failed: its pending
+                                      record, requests/<id>.pending.json, holds the addresses fal returned for it
+  request.py cancel <id>              ask fal to cancel a pending request, at the address fal returned for it
   request.py attach <id> <file> --as comparison|chart [--caption TEXT]
                                       embed an image the agent made to show the results in the request's report
   request.py resource <file>... --name NAME
@@ -19,7 +23,7 @@ Usage:
   request.py show <id | library file> the full record of the request that made a file, as JSON
   request.py tell <id>                what the agent says when the request is done, word for word
   request.py list [--skill S] [--pipeline P]
-  request.py check                    every report's files exist, every library file has its report, nothing in
+  request.py check                    every pending request is listed, every report's files exist, every library file has its report, nothing in
                                       library/, sources/, prompts/, or working/ was changed or removed since it was committed
   request.py id <name>                the ID a request named <name> would get now
 
@@ -193,43 +197,75 @@ def fal(spec, root, tmp, key_file):
         uploaded[f] = url
         if field.endswith("_urls"): body.setdefault(field, []).append(url)
         else: body[field] = url  # a single-file field, such as image_url or end_image_url
-    # fal's queue: submit, wait for the request to finish, then fetch its result. A long render never holds a
-    # connection open, and the request ID is kept in the report, so fal's own record of the request can be found.
-    import time
-    head = {"Authorization": "Key " + fal_key, "Content-Type": "application/json"}
-    call = lambda url, data=None: json.load(urllib.request.urlopen(
-        urllib.request.Request(url, json.dumps(data).encode() if data is not None else None, head,
-                               method="POST" if data is not None else "GET"), timeout=300))
-    q = call("https://queue.fal.run/" + ep["model"], body)
+    # fal's queue: submit, then collect. Once fal accepts a request it is paid for, so from that moment the request
+    # is never lost: its pending record keeps the addresses fal returned, and `request.py collect` finishes it later
+    # when waiting runs out or the connection fails. The status, result, and cancel addresses are always the ones fal
+    # returned on submit, never built from the model's name.
+    q = fal_call(fal_key, "https://queue.fal.run/" + ep["model"], body, retries=0)
     print("fal request " + q["request_id"], file=sys.stderr, flush=True)
-    for _ in range(720):
-        s = call(q["status_url"])
-        if s.get("status") == "COMPLETED": break
-        if s.get("status") not in ("IN_QUEUE", "IN_PROGRESS"): sys.exit("fal: " + json.dumps(s)[:600])
-        time.sleep(5)
-    else:
-        sys.exit("fal: still not finished after an hour; request " + q["request_id"])
-    r = call(q["response_url"])
-    urls = []
-    for field in ("audio", "image", "video"):
-        v = r.get(field)
-        if isinstance(v, dict) and v.get("url"): urls.append(v["url"])
-    for field in ("images", "audios", "videos"):
-        urls += [v["url"] for v in r.get(field) or [] if isinstance(v, dict) and v.get("url")]
-    paths = []
-    for i, u in enumerate(urls):
-        ext = os.path.splitext(u.split("?")[0])[1] or ".bin"
-        p = os.path.join(tmp, "out-%d%s" % (i, ext))
-        urllib.request.urlretrieve(u, p)
-        paths.append(p)
+    sent = {"service": "fal", "url": "https://queue.fal.run/" + ep["model"], "model": ep["model"], "request_id": q["request_id"],
+            "status_url": q.get("status_url"), "response_url": q.get("response_url"), "cancel_url": q.get("cancel_url"),
+            "settings": {k: v for k, v in body.items() if k != "prompt" and not str(v).startswith(("['data:", "data:"))},
+            "references_sent_as": "files uploaded to fal's storage, each address in its reference's field, in the order listed"}
+    return sent
+
+
+def fal_call(fal_key, url, data=None, method=None, retries=6):
+    """One call to fal's queue, tried again after a network failure, up to retries times with a growing wait."""
+    import time, urllib.error
+    head = {"Authorization": "Key " + fal_key, "Content-Type": "application/json"}
+    for attempt in range(retries + 1):
+        try:
+            req = urllib.request.Request(url, json.dumps(data).encode() if data is not None else None, head,
+                                         method=method or ("POST" if data is not None else "GET"))
+            return json.load(urllib.request.urlopen(req, timeout=300))
+        except urllib.error.HTTPError as e:
+            if e.code < 500 or attempt == retries: raise
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
+            if attempt == retries: raise
+        time.sleep(min(5 * 2 ** attempt, 120))
+
+
+def fal_collect(sent, ep, tmp, key_file, wait_minutes=60):
+    """Wait for a submitted fal request, fetch its result, and download its outputs. Returns None, leaving the request
+    pending, when the wait runs out or the network keeps failing; raises when fal says the request failed."""
+    import time, urllib.error
+    fal_key = key("fal-ai", "FAL_KEY", r"[A-Za-z0-9_\-]+:[A-Za-z0-9_\-]+", key_file)
+    deadline = time.time() + wait_minutes * 60
+    try:
+        while True:
+            s = fal_call(fal_key, sent["status_url"])
+            if s.get("status") == "COMPLETED": break
+            if s.get("status") not in ("IN_QUEUE", "IN_PROGRESS"): raise RuntimeError("fal: " + json.dumps(s)[:600])
+            if time.time() > deadline: return None
+            time.sleep(5)
+        r = fal_call(fal_key, sent["response_url"])
+        urls = []
+        for field in ("audio", "image", "video"):
+            v = r.get(field)
+            if isinstance(v, dict) and v.get("url"): urls.append(v["url"])
+        for field in ("images", "audios", "videos"):
+            urls += [v["url"] for v in r.get(field) or [] if isinstance(v, dict) and v.get("url")]
+        paths = []
+        for i, u in enumerate(urls):
+            ext = os.path.splitext(u.split("?")[0])[1] or ".bin"
+            pth = os.path.join(tmp, "out-%d%s" % (i, ext))
+            for attempt in range(7):
+                try:
+                    urllib.request.urlretrieve(u, pth); break
+                except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
+                    if attempt == 6: raise
+                    time.sleep(min(5 * 2 ** attempt, 120))
+            paths.append(pth)
+    except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+        if isinstance(e, urllib.error.HTTPError) and e.code < 500: raise
+        print("fal: the connection kept failing (%s)" % e, file=sys.stderr)
+        return None
     seconds = (r.get("audio") or {}).get("duration") if isinstance(r.get("audio"), dict) else None
-    cost = "not returned by the endpoint"
+    cost = "unknown: not returned by the endpoint"
     if ep.get("price_per_minute") and seconds:
         cost = "about $%.3f, from the price, not a bill" % (seconds / 60 * float(ep["price_per_minute"]))
-    sent = {"service": "fal", "url": "https://queue.fal.run/" + ep["model"], "model": ep["model"], "request_id": q["request_id"],
-            "settings": {k: v for k, v in body.items() if k != "prompt" and not str(v).startswith(("['data:", "data:"))},
-            "references_sent_as": "data URIs, in the order listed, in each reference's field"}
-    return paths, sent, {"seconds": seconds, "cost": cost}
+    return paths, {"seconds": seconds, "cost": cost}
 
 
 # ---- the report --------------------------------------------------------------------------------
@@ -357,18 +393,29 @@ def run(spec_file, stand=False, key_file=None):
     research = kind == "research"
     rpath = report_path(root, rid, research)
     if os.path.exists(rpath): sys.exit(rid + " already has a report: give the request another name")
+    if os.path.exists(pending_path(root, rid)): sys.exit(rid + " is pending: finish it with request.py collect " + rid)
     refs = []
     for r in spec.get("references", []):
         f = r.get("file")
         if f and not os.path.exists(os.path.join(root, f)): sys.exit("reference not found: " + f)
         refs.append(dict(r, sha256=sha(os.path.join(root, f))) if f else r)
+    if kind == "fal" and not stand:
+        tmp = os.path.join(root, ".request-" + rid)
+        os.makedirs(tmp, exist_ok=True)
+        try:
+            sent = fal(spec, root, tmp, key_file)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        pending = {"id": rid, "spec": spec, "refs": refs, "started": started.strftime("%Y-%m-%dT%H:%M:%SZ"), "sent": sent}
+        os.makedirs(os.path.join(root, "requests"), exist_ok=True)
+        json.dump(pending, open(pending_path(root, rid), "w"), indent=1)
+        return collect(rid, key_file, root=root)
     tmp = os.path.join(root, ".request-" + rid)
     os.makedirs(tmp, exist_ok=True)
     try:
         if stand: paths, sent, result = stand_in(spec, tmp)
         elif kind == "openai-image-edit": paths, sent, result = openai_image(spec, root, tmp, True, key_file)
         elif kind == "openai-image": paths, sent, result = openai_image(spec, root, tmp, False, key_file)
-        elif kind == "fal": paths, sent, result = fal(spec, root, tmp, key_file)
         elif kind == "research":
             paths = [os.path.join(root, f) if not os.path.isabs(f) else f for f in spec.get("outputs", [])]
             sent = {"service": "research"}
@@ -376,13 +423,63 @@ def run(spec_file, stand=False, key_file=None):
         elif kind in ("script", "agent"):
             sys.exit("not a request: what the agent or a builder makes goes into prompts/resources/ (request.py resource or build)")
         else: sys.exit("unknown endpoint kind: " + kind)
-        if research:
-            names = ["-" + slug(os.path.splitext(os.path.basename(p))[0]) for p in paths]
-            outputs = file_into(root, "sources", rid, paths, names)
-        else:
-            outputs = file_into(root, "library", rid, paths)
+        finish(root, spec, rid, started, refs, paths, sent, result, stand)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def pending_path(root, rid):
+    return os.path.join(root, "requests", rid + ".pending.json")
+
+
+def collect(rid, key_file=None, root=None):
+    """Finish a fal request that fal accepted: wait for it, file what it made, and write its report. When the wait runs
+    out or the network keeps failing, the request stays pending, to be collected again later, never sent again."""
+    root = root or project_root()
+    pp = pending_path(root, rid)
+    if not os.path.exists(pp): sys.exit("no pending request " + rid)
+    pend = json.load(open(pp))
+    spec, sent = pend["spec"], pend["sent"]
+    tmp = os.path.join(root, ".request-" + rid)
+    os.makedirs(tmp, exist_ok=True)
+    try:
+        try:
+            got = fal_collect(sent, spec["endpoint"], tmp, key_file)
+        except RuntimeError as e:
+            pend["failed"] = str(e); json.dump(pend, open(pp, "w"), indent=1)
+            sys.exit("%s; the request failed at fal, and its pending record, %s, says so" % (e, os.path.relpath(pp, root)))
+        if got is None:
+            sys.exit("fal request %s is not finished yet, and is still paid for: collect it later with\n"
+                     "  request.py collect %s\nor cancel it with request.py cancel %s" % (sent["request_id"], rid, rid))
+        paths, result = got
+        started = datetime.datetime.strptime(pend["started"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+        finish(root, spec, rid, started, pend["refs"], paths, sent, result, False)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    os.remove(pp)
+
+
+def cancel(rid, key_file=None):
+    root = project_root()
+    pp = pending_path(root, rid)
+    if not os.path.exists(pp): sys.exit("no pending request " + rid)
+    pend = json.load(open(pp))
+    url = pend["sent"].get("cancel_url")
+    if not url: sys.exit("fal returned no cancel address for " + rid)
+    fal_key = key("fal-ai", "FAL_KEY", r"[A-Za-z0-9_\-]+:[A-Za-z0-9_\-]+", key_file)
+    r = fal_call(fal_key, url, method="PUT")
+    pend["cancelled"] = r; json.dump(pend, open(pp, "w"), indent=1)
+    print("fal: " + json.dumps(r)[:300])
+
+
+def finish(root, spec, rid, started, refs, paths, sent, result, stand):
+    research = spec["endpoint"]["kind"] == "research"
+    rpath = report_path(root, rid, research)
+    if research:
+        names = ["-" + slug(os.path.splitext(os.path.basename(p))[0]) for p in paths]
+        outputs = file_into(root, "sources", rid, paths, names)
+    else:
+        outputs = file_into(root, "library", rid, paths)
     if not research and spec.get("prompt"):
         os.makedirs(os.path.join(root, "prompts"), exist_ok=True)
         pp = os.path.join(root, "prompts", rid + ".txt")
@@ -518,6 +615,11 @@ def check():
                        cwd=root, capture_output=True, text=True)
     for line in g.stdout.splitlines():
         if set(line[:2]) & set("MDR"): problems.append("changed or removed in a folder that only grows: " + line[3:])
+    for f in sorted(os.listdir(os.path.join(root, "requests"))) if os.path.isdir(os.path.join(root, "requests")) else []:
+        if f.endswith(".pending.json"):
+            pend = json.load(open(os.path.join(root, "requests", f)))
+            state = "failed at fal" if pend.get("failed") else "cancelled" if pend.get("cancelled") else "paid for, not collected"
+            problems.append("pending: %s, %s; request.py collect %s" % (pend["id"], state, pend["id"]))
     for x in problems: print(x)
     print("%d reports checked, %d problems" % (sum(1 for _ in all_reports(root)), len(problems)))
     sys.exit(1 if problems else 0)
@@ -539,6 +641,8 @@ if __name__ == "__main__":
     cmd = sys.argv[1]
     o, rest = opts(sys.argv[2:])
     if cmd == "run": run(rest[0], o.get("stand_in", False), o.get("key_file"))
+    elif cmd == "collect": collect(rest[0], o.get("key_file"))
+    elif cmd == "cancel": cancel(rest[0], o.get("key_file"))
     elif cmd == "attach": attach(rest[0], rest[1], o["as"], o.get("caption"))
     elif cmd == "note": note(rest[0], asked=o.get("asked"), why=o.get("why"), notes=o.get("notes"))
     elif cmd == "show": show(rest[0])
