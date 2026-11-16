@@ -19,6 +19,12 @@ Each camera's render is the structure every image from that camera is made from:
 
 The mock-up is built by a script, from the layout's numbers, never by an image model, which cannot keep measurements. The script belongs to the place: it is a shared resource in `prompts/resources/`, so the chain can run it again whenever the layout changes. The setup's 3D tool, such as Blender run without its window, renders it. Each run is a build, not a request: `project-library` runs it with `request.py build`, which files every render into `prompts/resources/`; for each render, the script also writes what is in its frame, as JSON: the camera, and each named piece by its key's name, with its box in the frame and whether it lies left, centre, or right.
 
+## The scene file
+
+A place's scene file is its geometry, in a form any 3D tool reads: one glTF 2.0 binary (`.glb`) per builder version, holding every object the builder makes, named as the builder names it and grouped as it groups them, its cameras with their exact positions, targets, and fields of view, the front door hinged with its swing as an animation, and the builder's looks as data. Once a place has one, it is the place's only geometry: every render, view, and plan is made from it, and a setup's 3D view shows it. As the user set on 2026-11-16, with Studio 0.15's scene contract.
+
+[scripts/export-scene.py](scripts/export-scene.py) makes it from a builder, and changes nothing: it runs the builder's source only up to its render marker, in a process of its own, takes the rest of what it needs by parsing the source, never by retyping it, and renders nothing. A builder may come from git history, as `git:<commit>:<path>`. File what it makes with `request.py build "python3 <export-scene.py> <builder> <out.glb> --canon pipeline/<n>/canon.sql" <out.glb> --name <place>-scene-<builder time> --from <builder>`, so its record names the builder, and `request.py show` traces the scene file to it. Name each render this builder made with `--reference <camera>=<file>`, so a camera links only a render of its own geometry; the camera's published canon artifact is named either way. `export-scene.py --missing` lists the builders that have no scene file yet.
+
 ## What it needs
 
 From the caller:

@@ -1,40 +1,65 @@
 #!/usr/bin/env python3
-"""A pipeline's published canon: pipeline/<n>/canon.sql, its chain pages, and what a change touches. See docs/projects.md.
+"""A project's living pipeline: pipeline/<n>/canon.sql, its run log pipeline/<n>/runs.jsonl, its chain pages, what
+is out of date, and what a change touches. See docs/projects.md.
+
+A project has one living pipeline, the highest-numbered: a change never starts a new one. Canon changes in place, under
+each artifact's stable name; history is the run log and canon.sql's git history; out of date is worked out from the
+records that made each artifact, never stored.
 
 Usage:
-  pipeline.py new <n>                         start pipeline <n> as a copy of the one before it, or empty
-  pipeline.py sql <n> "<query>"               query the table
+  pipeline.py new <n>                         start pipeline <n>: empty, or, only when the user asks to try a whole
+                                              alternative direction, as a copy of the one before it
+  pipeline.py sql <n> "<query>" [--read-only] [--as-of <time>]
+                                              query the table; --read-only refuses a write; --as-of reads canon as it
+                                              stood at a time, from canon.sql's git history
+  pipeline.py history <n> [<name>]            the run log's events, and canon.sql's commits, for one name or all
+  pipeline.py mark <n> "<label>"              name a moment in the run log, such as "final look settled"
   pipeline.py element <n> <name> --kind K     add a canonical element: a place, character, prop, look, story, sound
-  pipeline.py publish <n> "<element>: <role>" --file library/<file> --request <id> --chain <chain>
-                     [--from "<element>: <role>" ROLE]... [--note TEXT] [--waiting]
-                                              publish an approved result as canon; with --waiting, record a result
-                                              that waits for the user, which is not canon
+  pipeline.py publish <n> "<element>: <role>" --file <file> [--request <id>] --chain <chain>
+                     [--from "<element>: <role>" ROLE]... [--with "<element>: <role>=<request id>"]... [--note TEXT]
+                     [--waiting]
+                                              publish an approved result as canon, in place: the file it replaces stays
+                                              where it is, and the run log names it. A take is refused when an input it
+                                              was made from is no longer what is published, or its step was edited
+                                              since; --with publishes it together with the inputs it was made from.
+                                              With --waiting, record a result that waits for the user, not canon
   pipeline.py fact <n> "<element>: <fact>" <value> --artifact "<element>: <role>"
                                               set a canonical fact and the artifact that settles it
   pipeline.py content <n> "<element>: <role>" <json | @file>
                                               what a published image shows: [{"name", "camera", "where", "frame_box",
                                               "state", "mark", "looks_at"}], each thing by its canonical name
   pipeline.py chain <n> <name> --order NN [--title TEXT]
-  pipeline.py step <n> <chain> <step> --order N --skill S --endpoint JSON --template TEXT|@file
+  pipeline.py step <n> <chain> <step> [--order N] [--skill S] [--endpoint JSON] [--template TEXT|@file]
                      [--refs JSON|@file] [--script TEXT] [--request <id>] [--artifact "<element>: <role>"] [--deliver]
+                     [--show]
+                                              a partial update: what is not given keeps its value, and "" clears it;
+                                              --show prints the step as JSON; a ref or script naming work/ is refused
                                               record a step: its prompt as a template naming canon, {{<element>: <fact>}},
                                               its references by canonical artifact, the request that last ran it, and
                                               the artifact it published, if approved
   pipeline.py fill <n> <chain> <step> [--name NAME]
                                               a request spec for the step, filled from this pipeline's table
-  pipeline.py touches <n> (--fact "<element>: <fact>" | --artifact "<element>: <role>")
-                                              every published artifact and every step a change touches, in order
-  pipeline.py rerun <n> --fact "<element>: <fact>" [--stand-in] [--next]
-                                              run again, in order, each step the change touches, filled from <n>'s table;
-                                              --next runs only the first, for the user's approval before the rest
+  pipeline.py touches <n> [--fact "<element>: <fact>" | --artifact "<element>: <role>"] [--json]
+                                              with a change named, every published artifact and step it reaches; with
+                                              none, everything out of date now, and what is unverified
+  pipeline.py keep <n> "<element>: <role>"... --reason TEXT
+                                              accept each artifact as it is against its changed inputs; a later change
+                                              to any of them flags it again
+  pipeline.py rerun <n> [--fact F | --artifact A] [--stand-in] [--plan [--json] | --expect <hash>]
+                                              make a take of the first step out of date, or the first a change reaches,
+                                              filled from the table, and stop: publishing it comes first. --plan prints,
+                                              offline, what it would send or run, with its hash; --expect refuses to
+                                              run anything but that plan
   pipeline.py render <n>                      write the chain pages from the table
-  pipeline.py deliver <n> <library file>      file a finished deliverable into output/
+  pipeline.py deliver <n> <file>              file a finished deliverable into output/, its record inside cut to the
+                                              disclosure and the request's ID
 """
 import sys, os, re, json, sqlite3, shutil, html, subprocess, collections
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import request as rq
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS element (name TEXT PRIMARY KEY, kind TEXT, note TEXT);
 CREATE TABLE IF NOT EXISTS artifact (id TEXT PRIMARY KEY, element TEXT, role TEXT, file TEXT, request TEXT,
   chain TEXT, published TEXT, note TEXT);
@@ -62,7 +87,17 @@ def load(root, n):
     return db
 
 
+CANON_FORMAT = 1
+
+
+def canon_format(db):
+    r = db.execute("SELECT value FROM meta WHERE key='format'").fetchone()
+    return int(r[0]) if r else 1
+
+
 def save(root, n, db):
+    if canon_format(db) > CANON_FORMAT: sys.exit("refused: canon.sql is format %d, newer than this checkout's %d" % (canon_format(db), CANON_FORMAT))
+    db.execute("INSERT OR IGNORE INTO meta VALUES ('format', ?)", (str(CANON_FORMAT),))
     lines = [l for l in db.iterdump() if not l.startswith(("BEGIN", "COMMIT"))]
     open(os.path.join(folder(root, n), "canon.sql"), "w").write("\n".join(lines) + "\n")
 
@@ -80,6 +115,148 @@ def split(name):
 def chain_slug(db, chain):
     r = db.execute("SELECT ord FROM chain WHERE name=?", (chain,)).fetchone()
     return "%02d-%s" % (r[0] if r else 0, rq.slug(chain))
+
+
+# ---- what made each artifact, and what is out of date ------------------------------------------
+
+def events(root, n):
+    p = os.path.join(folder(root, n), "runs.jsonl")
+    return [json.loads(l) for l in open(p) if l.strip()] if os.path.exists(p) else []
+
+
+def making(root, db, art):
+    """The record that made a published artifact: its request's report, or its records.jsonl line."""
+    f, req, pub = db.execute("SELECT file, request, published FROM artifact WHERE id=?", (art,)).fetchone()
+    if req:
+        try:
+            d = rq.read_data(rq.find_report(root, req))
+            return {"kind": "report", "data": d, "at": d.get("started") or pub}
+        except SystemExit:
+            pass
+    lines = [l for l in rq.resource_records(root) if l["file"] == f]
+    if lines: return {"kind": "record", "data": lines[-1], "at": lines[-1]["at"]}
+    return None
+
+
+def file_sha(root, f):
+    return rq.sha(os.path.join(root, f)) if f and os.path.exists(os.path.join(root, f)) else None
+
+
+def plan_fields(spec):
+    ep = spec.get("endpoint") or {}
+    return {"model": ep.get("model"), "settings": ep.get("settings") or {}, "prompt": spec.get("prompt") or "",
+            "references": [r.get("file") for r in spec.get("references", [])]}
+
+
+def plan_hash(spec):
+    import hashlib
+    return hashlib.sha256(json.dumps(plan_fields(spec), sort_keys=True).encode()).hexdigest()
+
+
+def plan_differs(filled, data):
+    """What a step filled now would send differently from what its report says was sent, on the plan's fields only."""
+    f, sent, out = plan_fields(filled), data.get("sent") or {}, []
+    if (data.get("prompt") or "") != f["prompt"]: out.append("the prompt")
+    if [r.get("file") for r in data.get("references", [])] != f["references"]: out.append("the references")
+    if sent.get("service") == "stand-in": return out   # a dry run sends no model or settings to compare
+    if f["model"] and sent.get("model") and sent["model"] != f["model"]: out.append("the model")
+    for k, v in f["settings"].items():
+        if k in ("kind", "outputs"): continue
+        if (sent.get("settings") or {}).get(k) != v: out.append("the setting " + k)
+    return out
+
+
+def fact_value_at(evs, e, f, when, now_value):
+    """A fact's value at a time: the value the first later change replaced, or its value now."""
+    for ev in evs:
+        if ev.get("event") == "fact" and ev.get("fact") == "%s: %s" % (e, f) and ev["at"] > (when or ""):
+            return ev.get("replaced")
+    return now_value
+
+
+def relevant_facts(db, art):
+    rows = db.execute("SELECT element, name, value FROM fact WHERE artifact=?", (art,)).fetchall()
+    shown = [r[0] for r in db.execute("SELECT DISTINCT name FROM content WHERE artifact=?", (art,))]
+    for e in shown: rows += db.execute("SELECT element, name, value FROM fact WHERE element=?", (e,)).fetchall()
+    return {"%s: %s" % (e, f): v for e, f, v in rows}
+
+
+def step_of(db, art):
+    return db.execute("SELECT chain, name FROM step WHERE artifact=?", (art,)).fetchone()
+
+
+def baseline(root, n, db, art, evs):
+    """What an artifact was accepted against: its latest keep, or the record that made it."""
+    keeps = [e for e in evs if e.get("event") == "keep" and e.get("artifact") == art]
+    if keeps: return {"from": "keep", **keeps[-1]}
+    m = making(root, db, art)
+    if not m: return None
+    if m["kind"] == "report":
+        d = m["data"]
+        inputs = {r["canon"]: {"sha256": r.get("sha256"), "file": r.get("file")} for r in d.get("references", []) if r.get("canon")}
+        facts = {k: fact_value_at(evs, *k.split(": ", 1), m["at"], v) for k, v in relevant_facts(db, art).items()}
+        return {"from": "report", "request": d["id"], "inputs": inputs, "report": d, "facts": facts}
+    line = m["data"]
+    return {"from": "record", "record_inputs": {i["sha256"] for i in line.get("inputs", [])},
+            "facts": {k: fact_value_at(evs, *k.split(": ", 1), m["at"], v) for k, v in relevant_facts(db, art).items()}}
+
+
+def current_inputs(root, db, art):
+    srcs = [s for (s,) in db.execute("SELECT source FROM made_from WHERE artifact=?", (art,))]
+    out = {}
+    for s in srcs:
+        r = db.execute("SELECT file FROM artifact WHERE id=?", (s,)).fetchone()
+        if r: out[s] = {"file": r[0], "sha256": file_sha(root, r[0])}
+    return out
+
+
+def out_of_date(root, n):
+    """Everything out of date now, from canon.sql, the run log, and the records that made each artifact: an input
+    published since, a step edited since, or a fact changed since. What has no record to compare is unverified."""
+    db = load(root, n)
+    evs = events(root, n)
+    stale, unverified = {}, {}
+    for (art,) in db.execute("SELECT id FROM artifact WHERE published IS NOT NULL"):
+        b = baseline(root, n, db, art, evs)
+        if not b: unverified[art] = "no record of what made it"; continue
+        why, unknown = [], False
+        now_in = current_inputs(root, db, art)
+        if b["from"] in ("report", "keep"):
+            for canon, rec in b.get("inputs", {}).items():
+                cur = now_in.get(canon) or {}
+                cf = db.execute("SELECT file FROM artifact WHERE id=?", (canon,)).fetchone()
+                cur = {"file": cf[0], "sha256": file_sha(root, cf[0])} if cf else cur
+                if rec.get("sha256") and cur.get("sha256"):
+                    if rec["sha256"] != cur["sha256"]: why.append("%s was published again" % canon)
+                elif rec.get("file") and cur.get("file"):
+                    if rec["file"] != cur["file"]: why.append("%s was published again (by path)" % canon)
+                else: unknown = True
+        else:
+            for s, cur in now_in.items():
+                if cur.get("sha256") and cur["sha256"] not in b["record_inputs"]:
+                    why.append("%s is not what it was made from" % s)
+        st = step_of(db, art)
+        if st:
+            try:
+                filled = fill(root, n, st[0], st[1])
+                if b["from"] == "report":
+                    d = plan_differs(filled, b["report"])
+                    if d: why.append("its step was edited: " + ", ".join(d))
+                elif b["from"] == "keep" and b.get("plan") and b["plan"] != plan_hash(filled):
+                    why.append("its step was edited since it was kept")
+            except SystemExit:
+                unknown = True
+        cur_facts = relevant_facts(db, art)
+        for k, was in (b.get("facts") or {}).items():
+            if k in cur_facts and cur_facts[k] != was: why.append("the fact %s changed" % k)
+        if why: stale[art] = why
+        elif unknown: unverified[art] = "its record holds no sha256 for an input"
+    for art in list(stale):
+        reached, _ = touches(root, n, artifact=art)
+        for a in reached:
+            if a != art and a not in stale: stale[a] = ["made from %s, which is out of date" % art]
+            unverified.pop(a, None) if a in stale else None
+    return stale, unverified
 
 
 # ---- commands ----------------------------------------------------------------------------------
@@ -184,62 +361,126 @@ def touches(root, n, fact=None, artifact=None):
     return (sorted(arts), sorted(steps, key=lambda cs: (order.get(cs[0], 99), sord.get(cs, 99))))
 
 
-def rerun(root, n, fact, stand=False, only_next=False):
-    _, steps = touches(root, n, fact=fact)
-    if not steps: print("nothing to run again"); return
-    import tempfile
-    for chain, step in steps:
-        spec = fill(root, n, chain, step)
-        kind = spec["endpoint"].get("kind")
-        if kind in ("script", "agent"):
-            db = load(root, n)
-            art, skill = db.execute("SELECT artifact, skill FROM step WHERE chain=? AND name=?", (chain, step)).fetchone()
-            if not stand and (kind == "agent" or not spec.get("scripts")):
-                sys.exit("%s is the agent's own work, not a request: make it again with %s, publish it, then run again"
-                         % (step, skill))
-            tmp = os.path.join(root, ".stand-in")
-            os.makedirs(tmp, exist_ok=True)
+def check_take(root, n, db, art, o):
+    """Refuse to publish a take whose inputs are no longer what is published, whose step was edited since, or, for a
+    file made without a model, whose record does not hold each source it is said to be made from."""
+    withs = dict(w.split("=", 1) for w in o.get("with", []))
+    problems = []
+    if o.get("request"):
+        d = rq.read_data(rq.find_report(root, o["request"]))
+        for r in d.get("references", []):
+            c = r.get("canon")
+            if not c or not r.get("sha256"): continue
+            if c in withs:
+                wd = rq.read_data(rq.find_report(root, withs[c]))
+                if file_sha(root, wd["outputs"][0]) != r["sha256"]:
+                    problems.append("%s: the take was not made from %s's take %s" % (c, c, withs[c]))
+                continue
+            cur = db.execute("SELECT file FROM artifact WHERE id=? AND published IS NOT NULL", (c,)).fetchone()
+            if cur and file_sha(root, cur[0]) != r["sha256"]:
+                problems.append("%s has been published again since this take was made" % c)
+        st = step_of(db, art)
+        if st:
             try:
-                if stand:
-                    made = rq.stand_in(spec, tmp)[0]
-                else:
-                    cmd = spec["scripts"][0]["command"]
-                    p = subprocess.run(cmd, shell=True, cwd=root, capture_output=True, text=True)
-                    if p.returncode: sys.exit(p.stdout + p.stderr)
-                    made = [os.path.join(root, o) for o in spec.get("outputs", [])]
-                os.makedirs(os.path.join(root, "prompts", "resources"), exist_ok=True)
-                filed = rq.file_into(root, "prompts/resources", "%s-%s" % (rq.stamp(), rq.slug(spec["name"])), made)
+                filled = fill(root, n, st[0], st[1])
+                for r in filled.get("references", []):   # an input published with this take counts as its take
+                    if r.get("canon") in withs:
+                        r["file"] = rq.read_data(rq.find_report(root, withs[r["canon"]]))["outputs"][0]
+                diff = plan_differs(filled, d)
+                if diff: problems.append("its step was edited since this take was made: " + ", ".join(diff))
+            except SystemExit:
+                pass
+    elif o["from"]:
+        lines = [l for l in rq.resource_records(root) if l["file"] == o["file"]]
+        held = {i["sha256"] for i in lines[-1].get("inputs", [])} if lines else set()
+        for s, _ in o["from"]:
+            cur = db.execute("SELECT file FROM artifact WHERE id=?", (s,)).fetchone()
+            h = file_sha(root, cur[0]) if cur else None
+            if not lines: problems.append("%s has no record of what made it: file it with request.py resource or build --from" % o["file"])
+            elif h and h not in held: problems.append("its record does not hold %s as it is published now" % s)
+    if problems: sys.exit("refused to publish %s:\n  " % art + "\n  ".join(dict.fromkeys(problems)))
+
+
+def step_plan(root, n, chain, step):
+    """What a rerun of one step would send or run, offline, with its hash, as request.py plan works it out."""
+    spec = fill(root, n, chain, step)
+    kind = spec["endpoint"].get("kind")
+    if kind in ("script", "agent"):
+        refs = [r["file"] for r in spec.get("references", []) if r.get("file")]
+        plan = {"plan": rq.SPEC_FORMAT, "chain": chain, "step": step, "kind": kind,
+                "script": spec["scripts"][0]["command"] if spec.get("scripts") else None,
+                "inputs": [{"file": f, "sha256": file_sha(root, f)} for f in refs], "outputs": spec.get("outputs", []),
+                "estimate": "nothing: a script runs on this computer"}
+        plan["hash"] = rq.plan_hash({k: v for k, v in plan.items()})
+        return plan, spec
+    return rq.plan_of(spec, root), spec
+
+
+def rerun(root, n, fact=None, artifact=None, stand=False, plan_only=False, as_json=False, expect=None):
+    """Make a take of the first step out of date, or of the first step a change reaches, and stop. A take changes no
+    canon: the user approves it, publish puts it in, and the next rerun then makes the step below from it."""
+    if fact or artifact:
+        _, steps = touches(root, n, fact=fact, artifact=artifact)
+    else:
+        stale, _ = out_of_date(root, n)
+        db = load(root, n)
+        order = {c: o for c, o in db.execute("SELECT name, ord FROM chain")}
+        steps = sorted({(c, s) for c, s, a in db.execute("SELECT chain, name, artifact FROM step") if a in stale},
+                       key=lambda cs: (order.get(cs[0], 99), db.execute(
+                           "SELECT ord FROM step WHERE chain=? AND name=?", cs).fetchone()[0]))
+    if not steps: print("nothing to run again"); return
+    chain, step = steps[0]
+    plan, spec = step_plan(root, n, chain, step)
+    if plan_only:
+        if as_json: print(json.dumps(plan, indent=1, ensure_ascii=False))
+        else:
+            print("Next step: %s / %s" % (chain, step))
+            if plan.get("script"): print("Runs: " + plan["script"])
+            else: print("Sends to: %s, %s" % (plan["endpoint"]["kind"], plan["endpoint"]["model"]))
+            print("Estimate: " + plan["estimate"]); print("Plan hash: " + plan["hash"])
+        return
+    if expect and plan["hash"] != expect:
+        sys.exit("refused: the next step's plan is not the one approved (%s, now %s): plan it again" % (expect[:12], plan["hash"][:12]))
+    kind = spec["endpoint"].get("kind")
+    db = load(root, n)
+    art, skill = db.execute("SELECT artifact, skill FROM step WHERE chain=? AND name=?", (chain, step)).fetchone()
+    if kind in ("script", "agent"):
+        if not stand and (kind == "agent" or not spec.get("scripts")):
+            sys.exit("%s is the agent's own work, not a request: make it again with %s, then publish it" % (step, skill))
+        refs = [r["file"] for r in spec.get("references", []) if r.get("file")]
+        if stand:
+            tmp = os.path.join(root, ".stand-in"); os.makedirs(tmp, exist_ok=True)
+            try:
+                made = rq.stand_in(spec, tmp)[0]
+                filed = rq.resource(made, spec["name"], inputs=refs, command="stand-in", root=root)
             finally:
                 shutil.rmtree(tmp, ignore_errors=True)
-            print("%s: %s" % (step, ", ".join(filed)))
-            if art:
-                db.execute("UPDATE artifact SET file=?, request=NULL, published=?, note=? WHERE id=?",
-                           (filed[0], now() if stand else None, "stand-in, a dry run" if stand else "waiting for the user", art))
-                save(root, n, db)
-            if only_next: print("stopped after one step, for the user's approval"); return
-            continue
-        spec["asked"] = "Run %s again in pipeline %03d" % (step, int(n))
-        spec["why"] = "The brief changed %s; this step uses it, directly or through what it is made from." % fact
+        else:
+            filed = rq.build(spec["scripts"][0]["command"], spec.get("outputs", []), spec["name"], inputs=refs, root=root)
+        rq.run_log(root, n, {"event": "run", "chain": chain, "step": step, "files": filed, "stand_in": stand})
+        print("%s: a take, %s" % (step, ", ".join(filed)))
+    else:
+        import tempfile
+        spec["asked"] = "Make a take of %s, out of date in pipeline %03d" % (step, int(n))
+        spec["why"] = ("It reaches %s" % (fact or artifact)) if (fact or artifact) else "It is out of date: " + "; ".join(
+            out_of_date(root, n)[0].get(art, ["its inputs changed"]))
+        base = "%s-%s" % (rq.stamp(), rq.slug(spec["name"])); spec["id"], k = base, 2   # named here, so its report is known
+        while os.path.exists(rq.report_path(root, spec["id"])) or os.path.exists(rq.pending_path(root, spec["id"])):
+            spec["id"] = "%s-%d" % (base, k); k += 1   # a second take in the same minute
         with tempfile.NamedTemporaryFile("w", suffix=".json", dir=root, delete=False) as f:
             json.dump(spec, f); spec_file = f.name
-        try:
+        sys.stdout.flush()
+        try:   # request.py's output goes straight through, live, so a stopped rerun loses none of it
             out = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), "request.py"), "run", spec_file]
-                                 + (["--stand-in"] if stand else []), cwd=root, capture_output=True, text=True)
+                                 + (["--stand-in"] if stand else []) + (["--expect", expect] if expect else []), cwd=root)
         finally:
             os.unlink(spec_file)
-        if out.returncode: sys.exit(out.stdout + out.stderr)
-        report = out.stdout.strip()
-        data = rq.read_data(os.path.join(root, report))
-        print("%s: %s" % (step, report))
-        db = load(root, n)
-        a = db.execute("SELECT artifact, deliver FROM step WHERE chain=? AND name=?", (chain, step)).fetchone()
-        db.execute("UPDATE step SET request=? WHERE chain=? AND name=?", (data["id"], chain, step))
-        if stand and a and a[0]:
-            db.execute("UPDATE artifact SET file=?, request=?, published=?, note=? WHERE id=?",
-                       (data["outputs"][0], data["id"], now(), "stand-in, a dry run", a[0]))
-        save(root, n, db)
-        if stand and a and a[1]: deliver(root, n, data["outputs"][0])
-        if only_next: print("stopped after one step, for the user's approval"); return
+        if out.returncode: sys.exit("%s: request.py stopped (exit %d); its output is above" % (step, out.returncode))
+        print("%s: a take, %s" % (step, os.path.relpath(rq.report_path(root, spec["id"]), root)))
+    if art:
+        reached, _ = touches(root, n, artifact=art)
+        print("publishing it as %s would reach: %s" % (art, ", ".join(a for a in reached if a != art) or "nothing else"))
+    print("stopped after one step: publish it first, then run again for the step below")
 
 
 def deliver(root, n, f):
@@ -247,7 +488,8 @@ def deliver(root, n, f):
     dst = os.path.join(root, "output", "%s-%03d-%s%s" % (rq.stamp(), int(n), os.path.basename(root), ext))
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     if os.path.exists(dst): sys.exit("refusing to overwrite " + dst)
-    shutil.copyfile(os.path.join(root, f), dst)
+    rid = os.path.splitext(os.path.basename(f))[0]
+    rq.strip_record(os.path.join(root, f), dst, re.sub(r"-\d+$", "", rid))
     print(os.path.relpath(dst, root))
 
 
@@ -326,7 +568,8 @@ def opts(a):
     while i < len(a):
         if a[i].startswith("--"):
             k = a[i][2:].replace("-", "_")
-            if k in ("stand_in", "next", "deliver", "waiting"): o[k] = True; i += 1
+            if k in ("stand_in", "next", "deliver", "waiting", "read_only", "json", "show", "plan"): o[k] = True; i += 1
+            elif k == "with": o.setdefault("with", []).append(a[i + 1]); i += 2
             elif k == "from": o["from"].append((a[i + 1], a[i + 2])); i += 3
             else: o[k] = a[i + 1]; i += 2
         else: rest.append(a[i]); i += 1
@@ -343,27 +586,58 @@ if __name__ == "__main__":
     o, rest = opts(sys.argv[2:])
     root = rq.project_root()
     n = rest[0] if rest else None
+    reads = cmd in ("fill", "touches", "history", "render") or (cmd == "sql" and (o.get("read_only") or o.get("as_of") or
+            (len(rest) > 1 and rest[1].lstrip().upper().startswith(("SELECT", "WITH", "PRAGMA"))))) \
+        or (cmd == "step" and o.get("show")) or (cmd == "rerun" and o.get("plan"))
+    rq.guard(root, write=not reads)
     if cmd == "new": new(root, n)
     elif cmd == "sql":
-        db = load(root, n)
-        for row in db.execute(rest[1]): print(" | ".join("" if x is None else str(x) for x in row))
-        if not rest[1].lstrip().upper().startswith("SELECT"): save(root, n, db)
+        q = rest[1]
+        writes = not q.lstrip().upper().startswith(("SELECT", "WITH", "PRAGMA"))
+        if o.get("read_only") and writes: sys.exit("refused: --read-only, and this query writes")
+        if o.get("as_of"):
+            rel = os.path.relpath(os.path.join(folder(root, n), "canon.sql"), root)
+            c = subprocess.run(["git", "log", "-1", "--before=" + o["as_of"], "--format=%H", "--", rel], cwd=root,
+                               capture_output=True, text=True).stdout.strip()
+            if not c: sys.exit("canon.sql has no commit before " + o["as_of"])
+            db = sqlite3.connect(":memory:")
+            db.executescript(subprocess.run(["git", "show", "%s:%s" % (c, rel)], cwd=root, capture_output=True, text=True).stdout)
+            for row in db.execute(q): print(" | ".join("" if x is None else str(x) for x in row))
+        else:
+            db = load(root, n)
+            for row in db.execute(q): print(" | ".join("" if x is None else str(x) for x in row))
+            if writes: save(root, n, db)
     elif cmd == "element":
         db = load(root, n); db.execute("INSERT OR REPLACE INTO element VALUES (?,?,?)", (rest[1], o.get("kind"), o.get("note")))
         save(root, n, db)
     elif cmd == "publish":
         db = load(root, n); e, role = split(rest[1])
         if not os.path.exists(os.path.join(root, o["file"])): sys.exit("not found: " + o["file"])
+        if not o.get("waiting"): check_take(root, n, db, rest[1], o)
+        old = db.execute("SELECT file, published FROM artifact WHERE id=?", (rest[1],)).fetchone()
+        for w in o.get("with", []):
+            wa, wr = w.split("=", 1)
+            wd = rq.read_data(rq.find_report(root, wr))
+            wold = db.execute("SELECT file FROM artifact WHERE id=?", (wa,)).fetchone()
+            db.execute("UPDATE artifact SET file=?, request=?, published=? WHERE id=?", (wd["outputs"][0], wr, now(), wa))
+            rq.run_log(root, n, {"event": "publish", "artifact": wa, "file": wd["outputs"][0], "request": wr,
+                                 "replaced": wold[0] if wold else None, "with": rest[1]})
         db.execute("INSERT OR REPLACE INTO artifact VALUES (?,?,?,?,?,?,?,?)",
                    (rest[1], e, role, o["file"], o.get("request"), o.get("chain"),
                     None if o.get("waiting") else (o.get("published") or now()), o.get("note")))
         db.execute("DELETE FROM made_from WHERE artifact=?", (rest[1],))
         for s, r in o["from"]: db.execute("INSERT INTO made_from VALUES (?,?,?)", (rest[1], s, r))
         save(root, n, db)
+        rq.run_log(root, n, {"event": "waiting" if o.get("waiting") else "publish", "artifact": rest[1], "file": o["file"],
+                             "request": o.get("request"), "replaced": old[0] if old and old[1] else None,
+                             "made_from": [s for s, _ in o["from"]], "note": o.get("note")})
     elif cmd == "fact":
         db = load(root, n); e, f = split(rest[1])
+        old = db.execute("SELECT value FROM fact WHERE element=? AND name=?", (e, f)).fetchone()
         db.execute("INSERT OR REPLACE INTO fact VALUES (?,?,?,?)", (e, f, rest[2], o.get("artifact")))
         save(root, n, db)
+        rq.run_log(root, n, {"event": "fact", "fact": rest[1], "value": rest[2], "replaced": old[0] if old else None,
+                             "artifact": o.get("artifact")})
     elif cmd == "content":
         db = load(root, n); rows = json.loads(text(rest[2]))
         db.execute("DELETE FROM content WHERE artifact=?", (rest[1],))
@@ -376,16 +650,68 @@ if __name__ == "__main__":
         save(root, n, db)
     elif cmd == "step":
         db = load(root, n)
-        db.execute("INSERT OR REPLACE INTO step VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                   (rest[1], int(o["order"]), rest[2], o.get("skill"), o.get("endpoint"), text(o.get("template")),
-                    text(o.get("refs")), o.get("script"), o.get("request"), o.get("artifact"), 1 if o.get("deliver") else 0))
+        cols = ["chain", "ord", "name", "skill", "endpoint", "template", "refs", "script", "request", "artifact", "deliver"]
+        old = db.execute("SELECT * FROM step WHERE chain=? AND name=?", (rest[1], rest[2])).fetchone()
+        if o.get("show") or o.get("json"):
+            if not old: sys.exit("no step %s in chain %s" % (rest[2], rest[1]))
+            print(json.dumps(dict(zip(cols, old)), indent=1, ensure_ascii=False)); sys.exit()
+        # a partial update: what is not given keeps its value; an empty value clears it
+        cur = dict(zip(cols, old)) if old else {c: None for c in cols}
+        given = {"ord": o.get("order"), "skill": o.get("skill"), "endpoint": o.get("endpoint"), "template": text(o.get("template")),
+                 "refs": text(o.get("refs")), "script": o.get("script"), "request": o.get("request"), "artifact": o.get("artifact")}
+        for k, v in given.items():
+            if v is not None: cur[k] = (int(v) if k == "ord" else (v or None))
+        if o.get("deliver"): cur["deliver"] = 1
+        if cur["ord"] is None: sys.exit("a new step needs --order")
+        for r in json.loads(cur["refs"] or "[]"):   # a setup's workspace files are never an input (the user, 2026-11-16)
+            if (r.get("file") or "").startswith("work/"): sys.exit("refused: %s is in work/, which is never an input; file it first" % r["file"])
+        if cur["script"] and re.search(r"(^|[\s'\"=/])work/", cur["script"]): sys.exit("refused: the script names work/, which is never an input")
+        new_row = (rest[1], cur["ord"], rest[2], cur["skill"], cur["endpoint"], cur["template"], cur["refs"], cur["script"],
+                   cur["request"], cur["artifact"], cur["deliver"] or 0)
+        db.execute("INSERT OR REPLACE INTO step VALUES (?,?,?,?,?,?,?,?,?,?,?)", new_row)
         save(root, n, db)
+        if not old or tuple(old) != new_row:
+            rq.run_log(root, n, {"event": "step", "chain": rest[1], "step": rest[2],
+                                 "replaced": dict(zip(cols, old)) if old else None})
     elif cmd == "fill": print(json.dumps(fill(root, n, rest[1], rest[2], o.get("name")), indent=1))
     elif cmd == "touches":
-        arts, steps = touches(root, n, o.get("fact"), o.get("artifact"))
-        print("Published artifacts:"); [print("  " + a) for a in arts]
-        print("Steps, in order:"); [print("  %s / %s" % s) for s in steps]
-    elif cmd == "rerun": rerun(root, n, o["fact"], o.get("stand_in", False), o.get("next", False))
+        if o.get("fact") or o.get("artifact"):
+            arts, steps = touches(root, n, o.get("fact"), o.get("artifact"))
+            if o.get("json"): print(json.dumps({"artifacts": arts, "steps": [list(s) for s in steps]}, indent=1))
+            else:
+                print("Published artifacts:"); [print("  " + a) for a in arts]
+                print("Steps, in order:"); [print("  %s / %s" % s) for s in steps]
+        else:
+            stale, unverified = out_of_date(root, n)
+            if o.get("json"):
+                print(json.dumps({"out_of_date": [{"artifact": a, "why": w} for a, w in sorted(stale.items())],
+                                  "unverified": [{"artifact": a, "why": w} for a, w in sorted(unverified.items())]}, indent=1))
+            else:
+                print("Out of date:"); [print("  %s: %s" % (a, "; ".join(w))) for a, w in sorted(stale.items())]
+                print("Unverified:"); [print("  %s: %s" % (a, w)) for a, w in sorted(unverified.items())]
+    elif cmd == "keep":
+        if not o.get("reason"): sys.exit("keep needs --reason: why each still holds")
+        db = load(root, n); evs = events(root, n)
+        for art in rest[1:]:
+            if not db.execute("SELECT 1 FROM artifact WHERE id=? AND published IS NOT NULL", (art,)).fetchone():
+                sys.exit("not published: " + art)
+            st = step_of(db, art)
+            try: ph = plan_hash(fill(root, n, st[0], st[1])) if st else None
+            except SystemExit: ph = None
+            rq.run_log(root, n, {"event": "keep", "artifact": art, "reason": o["reason"],
+                                 "inputs": current_inputs(root, db, art), "plan": ph, "facts": relevant_facts(db, art)})
+            print("kept: " + art)
+    elif cmd == "rerun":
+        rerun(root, n, o.get("fact"), o.get("artifact"), o.get("stand_in", False), o.get("plan") is True, o.get("json", False), o.get("expect"))
+    elif cmd == "history":
+        name = rest[1] if len(rest) > 1 else None
+        for ev in events(root, n):
+            if not name or name in json.dumps(ev, ensure_ascii=False):
+                print("%s  %s  %s" % (ev["at"], ev.get("event"), json.dumps({k: v for k, v in ev.items() if k not in ("at", "event")}, ensure_ascii=False)[:240]))
+        rel = os.path.relpath(os.path.join(folder(root, n), "canon.sql"), root)
+        print(subprocess.run(["git", "log", "--format=%ci  commit %h  %s", "--", rel], cwd=root, capture_output=True, text=True).stdout.rstrip())
+    elif cmd == "mark":
+        rq.run_log(root, n, {"event": "mark", "label": rest[1]}); print("marked: " + rest[1])
     elif cmd == "render": render(root, n)
     elif cmd == "deliver": deliver(root, n, rest[1])
     else: print(__doc__)

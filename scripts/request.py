@@ -3,7 +3,10 @@
 See docs/projects.md.
 
 Usage:
-  request.py run <spec.json> [--stand-in] [--key-file F]
+  request.py plan <spec.json> [--json]  what run would send, offline: the endpoint and its settings, the prompt, every
+                                      reference in order with its role and path, the canon read, and the estimate,
+                                      unknown and never zero; with the plan's hash, which run --expect checks
+  request.py run <spec.json> [--stand-in] [--key-file F] [--expect <hash>]
                                       send the request to its model endpoint, file what comes back into library/,
                                       the prompt as sent into prompts/<id>.txt, and write requests/<id>.html;
                                       a research request files into sources/
@@ -11,26 +14,39 @@ Usage:
                                       as one still running after an hour or one whose connection failed: its pending
                                       record, requests/<id>.pending.json, holds the addresses fal returned for it
   request.py cancel <id>              ask fal to cancel a pending request, at the address fal returned for it
+  request.py close <id> --lost "<why>" close a pending request whose result is lost: its report says so and records the
+                                      cost as likely spent; check stops listing it. A synchronous request keeps its raw
+                                      reply beside its pending record before anything else, so collect can still file it
+                                      after a full disk or a crash
   request.py attach <id> <file> --as comparison|chart [--caption TEXT]
                                       embed an image the agent made to show the results in the request's report
-  request.py resource <file>... --name NAME
+  request.py resource <file>... --name NAME [--from <file>]...
                                       file shared material no model made, such as a canonical document, a pre-vis
-                                      render, or a builder, into prompts/resources/ as <time>-<name>.<ext>
-  request.py build "<command>" <output>... --name NAME
-                                      run a builder, and file each file it makes into prompts/resources/
+                                      render, or a builder, into prompts/resources/ as <time>-<name>.<ext>, with a
+                                      line in prompts/resources/records.jsonl naming each input it was made from
+  request.py build "<command>" <output>... --name NAME [--from <file> | --from git:<commit>:<path>]...
+                                      run a builder, and file each file it makes into prompts/resources/, recorded
+                                      with its command and inputs
+  request.py record <file>            the record written inside an image or a video when it was filed
   request.py note <id> [--asked TEXT] [--why TEXT] [--notes TEXT]
                                       set the agent's own words in the report
-  request.py show <id | library file> the full record of the request that made a file, as JSON
+  request.py show <id | file>         the full record of the request, resource, or build that made a file, as JSON
   request.py tell <id>                what the agent says when the request is done, word for word
   request.py list [--skill S] [--pipeline P]
   request.py check                    every pending request is listed, every report's files exist, every library file has its report, nothing in
-                                      library/, sources/, prompts/, or working/ was changed or removed since it was committed
+                                      library/, sources/, prompts/, or agent/ was changed or removed since it was committed
   request.py id <name>                the ID a request named <name> would get now
+  request.py version                  the formats this checkout writes, and its Spumcake-Skills commit
+
+The commands that spend are request.py run and pipeline.py rerun, each without --stand-in. collect and cancel never
+start a new paid request. A command that writes refuses a project holding records from a Spumcake-Skills commit this
+checkout does not have; a command that reads warns.
 
 A spec is JSON:
   {"name": "keyframe-the-line", "skill": "generate-keyframe", "asked": "...", "why": "...",
    "pipeline": "001", "chain": "the line", "step": "keyframe", "depends_on": ["<request id>"],
-   "endpoint": {"kind": "openai-image-edit" | "openai-image" | "fal" | "research",
+   "endpoint": {"kind": "openai-image-edit" | "openai-image" | "openrouter-image" | "openai-text" | "openrouter-text"
+                        | "fal" | "research",
                 "model": "...", "settings": {...}},
    "prompt": "the text exactly as sent",
    "references": [{"file": "library/<file>", "role": "image 1, the layout of the shot"}],
@@ -39,11 +55,13 @@ A spec is JSON:
    "outputs": ["<file to file>", ...]          for research: the files found
    "sources": [{"file": "...", "address": "...", "page": "...", "use": "..."}]   for research}
 A request is one call to a model endpoint. What the agent or a builder makes is not a request: it goes into
-prompts/resources/ when it is canon or is sent to a model, and into working/ otherwise: nothing made for a project
-is thrown away or left in a scratch folder. Names use local time.
+prompts/resources/ when it is canon or is sent to a model, and into agent/ otherwise: nothing made for a project
+is thrown away or left in a scratch folder. A setup's workspace files go in work/, which no skill reads or writes.
+Every image or video a request files carries its record inside it (request.py record), and the report keeps the
+sha256 of the file as the endpoint returned it and as filed. Names use local time.
 The agent writes the spec; everything else in the report comes from what this script sent and received.
 """
-import sys, os, re, json, base64, hashlib, html, shutil, subprocess, urllib.request, mimetypes, wave, datetime, struct, zlib
+import sys, os, re, json, base64, hashlib, html, shutil, subprocess, urllib.request, mimetypes, wave, datetime, struct, zlib, tempfile
 
 MEDIA_IMAGE = (".png", ".jpg", ".jpeg", ".webp", ".gif")
 MEDIA_AUDIO = (".wav", ".mp3", ".flac", ".aif", ".aiff")
@@ -82,6 +100,251 @@ def sha(path):
     with open(path, "rb") as f:
         for b in iter(lambda: f.read(1 << 20), b""): h.update(b)
     return h.hexdigest()
+
+
+SKILLS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RECORD_FORMAT = 1
+XMP = ('<?xpacket begin="" id="W5M0MpCehiHzreSzNTczkc9d"?><x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF '
+       'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" '
+       'xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/"><Iptc4xmpExt:DigitalSourceType>'
+       'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia</Iptc4xmpExt:DigitalSourceType>'
+       '</rdf:Description></rdf:RDF></x:xmpmeta><?xpacket end="r"?>')
+
+
+SPEC_FORMAT = 1      # the spec a skill or a setup writes for run and plan
+REPORT_FORMAT = 2    # the report's embedded JSON, "record"
+TELL_FORMAT = 1      # tell's text
+
+
+def plan_of(spec, root):
+    """Exactly what run would send for a spec, worked out offline, with its hash. The hash leaves out what changes
+    without changing what is sent: the request's ID and name, what was asked and why, when canon was read, and
+    absolute paths."""
+    ep = spec.get("endpoint") or {}
+    refs = []
+    for i, r in enumerate(spec.get("references", [])):
+        f = r.get("file")
+        p = os.path.join(root, f) if f else None
+        refs.append({"order": i + 1, "role": r.get("role"), "field": r.get("field"), "canon": r.get("canon"), "file": f,
+                     "path": os.path.abspath(p) if p else None, "sha256": sha(p) if p and os.path.exists(p) else None})
+    plan = {"plan": SPEC_FORMAT, "skill": spec.get("skill"), "pipeline": spec.get("pipeline"), "chain": spec.get("chain"),
+            "step": spec.get("step"), "endpoint": {"kind": ep.get("kind"), "model": ep.get("model"), "settings": ep.get("settings") or {}},
+            "prompt": spec.get("prompt"), "references": refs,
+            "canon": [{"name": c.get("name"), "value": c.get("value")} for c in spec.get("canon", [])],
+            "scripts": [s.get("command") for s in spec.get("scripts", [])], "requests": 1,
+            "estimate": estimate(spec)}
+    plan["hash"] = plan_hash(plan)
+    return plan
+
+
+def plan_hash(plan):
+    keep = {k: v for k, v in plan.items() if k not in ("hash", "estimate")}
+    keep["references"] = [{k: v for k, v in r.items() if k != "path"} for r in keep.get("references", [])]
+    return hashlib.sha256(json.dumps(keep, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+
+
+def money(x):
+    """A price with enough places that a small one never reads as zero: $0.64, $0.0012, $0.000034."""
+    x = float(x)
+    if x == 0: return "$0"
+    if x >= 0.01: return "$%.2f" % x
+    places = 2
+    while round(x, places) == 0 or abs(round(x, places) - x) / x > 0.05: places += 1
+    return "$%.*f" % (places, x)
+
+
+def estimate(spec):
+    """An estimate from the price the setup or the endpoint gives, or unknown: never zero."""
+    ep = spec.get("endpoint") or {}
+    s = ep.get("settings") or {}
+    if ep.get("price_per_minute") and s.get("duration"):
+        return "about %s, %s s at $%s a minute" % (money(float(s["duration"]) / 60 * float(ep["price_per_minute"])), s["duration"], ep["price_per_minute"])
+    if ep.get("price_per_request"):
+        return "about %s a request" % money(ep["price_per_request"])
+    return "unknown: no price for this endpoint"
+
+
+def plan_cmd(spec_file, as_json=False):
+    spec = json.load(open(spec_file))
+    root = project_root(os.path.dirname(os.path.abspath(spec_file)) if spec.get("project") is None else spec["project"])
+    guard(root, write=False)
+    if spec.get("spec", 1) > SPEC_FORMAT: sys.exit("this spec is format %s, newer than this checkout's %d" % (spec["spec"], SPEC_FORMAT))
+    p = plan_of(spec, root)
+    if as_json: print(json.dumps(p, indent=1, ensure_ascii=False)); return
+    ep = p["endpoint"]
+    print("Sends to: %s, %s, %s" % (ep["kind"], ep["model"] or "its default model", json.dumps(ep["settings"])))
+    print("References, in the order sent:" if p["references"] else "References: none")
+    for r in p["references"]: print("  %d. %s, %s%s" % (r["order"], r["path"], r["role"] or "", (" (%s)" % r["field"]) if r["field"] else ""))
+    if p["canon"]:
+        print("Canon read:"); [print("  %s = %s" % (c["name"], c["value"])) for c in p["canon"]]
+    if p["scripts"]: print("Runs: " + "; ".join(p["scripts"]))
+    print("Estimate: " + p["estimate"])
+    print("Prompt:\n" + (p["prompt"] or "(none)"))
+    print("Plan hash: " + p["hash"])
+
+
+_newer = {}
+
+
+def newer_records(root):
+    """The Spumcake-Skills commits this project's records name that this checkout does not have."""
+    if root in _newer: return _newer[root]
+    seen = set()
+    pat = re.compile(r'"skills_commit":\s*"([0-9a-f]{7,40})')
+    for d in ("requests", "sources"):
+        dd = os.path.join(root, d)
+        for f in os.listdir(dd) if os.path.isdir(dd) else []:
+            if f.endswith((".html", ".json")): seen.update(pat.findall(open(os.path.join(dd, f), errors="ignore").read()))
+    logs = [os.path.join(root, "prompts", "resources", "records.jsonl")]
+    pdir = os.path.join(root, "pipeline")
+    logs += [os.path.join(pdir, n, "runs.jsonl") for n in (os.listdir(pdir) if os.path.isdir(pdir) else [])]
+    for l in logs:
+        if os.path.exists(l): seen.update(pat.findall(open(l, errors="ignore").read()))
+    head = subprocess.run(["git", "-C", SKILLS_DIR, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    missing = set()
+    for c in seen:
+        if head.startswith(c): continue
+        r = subprocess.run(["git", "-C", SKILLS_DIR, "merge-base", "--is-ancestor", c, "HEAD"], capture_output=True)
+        if r.returncode: missing.add(c)
+    _newer[root] = sorted(missing)
+    return _newer[root]
+
+
+def guard(root, write=True):
+    """Refuse to write, or warn when reading, in a project holding records from a Skills commit this checkout lacks."""
+    m = newer_records(root)
+    if not m: return
+    msg = ("this project holds records from Spumcake-Skills %s, which this checkout does not have (newer, or unknown: "
+           "fetch Spumcake-Skills)" % ", ".join(m))
+    if write: sys.exit("refused: " + msg)
+    print("warning: " + msg, file=sys.stderr)
+
+
+def skills_commit():
+    """The Spumcake-Skills commit these scripts run from, "+dirty" when it has uncommitted changes, or "unknown"."""
+    try:
+        h = subprocess.run(["git", "-C", SKILLS_DIR, "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True, timeout=10)
+        if h.returncode: return "unknown"
+        d = subprocess.run(["git", "-C", SKILLS_DIR, "status", "--porcelain", "--", "scripts", "skills", "docs"],
+                           capture_output=True, text=True, timeout=10).stdout.strip()
+        return h.stdout.strip() + ("+dirty" if d else "")
+    except Exception:
+        return "unknown"
+
+
+def _png_chunks(b):
+    i, out = 8, []
+    while i + 8 <= len(b):
+        n = struct.unpack(">I", b[i:i + 4])[0]
+        out.append((b[i + 4:i + 8], b[i + 8:i + 8 + n])); i += 12 + n
+    return out
+
+
+def _png_chunk(typ, body):
+    return struct.pack(">I", len(body)) + typ + body + struct.pack(">I", zlib.crc32(typ + body) & 0xffffffff)
+
+
+def _itxt(keyword, text):
+    return keyword + b"\0\0\0\0\0" + text.encode("utf-8")
+
+
+def embed_record(path, record):
+    """Write a request's record inside the image or video it made, so the file says where it came from wherever it
+    goes: a PNG gets it as an iTXt chunk, spumcake:record, with the IPTC "made by a trained model" disclosure in its
+    XMP; an MP4 or MOV gets it as its comment, its streams copied, not encoded again. Other formats keep their record
+    in the report only. Returns whether it was written."""
+    ext = os.path.splitext(path)[1].lower()
+    data = json.dumps(record, separators=(",", ":"), ensure_ascii=False)
+    if ext == ".png":
+        b = open(path, "rb").read()
+        if b[:8] != b"\x89PNG\r\n\x1a\n": return False
+        out = [b[:8]]
+        for typ, body in _png_chunks(b):
+            if typ == b"iTXt" and body.split(b"\0", 1)[0] in (b"spumcake:record", b"XML:com.adobe.xmp"): continue
+            if typ == b"IEND":
+                out.append(_png_chunk(b"iTXt", _itxt(b"spumcake:record", data)))
+                out.append(_png_chunk(b"iTXt", _itxt(b"XML:com.adobe.xmp", XMP)))
+            out.append(_png_chunk(typ, body))
+        open(path, "wb").write(b"".join(out))
+        return True
+    if ext in (".mp4", ".mov", ".m4v"):
+        tmp = path + ".record" + ext
+        r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", path, "-map", "0", "-c", "copy", "-map_metadata", "0",
+                            "-metadata", "comment=" + data, tmp], capture_output=True)
+        if r.returncode or not os.path.exists(tmp): return False
+        os.replace(tmp, path)
+        return True
+    return False
+
+
+def read_record(path):
+    ext = os.path.splitext(path)[1].lower()
+    if ext == ".png":
+        for typ, body in _png_chunks(open(path, "rb").read()):
+            if typ == b"iTXt" and body.startswith(b"spumcake:record\0"):
+                return json.loads(body.split(b"\0", 5)[5].decode("utf-8"))
+        return None
+    if ext in (".mp4", ".mov", ".m4v"):
+        r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format_tags=comment", "-of", "json", path],
+                           capture_output=True, text=True)
+        c = (json.loads(r.stdout or "{}").get("format", {}).get("tags", {}) or {}).get("comment")
+        try: return json.loads(c) if c else None
+        except ValueError: return None
+    return None
+
+
+def strip_record(src, dst, rid):
+    """Copy a file for delivery or sharing with only the disclosure and the request's ID inside it, never its prompt
+    or inputs, since a file's metadata travels wherever the file is shared."""
+    small = {"spumcake_record": RECORD_FORMAT, "request": rid, "made_by": "a trained model"}
+    shutil.copyfile(src, dst)
+    if read_record(dst) is not None or os.path.splitext(dst)[1].lower() in (".png", ".mp4", ".mov", ".m4v"):
+        embed_record(dst, small)
+
+
+def record_line(root, f, inputs=(), command=None, name=None):
+    """Append one line to prompts/resources/records.jsonl for a file filed without a model: what it is, its sha256,
+    each input it was made from with its sha256, and the command that made it."""
+    def rel(x):
+        a = os.path.abspath(x if os.path.isabs(x) else os.path.join(root, x))
+        return os.path.relpath(a, root) if a.startswith(os.path.abspath(root) + os.sep) else "outside the project: " + os.path.basename(a)
+    entries = [git_source(root, i) if i.startswith("git:") else
+               {"file": rel(i), "sha256": sha(i if os.path.isabs(i) else os.path.join(root, i))} for i in inputs]
+    line = {"at": now().strftime("%Y-%m-%dT%H:%M:%SZ"), "file": rel(f), "sha256": sha(os.path.join(root, f)), "name": name,
+            "inputs": [e for e in entries if not e["file"].startswith("work/")],
+            "command": command, "skills_commit": skills_commit()}
+    workspace = [e for e in entries if e["file"].startswith("work/")]
+    if workspace: line["workspace"] = workspace   # where it was exported from: provenance only, never an input
+    with open(os.path.join(root, "prompts", "resources", "records.jsonl"), "a") as fh:
+        fh.write(json.dumps(line, ensure_ascii=False) + "\n")
+
+
+def git_source(root, name):
+    """A source that exists only in the project's git history, named git:<commit>:<path>, with the path from the
+    repository's root: its commit, path, and sha256, read with git show, never checked out."""
+    try:
+        _, commit, path = name.split(":", 2)
+    except ValueError:
+        sys.exit("name a source in git history as git:<commit>:<path>: " + name)
+    full = subprocess.run(["git", "rev-parse", "--verify", commit + "^{commit}"], cwd=root, capture_output=True, text=True)
+    if full.returncode: sys.exit("no such commit in this project's git history: " + commit)
+    blob = subprocess.run(["git", "show", "%s:%s" % (full.stdout.strip(), path)], cwd=root, capture_output=True)
+    if blob.returncode: sys.exit("no %s at %s" % (path, commit))
+    return {"file": name, "commit": full.stdout.strip(), "path": path, "sha256": hashlib.sha256(blob.stdout).hexdigest()}
+
+
+def resource_records(root):
+    p = os.path.join(root, "prompts", "resources", "records.jsonl")
+    return [json.loads(l) for l in open(p) if l.strip()] if os.path.exists(p) else []
+
+
+def run_log(root, pipeline, event):
+    """Append an event to the pipeline's run log, pipeline/<n>/runs.jsonl, when the pipeline exists."""
+    d = os.path.join(root, "pipeline", "%03d" % int(pipeline))
+    if not os.path.isdir(d): return
+    event = dict({"at": now().strftime("%Y-%m-%dT%H:%M:%SZ")}, **event, skills_commit=skills_commit())
+    with open(os.path.join(d, "runs.jsonl"), "a") as fh:
+        fh.write(json.dumps(event, ensure_ascii=False) + "\n")
 
 
 def report_path(root, rid, research=False):
@@ -158,28 +421,134 @@ def openai_image(spec, root, tmp, edit, key_file):
         body = dict(model=model, prompt=spec["prompt"], **settings)
         cmd = ["curl", "-s", url, "-H", "Authorization: Bearer " + k, "-H", "Content-Type: application/json",
                "-d", json.dumps(body)]
-    r = json.loads(subprocess.run(cmd, capture_output=True, text=True, timeout=900).stdout)
-    if "error" in r: sys.exit("the endpoint refused: " + json.dumps(r["error"])[:600])
-    paths = []
-    for i, d in enumerate(r["data"]):
-        p = os.path.join(tmp, "out-%d.png" % i)
-        open(p, "wb").write(base64.b64decode(d["b64_json"]))
-        paths.append(p)
     sent = {"service": "OpenAI", "url": url, "model": model, "settings": settings,
             "references_sent_as": "image[] in the order listed" if edit else "none"}
-    return paths, sent, {"usage": r.get("usage"), "cost": "not returned by the endpoint"}
+    raw = subprocess.run(cmd, capture_output=True, timeout=900).stdout
+    keep(raw, sent)   # the paid reply is on disk before anything else is done with it
+    paths, result = decode("openai-image", raw, tmp, ep)
+    return paths, sent, result
+
+
+def decode(kind, raw, tmp, ep):
+    """Turn a synchronous endpoint's raw reply into files and a result: the same whether it has just arrived or is
+    read back from a kept reply by collect."""
+    r = json.loads(raw)
+    if kind in ("openai-image", "openai-image-edit"):
+        if "error" in r: sys.exit("the endpoint refused: " + json.dumps(r["error"])[:600])
+        paths = []
+        for i, d in enumerate(r["data"]):
+            p = os.path.join(tmp, "out-%d.png" % i)
+            open(p, "wb").write(base64.b64decode(d["b64_json"]))
+            paths.append(p)
+        return paths, {"usage": r.get("usage"), "cost": "unknown: not returned by the endpoint"}
+    if kind == "openrouter-image":
+        items = r.get("data") or []
+        if len(items) != 1 or not items[0].get("b64_json"):
+            sys.exit("OpenRouter returned no image: " + json.dumps({k2: v for k2, v in r.items() if k2 != "data"})[:400])
+        data = base64.b64decode(items[0]["b64_json"])
+        ext = ".png" if data.startswith(b"\x89PNG") else ".jpg" if data.startswith(b"\xff\xd8\xff") else ".webp" if data[8:12] == b"WEBP" else ".bin"
+        path = os.path.join(tmp, "out" + ext); open(path, "wb").write(data)
+        return [path], {"usage": r.get("usage"), "cost": _billed(r.get("usage"))}
+    answer = ((r.get("choices") or [{}])[0].get("message") or {}).get("content")
+    if not answer: sys.exit("the model returned no answer: " + json.dumps({k2: v for k2, v in r.items() if k2 != "choices"})[:400])
+    path = os.path.join(tmp, "answer" + (ep.get("ext") or ".md")); open(path, "w").write(answer)
+    return [path], {"usage": r.get("usage"),
+                    "cost": _billed(r.get("usage")) if kind == "openrouter-text" else "unknown: not returned by the endpoint"}
+
+
+_keep = {}
+
+
+def keep(raw, sent):
+    """Write a synchronous endpoint's raw reply beside its pending record before anything else, so a full disk or a
+    crash loses a file write, never a paid result; when the project's disk refuses it, into the system's temporary
+    folder instead, and the pending record says where. collect files it later without paying again."""
+    root, rid = _keep["root"], _keep["rid"]
+    places = [os.path.join(root, "requests", rid + ".reply"), os.path.join(tempfile.gettempdir(), "spumcake-" + rid + ".reply")]
+    for p in places:
+        try:
+            with open(p, "wb") as fh: fh.write(raw); fh.flush(); os.fsync(fh.fileno())
+            _keep["file"] = p
+            break
+        except OSError as e:
+            print("could not keep the reply at %s: %s" % (p, e), file=sys.stderr)
+    try:
+        pp = pending_path(root, rid)
+        pend = json.load(open(pp)); pend.update(sent=sent, reply_file=_keep.get("file")); json.dump(pend, open(pp, "w"), indent=1)
+    except OSError as e:
+        print("could not note the reply in the pending record: %s; it is at %s" % (e, _keep.get("file")), file=sys.stderr)
+
+
+def _billed(usage):
+    c = (usage or {}).get("cost")
+    return ("%s, as billed by OpenRouter" % money(c)) if c not in (None, "") else "unknown: not returned by the endpoint"
+
+
+OPENROUTER = "https://openrouter.ai/api/v1/"
+
+
+def openrouter_image(spec, root, tmp, key_file):
+    """OpenRouter's image endpoint, one image a request, its references sent as data URIs in input_references, in the
+    order listed. A paid request is never retried."""
+    ep = spec["endpoint"]
+    settings = {"quality": "high"}
+    settings.update(ep.get("settings", {}))
+    body = dict(settings, model=ep["model"], prompt=spec["prompt"], n=1)
+    refs = []
+    for r in spec.get("references", []):
+        f = os.path.join(root, r["file"])
+        mime = mimetypes.guess_type(f)[0]
+        if mime not in ("image/png", "image/jpeg", "image/webp"): sys.exit("a reference must be PNG, JPEG, or WebP: " + r["file"])
+        refs.append({"type": "image_url", "image_url": {"url": "data:%s;base64,%s" % (mime, base64.b64encode(open(f, "rb").read()).decode())}})
+    if refs: body["input_references"] = refs
+    k = key("openrouter", "OPENROUTER_API_KEY", r"sk-or-[A-Za-z0-9_\-]+", key_file)
+    req = urllib.request.Request(OPENROUTER + "images", json.dumps(body).encode(),
+                                 {"Authorization": "Bearer " + k, "Content-Type": "application/json"})
+    sent = {"service": "OpenRouter", "url": OPENROUTER + "images", "model": ep["model"], "settings": settings,
+            "references_sent_as": "data URIs in input_references, in the order listed"}
+    raw = urllib.request.urlopen(req, timeout=ep.get("timeout", 600)).read()
+    keep(raw, sent)   # the paid reply is on disk before anything else is done with it
+    paths, result = decode("openrouter-image", raw, tmp, ep)
+    sent["response_id"] = json.loads(raw).get("id")
+    return paths, sent, result
+
+
+def language_model(spec, root, tmp, key_file, service):
+    """A language model's answer, through OpenAI or OpenRouter: one chat completion, its answer filed as text. A
+    reference is sent as text when it is a text file, or as an image when it is a picture."""
+    ep = spec["endpoint"]
+    content = [{"type": "text", "text": spec["prompt"]}]
+    for r in spec.get("references", []):
+        f = os.path.join(root, r["file"]); mime = mimetypes.guess_type(f)[0] or ""
+        if mime.startswith("image/"):
+            content.append({"type": "image_url", "image_url": {"url": "data:%s;base64,%s" % (mime, base64.b64encode(open(f, "rb").read()).decode())}})
+        else:
+            content.append({"type": "text", "text": "%s:\n%s" % (r.get("role") or r["file"], open(f, errors="replace").read())})
+    messages = ([{"role": "system", "content": ep["system"]}] if ep.get("system") else []) + [{"role": "user", "content": content}]
+    body = dict(ep.get("settings", {}), model=ep["model"], messages=messages)
+    if service == "openrouter":
+        url, k = OPENROUTER + "chat/completions", key("openrouter", "OPENROUTER_API_KEY", r"sk-or-[A-Za-z0-9_\-]+", key_file)
+    else:
+        url, k = "https://api.openai.com/v1/chat/completions", key("openai", "OPENAI_API_KEY", r"sk-[A-Za-z0-9_\-]+", key_file)
+    req = urllib.request.Request(url, json.dumps(body).encode(), {"Authorization": "Bearer " + k, "Content-Type": "application/json"})
+    sent = {"service": "OpenRouter" if service == "openrouter" else "OpenAI", "url": url, "model": ep["model"],
+            "settings": ep.get("settings", {}),
+            "references_sent_as": "in the user message after the prompt, in the order listed: text files as text, pictures as images"}
+    raw = urllib.request.urlopen(req, timeout=ep.get("timeout", 600)).read()
+    keep(raw, sent)   # the paid reply is on disk before anything else is done with it
+    paths, result = decode(service + "-text", raw, tmp, ep)
+    sent["response_id"] = json.loads(raw).get("id")
+    return paths, sent, result
 
 
 def fal_upload(path, fal_key):
-    """Upload one file to fal's storage, as fal's own client does, and return its address."""
-    tok = json.load(urllib.request.urlopen(urllib.request.Request(
-        "https://rest.fal.ai/storage/auth/token?storage_type=fal-cdn-v3", b"{}",
-        {"Authorization": "Key " + fal_key, "Content-Type": "application/json", "Accept": "application/json"}), timeout=60))
-    req = urllib.request.Request("https://v3.fal.media/files/upload", open(path, "rb").read(),
-                                 {"Authorization": "%s %s" % (tok["token_type"], tok["token"]),
-                                  "Content-Type": mimetypes.guess_type(path)[0] or "application/octet-stream",
-                                  "X-Fal-File-Name": os.path.basename(path)})
-    return json.load(urllib.request.urlopen(req, timeout=300))["access_url"]
+    """Upload one input file to fal's storage through fal's official Python client, as the user set on 2026-11-08,
+    and return its address."""
+    try:
+        import fal_client
+    except ImportError:
+        sys.exit("fal's official Python client is not installed: install it with  pip install fal-client  and run again")
+    return fal_client.SyncClient(key=fal_key).upload_file(path)
 
 
 def fal(spec, root, tmp, key_file):
@@ -206,7 +575,7 @@ def fal(spec, root, tmp, key_file):
     sent = {"service": "fal", "url": "https://queue.fal.run/" + ep["model"], "model": ep["model"], "request_id": q["request_id"],
             "status_url": q.get("status_url"), "response_url": q.get("response_url"), "cancel_url": q.get("cancel_url"),
             "settings": {k: v for k, v in body.items() if k != "prompt" and not str(v).startswith(("['data:", "data:"))},
-            "references_sent_as": "files uploaded to fal's storage, each address in its reference's field, in the order listed"}
+            "references_sent_as": "files uploaded to fal's storage with fal's official client, each address in its reference's field, in the order listed"}
     return sent
 
 
@@ -264,7 +633,7 @@ def fal_collect(sent, ep, tmp, key_file, wait_minutes=60):
     seconds = (r.get("audio") or {}).get("duration") if isinstance(r.get("audio"), dict) else None
     cost = "unknown: not returned by the endpoint"
     if ep.get("price_per_minute") and seconds:
-        cost = "about $%.3f, from the price, not a bill" % (seconds / 60 * float(ep["price_per_minute"]))
+        cost = "about %s, from the price, not a bill" % money(seconds / 60 * float(ep["price_per_minute"]))
     return paths, {"seconds": seconds, "cost": cost}
 
 
@@ -384,9 +753,14 @@ def render(root, data, path):
 
 # ---- commands ----------------------------------------------------------------------------------
 
-def run(spec_file, stand=False, key_file=None):
+def run(spec_file, stand=False, key_file=None, expect=None):
     spec = json.load(open(spec_file))
     root = project_root(os.path.dirname(os.path.abspath(spec_file)) if spec.get("project") is None else spec["project"])
+    guard(root)
+    if spec.get("spec", 1) > SPEC_FORMAT: sys.exit("this spec is format %s, newer than this checkout's %d" % (spec["spec"], SPEC_FORMAT))
+    if expect:   # the approval is bound to what spends: the plan is worked out again, and must be the one approved
+        got = plan_of(spec, root)["hash"]
+        if got != expect: sys.exit("refused: what this would send is not the plan approved (%s, now %s): plan it again" % (expect[:12], got[:12]))
     started = now()
     rid = spec.get("id") or "%s-%s" % (stamp(started), slug(spec["name"]))
     kind = spec["endpoint"]["kind"]
@@ -397,6 +771,7 @@ def run(spec_file, stand=False, key_file=None):
     refs = []
     for r in spec.get("references", []):
         f = r.get("file")
+        if (f or "").startswith("work/"): sys.exit("refused: %s is in work/, which is never an input; file it first" % f)
         if f and not os.path.exists(os.path.join(root, f)): sys.exit("reference not found: " + f)
         refs.append(dict(r, sha256=sha(os.path.join(root, f))) if f else r)
     if kind == "fal" and not stand:
@@ -412,10 +787,19 @@ def run(spec_file, stand=False, key_file=None):
         return collect(rid, key_file, root=root)
     tmp = os.path.join(root, ".request-" + rid)
     os.makedirs(tmp, exist_ok=True)
+    pp = pending_path(root, rid)
+    if not stand and kind != "research":   # sent and possibly paid for from here: if this process ends, check says so
+        os.makedirs(os.path.join(root, "requests"), exist_ok=True)
+        json.dump({"id": rid, "spec": spec, "refs": refs, "started": started.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                   "in_flight": True, "kind": kind}, open(pp, "w"), indent=1)
+    _keep.clear(); _keep.update(root=root, rid=rid)
     try:
         if stand: paths, sent, result = stand_in(spec, tmp)
         elif kind == "openai-image-edit": paths, sent, result = openai_image(spec, root, tmp, True, key_file)
         elif kind == "openai-image": paths, sent, result = openai_image(spec, root, tmp, False, key_file)
+        elif kind == "openrouter-image": paths, sent, result = openrouter_image(spec, root, tmp, key_file)
+        elif kind == "openrouter-text": paths, sent, result = language_model(spec, root, tmp, key_file, "openrouter")
+        elif kind == "openai-text": paths, sent, result = language_model(spec, root, tmp, key_file, "openai")
         elif kind == "research":
             paths = [os.path.join(root, f) if not os.path.isabs(f) else f for f in spec.get("outputs", [])]
             sent = {"service": "research"}
@@ -424,6 +808,8 @@ def run(spec_file, stand=False, key_file=None):
             sys.exit("not a request: what the agent or a builder makes goes into prompts/resources/ (request.py resource or build)")
         else: sys.exit("unknown endpoint kind: " + kind)
         finish(root, spec, rid, started, refs, paths, sent, result, stand)
+        if os.path.exists(pp): os.remove(pp)
+        if _keep.get("file") and os.path.exists(_keep["file"]): os.remove(_keep["file"])   # filed: the kept reply is done
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -439,6 +825,21 @@ def collect(rid, key_file=None, root=None):
     pp = pending_path(root, rid)
     if not os.path.exists(pp): sys.exit("no pending request " + rid)
     pend = json.load(open(pp))
+    if pend.get("in_flight"):   # a synchronous request: finish it from its kept reply, never by sending it again
+        rf = pend.get("reply_file") or next((f for f in (os.path.join(root, "requests", rid + ".reply"),
+                                             os.path.join(tempfile.gettempdir(), "spumcake-" + rid + ".reply")) if os.path.exists(f)), None)
+        if not rf or not os.path.exists(rf):
+            sys.exit("%s has no kept reply, so its result is lost: close it with  request.py close %s --lost \"<why>\"" % (rid, rid))
+        tmp = os.path.join(root, ".request-" + rid); os.makedirs(tmp, exist_ok=True)
+        try:
+            paths, result = decode(pend["kind"], open(rf, "rb").read(), tmp, pend["spec"]["endpoint"])
+            sent = pend.get("sent") or {"service": pend["kind"], "note": "what was sent is in the spec"}
+            started = datetime.datetime.strptime(pend["started"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+            finish(root, pend["spec"], rid, started, pend["refs"], paths, sent, dict(result, collected_from="the kept reply"), False)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        os.remove(pp); os.remove(rf)
+        return
     spec, sent = pend["spec"], pend["sent"]
     tmp = os.path.join(root, ".request-" + rid)
     os.makedirs(tmp, exist_ok=True)
@@ -459,6 +860,22 @@ def collect(rid, key_file=None, root=None):
     os.remove(pp)
 
 
+def close(rid, why):
+    """Close a request whose result is lost, such as a synchronous reply that never reached the disk: its report says
+    so, records the cost as likely spent, and files nothing; check stops listing it."""
+    root = project_root()
+    pp = pending_path(root, rid)
+    if not os.path.exists(pp): sys.exit("no pending request " + rid)
+    pend = json.load(open(pp)); spec = pend["spec"]
+    started = datetime.datetime.strptime(pend["started"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+    sent = pend.get("sent") or {"service": pend.get("kind"), "note": "sent; what was sent is in the spec"}
+    est = estimate(spec)
+    result = {"cost": "likely spent, never filed: " + (est if not est.startswith("unknown") else "amount unknown"), "lost": why}
+    spec = dict(spec, notes=((spec.get("notes") or "") + " Lost: " + why).strip())
+    finish(root, spec, rid, started, pend["refs"], [], sent, result, False)
+    os.remove(pp)
+
+
 def cancel(rid, key_file=None):
     root = project_root()
     pp = pending_path(root, rid)
@@ -475,6 +892,21 @@ def cancel(rid, key_file=None):
 def finish(root, spec, rid, started, refs, paths, sent, result, stand):
     research = spec["endpoint"]["kind"] == "research"
     rpath = report_path(root, rid, research)
+    endpoint_sha, recorded = {}, []
+    if not research:
+        for i, pth in enumerate(paths):
+            endpoint_sha[i] = sha(pth)
+            rec = {"spumcake_record": RECORD_FORMAT, "request": rid, "skill": spec.get("skill"), "made_by": "a trained model",
+                   "service": sent.get("service"), "model": sent.get("model") or spec["endpoint"].get("model"),
+                   "settings": {k: v for k, v in (sent.get("settings") or {}).items() if not k.endswith(("_url", "_urls"))},
+                   "prompt": spec.get("prompt"), "asked": spec.get("asked"), "why": spec.get("why"),
+                   "pipeline": spec.get("pipeline"), "chain": spec.get("chain"), "step": spec.get("step"),
+                   "inputs": [{"order": n + 1, "role": r.get("role"), "canon": r.get("canon"), "file": r.get("file"),
+                               "sha256": r.get("sha256")} for n, r in enumerate(refs)],
+                   "helpers": [{"name": c.get("name"), "value": c.get("value")} for c in spec.get("canon", [])],
+                   "endpoint_sha256": endpoint_sha[i], "skills_commit": skills_commit()}
+            if spec.get("setup"): rec["setup"] = spec["setup"]
+            if embed_record(pth, rec): recorded.append(i)
     if research:
         names = ["-" + slug(os.path.splitext(os.path.basename(p))[0]) for p in paths]
         outputs = file_into(root, "sources", rid, paths, names)
@@ -495,8 +927,15 @@ def finish(root, spec, rid, started, refs, paths, sent, result, stand):
             "depends_on": spec.get("depends_on", []), "sent": sent, "prompt": spec.get("prompt"),
             "references": refs, "canon": spec.get("canon", []), "scripts": spec.get("scripts", []),
             "sources": srcs, "outputs": outputs, "output_sha256": {o: sha(os.path.join(root, o)) for o in outputs},
-            "shown": [], "result": result, "notes": spec.get("notes"), "stand_in": bool(stand)}
+            "shown": [], "result": result, "notes": spec.get("notes"), "stand_in": bool(stand),
+            "tell_format": TELL_FORMAT, "spec": spec.get("spec", SPEC_FORMAT),
+            "endpoint_sha256": {outputs[i]: h for i, h in endpoint_sha.items() if i < len(outputs)},
+            "record_inside": [outputs[i] for i in recorded if i < len(outputs)], "skills_commit": skills_commit(),
+            **({"setup": spec["setup"]} if spec.get("setup") else {})}
     render(root, data, rpath)
+    if spec.get("pipeline"):
+        run_log(root, spec["pipeline"], {"event": "request", "request": rid, "chain": spec.get("chain"), "step": spec.get("step"),
+                                         "outputs": outputs, "stand_in": bool(stand)})
     print(os.path.relpath(rpath, root))
     # What the user is told, word for word: printed with every request, so it is never left out of the reply.
     print("\n--- tell the user, word for word ---", file=sys.stderr)
@@ -513,20 +952,28 @@ def attach(rid, f, as_, caption=None):
     print("embedded in " + os.path.relpath(path, root))
 
 
-def resource(fs, name, date=None):
-    root = project_root()
+def resource(fs, name, date=None, inputs=(), command=None, root=None):
+    root = root or project_root()
     os.makedirs(os.path.join(root, "prompts", "resources"), exist_ok=True)
+    for i in inputs:
+        if i.startswith("git:"): git_source(root, i); continue
+        if not os.path.exists(i if os.path.isabs(i) else os.path.join(root, i)): sys.exit("input not found: " + i)
     rid = "%s-%s" % (stamp(date), slug(name))
-    for f in file_into(root, "prompts/resources", rid, fs): print(f)
+    filed = file_into(root, "prompts/resources", rid, fs)
+    for f in filed:
+        record_line(root, f, inputs, command, name)
+        print(f)
+    return filed
 
 
-def build(command, outputs, name):
-    root = project_root()
-    p = subprocess.run(command, shell=True, cwd=root, capture_output=True, text=True, timeout=3600)
-    if p.returncode: sys.exit("the builder failed:\n" + (p.stdout + p.stderr)[-2000:])
+def build(command, outputs, name, inputs=(), root=None):
+    root = root or project_root()
+    sys.stdout.flush()
+    p = subprocess.run(command, shell=True, cwd=root, stdout=sys.stderr, timeout=3600)   # live, onto stderr, so stdout
+    if p.returncode: sys.exit("the builder failed (exit %d); its output is above" % p.returncode)   # stays the filed paths
     missing = [o for o in outputs if not os.path.exists(os.path.join(root, o))]
     if missing: sys.exit("the builder made no " + ", ".join(missing))
-    resource([os.path.join(root, o) for o in outputs], name)
+    return resource([os.path.join(root, o) for o in outputs], name, inputs=inputs, command=command, root=root)
 
 
 def note(rid, **kw):
@@ -540,12 +987,22 @@ def note(rid, **kw):
 
 def show(what):
     root = project_root()
+    guard(root, write=False)
     base = os.path.basename(what)
     for p, d in all_reports(root):
         made = d.get("outputs", [])
         if d["id"] == base or any(os.path.basename(f) == base for f in made):
             print(json.dumps(d, indent=1)); return
-    sys.exit("no report names " + what)
+    lines = [l for l in resource_records(root) if os.path.basename(l["file"]) == base]
+    if lines:
+        print(json.dumps(lines[-1] if len(lines) == 1 else lines, indent=1)); return
+    sys.exit("no report or record made " + what)
+
+
+def record(f):
+    r = read_record(f)
+    if r is None: sys.exit("no record inside " + f)
+    print(json.dumps(r, indent=1, ensure_ascii=False))
 
 
 def tell(rid):
@@ -595,9 +1052,12 @@ def listing(skill=None, pipeline=None):
 
 def check():
     root = project_root()
+    guard(root, write=False)
     problems, owned = [], set()
     for p, d in all_reports(root):
         for r in d.get("references", []):
+            if (r.get("file") or "").startswith("work/"):
+                problems.append("%s: sent a file in work/, which is never an input: %s" % (d["id"], r["file"]))
             if r.get("file") and not os.path.exists(os.path.join(root, r["file"])):
                 problems.append("%s: reference missing: %s" % (d["id"], r["file"]))
         for o in d.get("outputs", []):
@@ -611,13 +1071,27 @@ def check():
             rel = folder + "/" + f
             if f.endswith(".html") and folder == "sources": continue
             if rel not in owned: problems.append("no report made " + rel)
-    g = subprocess.run(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "working", ":!working/index.md"],
-                       cwd=root, capture_output=True, text=True)
+    logs = ("agent/index.md", "prompts/resources/records.jsonl")
+    g = subprocess.run(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "agent", "working"]
+                       + [":!" + l for l in logs], cwd=root, capture_output=True, text=True)
     for line in g.stdout.splitlines():
-        if set(line[:2]) & set("MDR"): problems.append("changed or removed in a folder that only grows: " + line[3:])
+        code, path = line[:2], line[3:]
+        if "R" in code and " -> " in path:   # the move of working/ to agent/ (the user, 2026-11-16) is not a change
+            a, b = path.split(" -> ")
+            if a.startswith("working/") and b == "agent/" + a[len("working/"):]: continue
+        if "D" in code and path.startswith("working/") and os.path.exists(os.path.join(root, "agent", path[len("working/"):])):
+            continue
+        if set(code) & set("MDR"): problems.append("changed or removed in a folder that only grows: " + path)
+    for l in logs:   # these are only added to: a change may add lines, never remove one
+        d = subprocess.run(["git", "diff", "HEAD", "--numstat", "--", l], cwd=root, capture_output=True, text=True).stdout.split()
+        if len(d) >= 2 and d[1] not in ("0", "-"): problems.append("lines removed from a log that only grows: " + l)
     for f in sorted(os.listdir(os.path.join(root, "requests"))) if os.path.isdir(os.path.join(root, "requests")) else []:
         if f.endswith(".pending.json"):
             pend = json.load(open(os.path.join(root, "requests", f)))
+            if pend.get("in_flight"):
+                problems.append("in flight: %s, a %s request sent at %s and not filed: if the process that sent it ended, "
+                                "it may have been paid for and its result lost" % (pend["id"], pend.get("kind"), pend.get("started")))
+                continue
             state = "failed at fal" if pend.get("failed") else "cancelled" if pend.get("cancelled") else "paid for, not collected"
             problems.append("pending: %s, %s; request.py collect %s" % (pend["id"], state, pend["id"]))
     for x in problems: print(x)
@@ -630,7 +1104,8 @@ def opts(a):
     while i < len(a):
         if a[i].startswith("--"):
             k = a[i][2:].replace("-", "_")
-            if k == "stand_in": o[k] = True; i += 1
+            if k in ("stand_in", "json"): o[k] = True; i += 1
+            elif k == "from": o.setdefault("from", []).append(a[i + 1]); i += 2
             else: o[k] = a[i + 1]; i += 2
         else: rest.append(a[i]); i += 1
     return o, rest
@@ -640,15 +1115,23 @@ if __name__ == "__main__":
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"): print(__doc__); sys.exit()
     cmd = sys.argv[1]
     o, rest = opts(sys.argv[2:])
-    if cmd == "run": run(rest[0], o.get("stand_in", False), o.get("key_file"))
+    if cmd == "run": run(rest[0], o.get("stand_in", False), o.get("key_file"), o.get("expect"))
+    elif cmd == "plan": plan_cmd(rest[0], "json" in o)
+    elif cmd == "version":
+        print(json.dumps({"skills_commit": skills_commit(), "spec": SPEC_FORMAT, "report": REPORT_FORMAT, "tell": TELL_FORMAT,
+                          "record_inside": RECORD_FORMAT, "canon": 1}, indent=1))
     elif cmd == "collect": collect(rest[0], o.get("key_file"))
     elif cmd == "cancel": cancel(rest[0], o.get("key_file"))
+    elif cmd == "close":
+        if not o.get("lost"): sys.exit('close needs --lost "<why the result is lost>"')
+        close(rest[0], o["lost"])
     elif cmd == "attach": attach(rest[0], rest[1], o["as"], o.get("caption"))
     elif cmd == "note": note(rest[0], asked=o.get("asked"), why=o.get("why"), notes=o.get("notes"))
     elif cmd == "show": show(rest[0])
     elif cmd == "tell": tell(rest[0])
-    elif cmd == "resource": resource(rest, o["name"])
-    elif cmd == "build": build(rest[0], rest[1:], o["name"])
+    elif cmd == "resource": resource(rest, o["name"], inputs=o.get("from", []))
+    elif cmd == "build": build(rest[0], rest[1:], o["name"], inputs=o.get("from", []))
+    elif cmd == "record": record(rest[0])
     elif cmd == "list": listing(o.get("skill"), o.get("pipeline"))
     elif cmd == "check": check()
     elif cmd == "id": print("%s-%s" % (stamp(), slug(rest[0])))

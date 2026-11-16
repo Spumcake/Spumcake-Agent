@@ -24,7 +24,7 @@ Each section's skill drafts it as a request, so its draft is in the library with
 ## Updating it
 
 - A change that adds to the brief, or refines something not yet published, is made in place. Git keeps the page's history.
-- A change that contradicts published canon, such as moving a door the canonical floor plan places, starts the next pipeline: copy the page to `brief/<next>-<project>.html` with the change, and have `project-pipeline` start the next pipeline. The earlier page stays as it was.
+- A change that contradicts published canon, such as moving a door the canonical floor plan places, is made in place too, as the user set on 2026-11-16: the brief page is updated, and `project-pipeline` changes canon and lists what is now out of date. Git keeps the page's history. A new page, `brief/<next>-<project>.html`, is started only with a new pipeline the user asks for.
 
 ## The audit
 

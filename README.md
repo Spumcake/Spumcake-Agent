@@ -37,7 +37,7 @@ Each skill belongs to one category, the first word of its name, which says what 
 | project | [project-brief](skills/project-brief/SKILL.md) | keeps the brief, one page per pipeline, and compares it with the canon |
 |  | [project-library](skills/project-library/SKILL.md) | keeps the library and the sources: every output, named by its request, only ever added to |
 |  | [project-output](skills/project-output/SKILL.md) | files finished deliverables into output |
-|  | [project-pipeline](skills/project-pipeline/SKILL.md) | publishes approved results as canon, lists what a change touches, and runs a new pipeline |
+|  | [project-pipeline](skills/project-pipeline/SKILL.md) | keeps the one living pipeline: publishes approved results as canon, in place, lists what is out of date and what a change reaches, and makes it again as takes, keeps it, or reverts it |
 |  | [project-requests](skills/project-requests/SKILL.md) | splits what the user asks for into requests, orders them, runs each as one cycle, and says what its report holds |
 | prompt | [prompt-image](skills/prompt-image/SKILL.md) | writes the words of any image prompt as visual, image-generator phrases, not prose |
 | research | [research-references](skills/research-references/SKILL.md) | researches real places and character archetypes on the web, into a sourced reference board, and frames from CG animated features read for their light |
