@@ -6,7 +6,7 @@ Its method exists to make AI-assisted animated filmmaking as deterministic, and 
 
 The skills take a film from a brief to a final render, with the user directing every step: planning its story from beat sheet to shot list; setting its look; finding its places, props, and staging in concept art and designing its characters by hand; making them canonical so every shot holds together; its voices and sound; staging, timing, and assembling its animatic; and its line-art and final animation. Each skill plans its task and creates the prompts destined for the models that make its results; the setup it runs in renders them.
 
-[docs/overview.md](docs/overview.md) says what Spumcake-Skills is and where it is going. [docs/projects.md](docs/projects.md) describes a project's folders, how requests are run and reported, and how results are published as canon; [scripts/request.py](scripts/request.py) runs each request and writes its report, and [scripts/pipeline.py](scripts/pipeline.py) keeps a pipeline's canon. [docs/prompt-roles.md](docs/prompt-roles.md) describes the roles a prompt is filled by, and what a setup provides to run it.
+[docs/overview.md](docs/overview.md) says what Spumcake-Skills is and where it is going. [docs/projects.md](docs/projects.md) describes a project's folders, how requests are run and reported, and how results are published as canon; [scripts/request.py](scripts/request.py) runs each request and writes its report, and [scripts/pipeline.py](scripts/pipeline.py) keeps a pipeline's canon. [docs/prompt-roles.md](docs/prompt-roles.md) describes the roles a prompt is filled by, and what a setup provides to run it; [docs/setup.md](docs/setup.md), the setup file that gives the scripts their keys and prices.
 
 ## Skills
 

@@ -5,11 +5,13 @@ render: it reads the builder, and changes nothing.
 
 Usage:
   export-scene.py <builder.py | git:<commit>:<path>> <out.glb> [--canon <pipeline/NNN/canon.sql>]
-                  [--reference <camera>=<file>]...
+                  [--reference <camera>=<file>[@grey|coded|simple]]...
                                             --reference names a render this builder made from that camera, the
                                             camera's reference_file; only renders this builder made are named, since
                                             another builder's geometry differs. canon names each camera's published
-                                            pre-vis artifact either way
+                                            pre-vis artifact either way. @look says which look the render was drawn
+                                            in, as the command that made it did (--simple: simple; a labelled render:
+                                            coded); without it, from the file's name: "simple" or "labelled", or grey
   export-scene.py --missing                 the builders in prompts/resources/ that have no scene file yet
 
 Run it inside the project, and file what it makes with request.py build, so its record names the builder:
@@ -73,6 +75,13 @@ def pieces(src):
             if var and any(s.targets[0].id == "key" for s in body):
                 rules.append((var, [ast.get_source_segment(src, s) for s in body]))
     rule = next((r for r in rules if r[0] == "oname"), rules[0] if rules else None)
+    # the groups the builder leaves unlabelled: `if key in (...): continue` where it labels its images
+    skipped = []
+    for node in ast.walk(ast.parse(src)):
+        if (isinstance(node, ast.If) and isinstance(node.test, ast.Compare) and isinstance(node.test.left, ast.Name)
+                and node.test.left.id == "key" and isinstance(node.test.ops[0], ast.In)
+                and any(isinstance(s, ast.Continue) for s in node.body)):
+            skipped = list(ast.literal_eval(node.test.comparators[0]))
     # the words the published images show for each group: the builder's label map, {key: words}.get(key, key)
     words = {}
     for node in ast.walk(ast.parse(src)):
@@ -88,7 +97,7 @@ def pieces(src):
     bg = re.search(r"cols\s*=\s*np\.full\(\(IH,\s*IW,\s*3\),\s*(\d+)", src)   # the image the faces are drawn onto
     return head, "\n\n".join(defs), rule, {"shading": [float(shade.group(1)), float(shade.group(2))] if shade else None,
                                          "edge": int(tuples[-1][0]) if tuples else None, "simple_edge": simple_edge,
-                                         "background": int(bg.group(1)) if bg else None,
+                                         "background": int(bg.group(1)) if bg else None, "unlabelled": skipped,
                                          "words": words}
 
 
@@ -212,6 +221,7 @@ def scene_of(d, name, sha, canon_refs, made=None):
         nodes.append({"name": o["name"], "mesh": len(meshes) - 1,
                       "extras": {"kind": o["kind"], "label": o["label"],
                                  "label_text": d["constants"]["words"].get(o["label"], o["label"]) if o["label"] else None,
+                                 "named": bool(o["label"]) and o["label"] not in d["constants"]["unlabelled"],
                                  "builder_id": o["id"]}})
         (leaf_nodes if o["name"] in leaf else children).append(len(nodes) - 1)
     animations = []
@@ -238,7 +248,8 @@ def scene_of(d, name, sha, canon_refs, made=None):
         ref = canon_refs.get(cname)
         nodes.append({"name": cname, "camera": len(cameras) - 1, "translation": cam, "rotation": quat_from_basis(r, u, [-x for x in f]),
                       "extras": {"position": cam, "target": target, "hfov": hfov, "image_size": [iw, ih],
-                                 "canon": ref[0] if ref else None, "reference_file": made.get(cname)}})
+                                 "canon": ref[0] if ref else None, "reference_file": (made.get(cname) or (None, None))[0],
+                                 "reference_look": (made.get(cname) or (None, None))[1]}})
         children.append(len(nodes) - 1)
     c = d["constants"]
     looks = {"background": c["background"],
@@ -301,8 +312,11 @@ if __name__ == "__main__":
     for i, x in enumerate(a):
         if x == "--reference":
             cam, f = a[i + 1].split("=", 1)
+            f, _, look = f.partition("@")
             if not os.path.exists(os.path.join(root, f)): sys.exit("no such render: " + f)
-            made[cam] = f
+            look = look or ("simple" if "simple" in f else "coded" if "labelled" in f else "grey")
+            if look not in ("grey", "coded", "simple"): sys.exit("a reference's look is grey, coded, or simple: " + look)
+            made[cam] = (f, look)
     out = scene_of(d, a[0], hashlib.sha256(src.encode()).hexdigest(), canon_references(root, canon), made)
     open(a[1], "wb").write(out)
     print("%s: %d objects, %d cameras%s" % (a[1], len(d["objects"]), len(d["cameras"]), ", the door swings" if d.get("door") else ""))

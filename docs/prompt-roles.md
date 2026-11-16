@@ -26,9 +26,27 @@ A skill here names no model, service, server, key, price, or command. The setup 
 
 - **the model's own documentation,** for the model the request names or the user chooses: its **workflow skill**, which says what is true of the model, such as which inputs it takes, its sizes and lengths, and its licence; and a **prompt skill** for each way of running it, which gives its syntax and limits. When the request names no model and more than one fits, ask.
 - **a prompt writer,** which turns the skill's prompt into the file the model's runner reads;
-- **a renderer,** which runs a written prompt, shows its plan and cost first, and saves what comes back beside the prompt. A setup may have an **execution skill** made for one of these skills, which says so by listing it under `implements`; that one renders for it.
+- **its keys and prices,** in its setup file, as [setup.md](setup.md) describes; the scripts here read them, and the skills never name either.
+
+**The renderer, in a project, is `request.py`.** Every request to a model in a project laid out as [projects.md](projects.md) describes is sent by [`scripts/request.py`](../scripts/request.py), in every setup: it plans the request offline first (`request.py plan`), sends exactly the plan the user approved (`run --expect`), files what comes back, and writes the report. No execution skill renders a request in a project. Outside any project, such as a single prompt run on its own, a setup's renderer, or an execution skill that lists a skill under `implements`, runs it, shows its plan and cost first, and saves what comes back beside the prompt.
 
 When one is missing, say which and stop. Never do a step by hand because the setup lacks it.
+
+## What the agent must be able to do
+
+The skills assume an agent that can, in any harness:
+
+- read, write, and edit the project's files;
+- run Python 3 scripts, `ffmpeg`, and Pillow, each with the user's approval;
+- search and fetch the web, and download a file only after the user's yes;
+- look at images, and at frames taken from a clip; a step that must look and cannot, such as `review-continuity`, stops and says so;
+- answer a saved prompt on its own, as a fresh request, when the setup says so;
+- wait on a long job, saying what runs and for how long, or leave it pending and collect it later (`request.py collect`);
+- give every file by its full path, and show an image with its path, which counts as giving it.
+
+## Everything is in the project
+
+Everything a later step needs is in the project's own folders: the requests and their reports, the library, the prompts and resources, `agent/` and its index, the brief, and the canon. Nothing a step needs lives only in a conversation or in a setup's own folder, so a project moves between setups, and between an agent's harness and an application, and each picks up where the other left off.
 
 ## What every skill keeps
 

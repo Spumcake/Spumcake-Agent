@@ -584,6 +584,8 @@ if __name__ == "__main__":
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"): print(__doc__); sys.exit()
     cmd = sys.argv[1]
     o, rest = opts(sys.argv[2:])
+    if o.get("setup"):   # the setup file, for this command and every request it runs (docs/setup.md)
+        os.environ["SKILLS_SETUP"] = os.path.abspath(o["setup"]); rq._setup["path"] = os.environ["SKILLS_SETUP"]
     root = rq.project_root()
     n = rest[0] if rest else None
     reads = cmd in ("fill", "touches", "history", "render") or (cmd == "sql" and (o.get("read_only") or o.get("as_of") or

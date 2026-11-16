@@ -66,7 +66,28 @@ import sys, os, re, json, base64, hashlib, html, shutil, subprocess, urllib.requ
 MEDIA_IMAGE = (".png", ".jpg", ".jpeg", ".webp", ".gif")
 MEDIA_AUDIO = (".wav", ".mp3", ".flac", ".aif", ".aiff")
 MEDIA_VIDEO = (".mp4", ".mov", ".webm")
-CRED = "/mnt/Hot/.{}/credentials"
+# Where keys and prices come from: the setup, a setup-v1 JSON file named by --setup or SKILLS_SETUP, or found at
+# ~/.config/spumcake-skills/setup.json; docs/setup.md describes the keys request.py reads. The folder below is the
+# last fallback for one computer, kept until that computer's setup names its keys; it prints a warning when used.
+LEGACY_CRED = "/mnt/Hot/.{}/credentials"
+_setup = {}
+
+
+def setup():
+    """The setup file's values, read once: --setup, then SKILLS_SETUP, then ~/.config/spumcake-skills/setup.json."""
+    if "values" in _setup: return _setup["values"]
+    p = _setup.get("path") or os.environ.get("SKILLS_SETUP") or os.path.expanduser("~/.config/spumcake-skills/setup.json")
+    vals = {}
+    if p and os.path.exists(p):
+        vals = json.load(open(p))
+        if vals.get("format") not in ("setup-v1", None): sys.exit("the setup file %s is %s, not setup-v1" % (p, vals.get("format")))
+        base = os.path.dirname(os.path.abspath(p))   # a relative path in it is relative to the file
+        for k, v in list(vals.items()):
+            if isinstance(v, str) and (k == "env_file" or k.endswith("_key") or k == "credentials_dir") and not os.path.isabs(v):
+                vals[k] = os.path.join(base, v)
+        vals["_path"] = p
+    _setup["values"] = vals
+    return vals
 
 
 # ---- the project -------------------------------------------------------------------------------
@@ -95,7 +116,17 @@ def slug(name):
     return s
 
 
+LFS = b"version https://git-lfs.github.com/spec/v1"
+
+
 def sha(path):
+    """A file's sha256; for a Git LFS pointer, the sha256 of the file it stands for, which is its oid, so a clone
+    without LFS content checks and plans the same."""
+    if os.path.getsize(path) < 1024:
+        head = open(path, "rb").read()
+        if head.startswith(LFS):
+            m = re.search(rb"oid sha256:([0-9a-f]{64})", head)
+            if m: return m.group(1).decode()
     h = hashlib.sha256()
     with open(path, "rb") as f:
         for b in iter(lambda: f.read(1 << 20), b""): h.update(b)
@@ -133,6 +164,13 @@ def plan_of(spec, root):
             "canon": [{"name": c.get("name"), "value": c.get("value")} for c in spec.get("canon", [])],
             "scripts": [s.get("command") for s in spec.get("scripts", [])], "requests": 1,
             "estimate": estimate(spec)}
+    if ep.get("kind") == "research":   # what research files is what is approved: each file, by its sha256, and its source
+        files = []
+        for f in spec.get("outputs", []):
+            pth = f if os.path.isabs(f) else os.path.join(root, f)
+            files.append({"file": os.path.basename(f), "sha256": sha(pth) if os.path.exists(pth) else None})
+        plan["outputs"] = files
+        plan["sources"] = spec.get("sources", [])
     plan["hash"] = plan_hash(plan)
     return plan
 
@@ -154,9 +192,16 @@ def money(x):
 
 
 def estimate(spec):
-    """An estimate from the price the setup or the endpoint gives, or unknown: never zero."""
-    ep = spec.get("endpoint") or {}
+    """An estimate from the price the setup gives for the service and model, or the endpoint's own, or unknown:
+    never zero."""
+    ep = dict(spec.get("endpoint") or {})
     s = ep.get("settings") or {}
+    if ep.get("kind") == "research": return "nothing: research is filed, not sent"
+    service = (ep.get("kind") or "").split("-")[0]   # fal, openai, openrouter
+    price = ((setup().get("prices") or {}).get(service) or {}).get(ep.get("model") or "")
+    if isinstance(price, dict):
+        if price.get("per_minute"): ep.setdefault("price_per_minute", price["per_minute"])
+        if price.get("per_request"): ep.setdefault("price_per_request", price["per_request"])
     if ep.get("price_per_minute") and s.get("duration"):
         return "about %s, %s s at $%s a minute" % (money(float(s["duration"]) / 60 * float(ep["price_per_minute"])), s["duration"], ep["price_per_minute"])
     if ep.get("price_per_request"):
@@ -365,11 +410,27 @@ def read_data(path):
 
 
 def key(service, env, pattern, key_file=None):
+    """A service's key: the environment variable first; then --key-file; then the setup's env_file, its
+    <service>_key file, or its credentials_dir/.<service>/credentials; then, with a warning, the legacy folder."""
     if os.environ.get(env): return os.environ[env]
-    f = key_file or CRED.format(service)
-    m = re.search(pattern, open(f).read())
-    if not m: sys.exit("no key found in " + f)
-    return m.group(0)
+    s = setup()
+    tried = []
+    for f, how in ((key_file, "--key-file"), (s.get("env_file"), "the setup's env_file"),
+                   (s.get(service.replace("-", "_") + "_key") or s.get(service.split("-")[0] + "_key"), "the setup's %s_key" % service),
+                   (os.path.join(s["credentials_dir"], "." + service, "credentials") if s.get("credentials_dir") else None, "credentials_dir")):
+        if not f or not os.path.exists(f): continue
+        text = open(f).read()
+        m = re.search(r"^\s*%s\s*=\s*['\"]?([^'\"\s]+)" % env, text, re.M) if how == "the setup's env_file" else re.search(pattern, text)
+        if m: return m.group(1) if how == "the setup's env_file" else m.group(0)
+        tried.append(how)
+    legacy = LEGACY_CRED.format(service)
+    if os.path.exists(legacy):
+        m = re.search(pattern, open(legacy).read())
+        if m:
+            print("warning: the %s key came from %s, which is not in the setup; name it in the setup file (docs/setup.md)"
+                  % (service, os.path.dirname(legacy)), file=sys.stderr)
+            return m.group(0)
+    sys.exit("no %s key: set %s, or name it in the setup file (docs/setup.md)%s" % (service, env, ("; tried " + ", ".join(tried)) if tried else ""))
 
 
 # ---- filing ------------------------------------------------------------------------------------
@@ -377,6 +438,7 @@ def key(service, env, pattern, key_file=None):
 def file_into(root, folder, rid, sources, suffixes=None):
     """Copy each source into folder as <rid>.<ext>, or <rid>-<n>.<ext> when there are several. Never overwrite."""
     out = []
+    os.makedirs(os.path.join(root, folder), exist_ok=True)   # a new project may not have the folder yet
     for i, src in enumerate(sources):
         ext = os.path.splitext(src)[1].lower()
         tail = suffixes[i] if suffixes else (("-%d" % (i + 1)) if len(sources) > 1 else "")
@@ -1115,6 +1177,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"): print(__doc__); sys.exit()
     cmd = sys.argv[1]
     o, rest = opts(sys.argv[2:])
+    if o.get("setup"): _setup["path"] = o["setup"]
     if cmd == "run": run(rest[0], o.get("stand_in", False), o.get("key_file"), o.get("expect"))
     elif cmd == "plan": plan_cmd(rest[0], "json" in o)
     elif cmd == "version":
