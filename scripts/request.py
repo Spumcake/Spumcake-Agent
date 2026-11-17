@@ -1176,15 +1176,10 @@ def check():
             if f.endswith(".html") and folder == "sources": continue
             if rel not in owned: problems.append("no report made " + rel)
     logs = ("agent/index.md", "prompts/resources/records.jsonl")
-    g = keyless(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "agent", "working"]
+    g = keyless(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "agent"]
                        + [":!" + l for l in logs], cwd=root, capture_output=True, text=True)
     for line in g.stdout.splitlines():
         code, path = line[:2], line[3:]
-        if "R" in code and " -> " in path:   # the move of working/ to agent/ (the user, 2026-11-16) is not a change
-            a, b = path.split(" -> ")
-            if a.startswith("working/") and b == "agent/" + a[len("working/"):]: continue
-        if "D" in code and path.startswith("working/") and os.path.exists(os.path.join(root, "agent", path[len("working/"):])):
-            continue
         if set(code) & set("MDR"): problems.append("changed or removed in a folder that only grows: " + path)
     for l in logs:   # these are only added to: a change may add lines, never remove one
         d = keyless(["git", "diff", "HEAD", "--numstat", "--", l], cwd=root, capture_output=True, text=True).stdout.split()

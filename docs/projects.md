@@ -33,7 +33,7 @@ Each folder is owned by one skill, which alone writes there: `requests/` by [pro
 - **A source** is its research request's ID and what it is: `2026-11-09_14-07-diner-research-1939-route-40-diner.jpg`.
 - **An output** is its local time, its pipeline, and the project: `2026-11-14_13-30-001-last-order.mp4`.
 - **A scene file** is a place's geometry, a glTF 2.0 binary filed as a resource, named for its place and the builder it was made from: `2026-11-16_11-59-diner-scene-2026-11-14-19-56.glb`. Once a place has one, it is the place's only geometry ([build-previs](../skills/build-previs/SKILL.md)).
-- **An agent file** is the local time it was made and what it is: `2026-11-14_21-12-door-21-08-fine.png`. `agent/index.md` says what each is. Nothing made for a project is thrown away or left in a scratch folder: the agent writes these files here from the start (the user, 2026-11-14). As the user set on 2026-11-16, the folder once called `working/` is `agent/`; a project moves it with one `git mv`, in one commit, and `request.py check` does not count that move as a change.
+- **An agent file** is the local time it was made and what it is: `2026-11-14_21-12-door-21-08-fine.png`. `agent/index.md` says what each is. Nothing made for a project is thrown away or left in a scratch folder: the agent writes these files here from the start (the user, 2026-11-14).
 - No folder holds a single file.
 
 ## Requests
