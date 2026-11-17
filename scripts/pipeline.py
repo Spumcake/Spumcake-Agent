@@ -14,7 +14,8 @@ Usage:
                                               stood at a time, from canon.sql's git history
   pipeline.py history <n> [<name>] [--json]   the run log's events, and canon.sql's commits, for one name or all;
                                               for an artifact with --json, its versions newest first: each file, when
-                                              it was published, its note, its request, and whether it is canon now
+                                              it was published, its note, its request, what it was made from with
+                                              each source's role, and whether it is canon now
   pipeline.py mark <n> "<label>"              name a moment in the run log, such as "final look settled"
   pipeline.py element <n> <name> --kind K     add a canonical element: a place, character, prop, look, story, sound
   pipeline.py publish <n> "<element>: <role>" --file <file> [--request <id>] --chain <chain>
@@ -47,11 +48,15 @@ Usage:
   pipeline.py keep <n> "<element>: <role>"... --reason TEXT
                                               accept each artifact as it is against its changed inputs; a later change
                                               to any of them flags it again
-  pipeline.py rerun <n> [--fact F | --artifact A] [--stand-in] [--plan [--json] | --expect <hash>]
-                                              make a take of the first step out of date, or the first a change reaches,
-                                              filled from the table, and stop: publishing it comes first. --plan prints,
-                                              offline, what it would send or run, with its hash; --expect refuses to
-                                              run anything but that plan
+  pipeline.py rerun <n> [--fact F | --artifact A | --step <chain> <step>] [--stand-in] [--plan | --expect <hash>]
+                    [--json]                  make a take of the first step out of date, or the first a change reaches,
+                                              or of the step named, out of date or not, filled from the table, and
+                                              stop: publishing it comes first. --plan prints, offline, what it would
+                                              send or run, with its hash; --expect refuses to run anything but that
+                                              plan. The take's files end the output, one "take: <file>" line each, and
+                                              "report: <file>" for a request, or "pending: <id>" for one still running;
+                                              with --json, one JSON line instead, {chain, step, files, report,
+                                              pending, stand_in}
   pipeline.py render <n>                      write the chain pages from the table
   pipeline.py deliver <n> <file>              file a finished deliverable into output/, its record inside cut to the
                                               disclosure and the request's ID
@@ -365,31 +370,34 @@ def touches(root, n, fact=None, artifact=None):
 
 def versions(root, n, art):
     """An artifact's versions, newest first, worked out from the run log and canon.sql's git history: each file, when
-    it was published, its note and request, and whether it is canon now. The same file published twice is one version,
-    at its latest publish."""
+    it was published, its note and request, what it was made from with each source's role (None when no record says),
+    and whether it is canon now. The same file published twice is one version, at its latest publish."""
     db = load(root, n)
     now_row = db.execute("SELECT file, published FROM artifact WHERE id=?", (art,)).fetchone()
     seen = {}
-    def add(f, at, note, req, source):
+    def add(f, at, note, req, source, made_from):
         if not f: return
         v = seen.get(f)
         if not v or (at or "") > (v["published"] or ""):
-            seen[f] = {"file": f, "published": at, "note": note, "request": req, "from": source}
+            seen[f] = {"file": f, "published": at, "note": note, "request": req, "from": source, "made_from": made_from}
+        elif v["made_from"] is None and made_from is not None and (at or "") == (v["published"] or ""):
+            v["made_from"] = made_from   # the same publish, its roles from canon.sql when the run log lacks them
     for ev in events(root, n):   # the run log: every publish since it began
         if ev.get("event") == "publish" and ev.get("artifact") == art:
-            add(ev.get("file"), ev.get("at"), ev.get("note"), ev.get("request"), "the run log")
+            add(ev.get("file"), ev.get("at"), ev.get("note"), ev.get("request"), "the run log", ev.get("sources"))
     rel = os.path.relpath(os.path.join(folder(root, n), "canon.sql"), root)   # older: canon.sql as each commit held it
-    log = subprocess.run(["git", "log", "--format=%H", "--", rel], cwd=root, capture_output=True, text=True).stdout.split()
+    log = rq.keyless(["git", "log", "--format=%H", "--", rel], cwd=root, capture_output=True, text=True).stdout.split()
     for c in log:
-        src = subprocess.run(["git", "show", "%s:./%s" % (c, rel)], cwd=root, capture_output=True, text=True)   # ./: from root
+        src = rq.keyless(["git", "show", "%s:./%s" % (c, rel)], cwd=root, capture_output=True, text=True)   # ./: from root
         if src.returncode: continue
         old = sqlite3.connect(":memory:")
         try:
             old.executescript(src.stdout)
             row = old.execute("SELECT file, published, note, request FROM artifact WHERE id=?", (art,)).fetchone()
+            srcs = [{"source": a, "role": r} for a, r in old.execute("SELECT source, role FROM made_from WHERE artifact=?", (art,))]
         except sqlite3.Error:
             continue
-        if row and row[1]: add(row[0], row[1], row[2], row[3], "canon.sql at %s" % c[:7])
+        if row and row[1]: add(row[0], row[1], row[2], row[3], "canon.sql at %s" % c[:7], srcs)
     out = sorted(seen.values(), key=lambda v: v["published"] or "", reverse=True)
     for v in out: v["canon_now"] = bool(now_row and now_row[1] and now_row[0] == v["file"])
     if not out and not now_row: sys.exit("no artifact %s in pipeline %03d" % (art, int(n)))
@@ -451,10 +459,14 @@ def step_plan(root, n, chain, step):
     return rq.plan_of(spec, root), spec
 
 
-def rerun(root, n, fact=None, artifact=None, stand=False, plan_only=False, as_json=False, expect=None):
-    """Make a take of the first step out of date, or of the first step a change reaches, and stop. A take changes no
-    canon: the user approves it, publish puts it in, and the next rerun then makes the step below from it."""
-    if fact or artifact:
+def rerun(root, n, fact=None, artifact=None, stand=False, plan_only=False, as_json=False, expect=None, named=None):
+    """Make a take of the first step out of date, of the first step a change reaches, or of the step named, and stop.
+    A take changes no canon: the user approves it, publish puts it in, and the next rerun then makes the step below."""
+    if named:
+        if not load(root, n).execute("SELECT 1 FROM step WHERE chain=? AND name=?", named).fetchone():
+            sys.exit("no step %s in chain %s" % (named[1], named[0]))
+        steps = [tuple(named)]
+    elif fact or artifact:
         _, steps = touches(root, n, fact=fact, artifact=artifact)
     else:
         stale, _ = out_of_date(root, n)
@@ -469,7 +481,7 @@ def rerun(root, n, fact=None, artifact=None, stand=False, plan_only=False, as_js
     if plan_only:
         if as_json: print(json.dumps(plan, indent=1, ensure_ascii=False))
         else:
-            print("Next step: %s / %s" % (chain, step))
+            print("%s step: %s / %s" % ("The" if named else "Next", chain, step))
             if plan.get("script"): print("Runs: " + plan["script"])
             else: print("Sends to: %s, %s" % (plan["endpoint"]["kind"], plan["endpoint"]["model"]))
             print("Estimate: " + plan["estimate"]); print("Plan hash: " + plan["hash"])
@@ -494,11 +506,13 @@ def rerun(root, n, fact=None, artifact=None, stand=False, plan_only=False, as_js
             filed = rq.build(spec["scripts"][0]["command"], spec.get("outputs", []), spec["name"], inputs=refs, root=root)
         rq.run_log(root, n, {"event": "run", "chain": chain, "step": step, "files": filed, "stand_in": stand})
         print("%s: a take, %s" % (step, ", ".join(filed)))
+        report = pending = None
     else:
         import tempfile
-        spec["asked"] = "Make a take of %s, out of date in pipeline %03d" % (step, int(n))
-        spec["why"] = ("It reaches %s" % (fact or artifact)) if (fact or artifact) else "It is out of date: " + "; ".join(
-            out_of_date(root, n)[0].get(art, ["its inputs changed"]))
+        spec["asked"] = "Make a take of %s%s in pipeline %03d" % (step, "" if named else ", out of date,", int(n))
+        spec["why"] = ("It reaches %s" % (fact or artifact)) if (fact or artifact) else (
+            "The user asked for a take of this step" if named else "It is out of date: " + "; ".join(
+            out_of_date(root, n)[0].get(art, ["its inputs changed"])))
         base = "%s-%s" % (rq.stamp(), rq.slug(spec["name"])); spec["id"], k = base, 2   # named here, so its report is known
         while os.path.exists(rq.report_path(root, spec["id"])) or os.path.exists(rq.pending_path(root, spec["id"])):
             spec["id"] = "%s-%d" % (base, k); k += 1   # a second take in the same minute
@@ -511,11 +525,24 @@ def rerun(root, n, fact=None, artifact=None, stand=False, plan_only=False, as_js
         finally:
             os.unlink(spec_file)
         if out.returncode: sys.exit("%s: request.py stopped (exit %d); its output is above" % (step, out.returncode))
-        print("%s: a take, %s" % (step, os.path.relpath(rq.report_path(root, spec["id"]), root)))
+        report, pending = os.path.relpath(rq.report_path(root, spec["id"]), root), None
+        if os.path.exists(os.path.join(root, report)):
+            print("%s: a take, %s" % (step, report))
+            filed = rq.read_data(os.path.join(root, report)).get("outputs", [])
+        else:   # a queued request still running: request.py collect files it
+            report, pending, filed = None, spec["id"], []
+            print("%s: a take on its way, %s; request.py collect %s files it" % (step, pending, pending))
     if art:
         reached, _ = touches(root, n, artifact=art)
         print("publishing it as %s would reach: %s" % (art, ", ".join(a for a in reached if a != art) or "nothing else"))
     print("stopped after one step: publish it first, then run again for the step below")
+    if as_json:   # last, on one line, for a setup to read
+        print(json.dumps({"chain": chain, "step": step, "files": filed, "report": report,
+                          "pending": pending, "stand_in": stand}, ensure_ascii=False))
+    else:
+        for f in filed: print("take: " + f)
+        if report: print("report: " + report)
+        if pending: print("pending: " + pending)
 
 
 def deliver(root, n, f):
@@ -606,6 +633,7 @@ def opts(a):
             if k in ("stand_in", "next", "deliver", "waiting", "read_only", "json", "show", "plan"): o[k] = True; i += 1
             elif k == "with": o.setdefault("with", []).append(a[i + 1]); i += 2
             elif k == "from": o["from"].append((a[i + 1], a[i + 2])); i += 3
+            elif k == "step": o["step"] = (a[i + 1], a[i + 2]); i += 3
             else: o[k] = a[i + 1]; i += 2
         else: rest.append(a[i]); i += 1
     return o, rest
@@ -634,11 +662,11 @@ if __name__ == "__main__":
         if o.get("read_only") and writes: sys.exit("refused: --read-only, and this query writes")
         if o.get("as_of"):
             rel = os.path.relpath(os.path.join(folder(root, n), "canon.sql"), root)
-            c = subprocess.run(["git", "log", "-1", "--before=" + o["as_of"], "--format=%H", "--", rel], cwd=root,
+            c = rq.keyless(["git", "log", "-1", "--before=" + o["as_of"], "--format=%H", "--", rel], cwd=root,
                                capture_output=True, text=True).stdout.strip()
             if not c: sys.exit("canon.sql has no commit before " + o["as_of"])
             db = sqlite3.connect(":memory:")
-            db.executescript(subprocess.run(["git", "show", "%s:./%s" % (c, rel)], cwd=root, capture_output=True, text=True).stdout)
+            db.executescript(rq.keyless(["git", "show", "%s:./%s" % (c, rel)], cwd=root, capture_output=True, text=True).stdout)
             for row in db.execute(q): print(" | ".join("" if x is None else str(x) for x in row))
         else:
             db = load(root, n)
@@ -667,7 +695,8 @@ if __name__ == "__main__":
         save(root, n, db)
         rq.run_log(root, n, {"event": "waiting" if o.get("waiting") else "publish", "artifact": rest[1], "file": o["file"],
                              "request": o.get("request"), "replaced": old[0] if old and old[1] else None,
-                             "made_from": [s for s, _ in o["from"]], "note": o.get("note")})
+                             "made_from": [s for s, _ in o["from"]], "note": o.get("note"),
+                             "sources": [{"source": s, "role": r} for s, r in o["from"]]})   # roles, for a revert
     elif cmd == "fact":
         db = load(root, n); e, f = split(rest[1])
         old = db.execute("SELECT value FROM fact WHERE element=? AND name=?", (e, f)).fetchone()
@@ -739,7 +768,8 @@ if __name__ == "__main__":
                                  "inputs": current_inputs(root, db, art), "plan": ph, "facts": relevant_facts(db, art)})
             print("kept: " + art)
     elif cmd == "rerun":
-        rerun(root, n, o.get("fact"), o.get("artifact"), o.get("stand_in", False), o.get("plan") is True, o.get("json", False), o.get("expect"))
+        rerun(root, n, o.get("fact"), o.get("artifact"), o.get("stand_in", False), o.get("plan") is True, o.get("json", False), o.get("expect"),
+              o.get("step"))
     elif cmd == "history" and o.get("json") and len(rest) > 1:
         print(json.dumps(versions(root, n, rest[1]), indent=1, ensure_ascii=False))
     elif cmd == "history":
@@ -748,7 +778,7 @@ if __name__ == "__main__":
             if not name or name in json.dumps(ev, ensure_ascii=False):
                 print("%s  %s  %s" % (ev["at"], ev.get("event"), json.dumps({k: v for k, v in ev.items() if k not in ("at", "event")}, ensure_ascii=False)[:240]))
         rel = os.path.relpath(os.path.join(folder(root, n), "canon.sql"), root)
-        print(subprocess.run(["git", "log", "--format=%ci  commit %h  %s", "--", rel], cwd=root, capture_output=True, text=True).stdout.rstrip())
+        print(rq.keyless(["git", "log", "--format=%ci  commit %h  %s", "--", rel], cwd=root, capture_output=True, text=True).stdout.rstrip())
     elif cmd == "mark":
         rq.run_log(root, n, {"event": "mark", "label": rest[1]}); print("marked: " + rest[1])
     elif cmd == "render": render(root, n)

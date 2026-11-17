@@ -2,7 +2,7 @@
  {
   "service": "fal",
   "model": "bytedance/seed-audio-1.0",
-  "name": "Seed Audio 1.0"
+  "name": "Bytedance Seed Audio 1.0"
  },
  {
   "service": "fal",
@@ -27,12 +27,12 @@
  {
   "service": "fal",
   "model": "krea/v3/edit",
-  "name": "Krea 3 Edit"
+  "name": "Krea 3"
  },
  {
   "service": "fal",
   "model": "minimax/h3-max/reference-to-video",
-  "name": "H3 Max Reference to Video"
+  "name": "MiniMax H3 Max"
  },
  {
   "service": "fal",
@@ -42,7 +42,7 @@
  {
   "service": "fal",
   "model": "openai/gpt-image-2.5/flare/edit",
-  "name": "GPT Image 2.5 Flare Edit"
+  "name": "OpenAI GPT-Image-2.5 Flare"
  },
  {
   "service": "fal",
@@ -57,21 +57,21 @@
  {
   "service": "openai",
   "model": "gpt-5.5",
-  "name": "GPT-5.5"
+  "name": "OpenAI GPT-5.5"
  },
  {
   "service": "openai",
   "model": "gpt-image-2",
-  "name": "GPT-Image-2"
+  "name": "OpenAI GPT-Image-2"
  },
  {
   "service": "openai",
   "model": "gpt-image-2.6-sunburst",
-  "name": "GPT-Image-2.6 Sunburst"
+  "name": "OpenAI GPT-Image-2.6 Sunburst"
  },
  {
   "service": "openrouter",
   "model": "openai/gpt-image-2.5-sunburst",
-  "name": "OpenAI: GPT Image 2.5 Sunburst"
+  "name": "OpenAI GPT-Image-2.5 Sunburst"
  }
 ]

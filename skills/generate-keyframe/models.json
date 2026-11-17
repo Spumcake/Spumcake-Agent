@@ -2,6 +2,6 @@
  {
   "service": "openai",
   "model": "gpt-image-2.6-sunburst",
-  "name": "GPT-Image-2.6 Sunburst"
+  "name": "OpenAI GPT-Image-2.6 Sunburst"
  }
 ]

@@ -245,11 +245,11 @@ def newer_records(root):
     logs += [os.path.join(pdir, n, "runs.jsonl") for n in (os.listdir(pdir) if os.path.isdir(pdir) else [])]
     for l in logs:
         if os.path.exists(l): seen.update(pat.findall(open(l, errors="ignore").read()))
-    head = subprocess.run(["git", "-C", SKILLS_DIR, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    head = keyless(["git", "-C", SKILLS_DIR, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     missing = set()
     for c in seen:
         if head.startswith(c): continue
-        r = subprocess.run(["git", "-C", SKILLS_DIR, "merge-base", "--is-ancestor", c, "HEAD"], capture_output=True)
+        r = keyless(["git", "-C", SKILLS_DIR, "merge-base", "--is-ancestor", c, "HEAD"], capture_output=True)
         if r.returncode: missing.add(c)
     _newer[root] = sorted(missing)
     return _newer[root]
@@ -268,9 +268,9 @@ def guard(root, write=True):
 def skills_commit():
     """The Spumcake-Skills commit these scripts run from, "+dirty" when it has uncommitted changes, or "unknown"."""
     try:
-        h = subprocess.run(["git", "-C", SKILLS_DIR, "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True, timeout=10)
+        h = keyless(["git", "-C", SKILLS_DIR, "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True, timeout=10)
         if h.returncode: return "unknown"
-        d = subprocess.run(["git", "-C", SKILLS_DIR, "status", "--porcelain", "--", "scripts", "skills", "docs"],
+        d = keyless(["git", "-C", SKILLS_DIR, "status", "--porcelain", "--", "scripts", "skills", "docs"],
                            capture_output=True, text=True, timeout=10).stdout.strip()
         return h.stdout.strip() + ("+dirty" if d else "")
     except Exception:
@@ -314,7 +314,7 @@ def embed_record(path, record):
         return True
     if ext in (".mp4", ".mov", ".m4v"):
         tmp = path + ".record" + ext
-        r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", path, "-map", "0", "-c", "copy", "-map_metadata", "0",
+        r = keyless(["ffmpeg", "-v", "error", "-y", "-i", path, "-map", "0", "-c", "copy", "-map_metadata", "0",
                             "-metadata", "comment=" + data, tmp], capture_output=True)
         if r.returncode or not os.path.exists(tmp): return False
         os.replace(tmp, path)
@@ -330,7 +330,7 @@ def read_record(path):
                 return json.loads(body.split(b"\0", 5)[5].decode("utf-8"))
         return None
     if ext in (".mp4", ".mov", ".m4v"):
-        r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format_tags=comment", "-of", "json", path],
+        r = keyless(["ffprobe", "-v", "error", "-show_entries", "format_tags=comment", "-of", "json", path],
                            capture_output=True, text=True)
         c = (json.loads(r.stdout or "{}").get("format", {}).get("tags", {}) or {}).get("comment")
         try: return json.loads(c) if c else None
@@ -371,9 +371,9 @@ def git_source(root, name):
         _, commit, path = name.split(":", 2)
     except ValueError:
         sys.exit("name a source in git history as git:<commit>:<path>: " + name)
-    full = subprocess.run(["git", "rev-parse", "--verify", commit + "^{commit}"], cwd=root, capture_output=True, text=True)
+    full = keyless(["git", "rev-parse", "--verify", commit + "^{commit}"], cwd=root, capture_output=True, text=True)
     if full.returncode: sys.exit("no such commit in this project's git history: " + commit)
-    blob = subprocess.run(["git", "show", "%s:%s" % (full.stdout.strip(), path)], cwd=root, capture_output=True)
+    blob = keyless(["git", "show", "%s:%s" % (full.stdout.strip(), path)], cwd=root, capture_output=True)
     if blob.returncode: sys.exit("no %s at %s" % (path, commit))
     return {"file": name, "commit": full.stdout.strip(), "path": path, "sha256": hashlib.sha256(blob.stdout).hexdigest()}
 
@@ -475,17 +475,18 @@ def openai_image(spec, root, tmp, edit, key_file):
     url = "https://api.openai.com/v1/images/" + ("edits" if edit else "generations")
     k = key("openai", "OPENAI_API_KEY", r"sk-[A-Za-z0-9_\-]+", key_file)
     if edit:
-        cmd = ["curl", "-s", url, "-H", "Authorization: Bearer " + k, "-F", "model=" + model]
+        cmd = ["curl", "-s", url, "-H", "@-", "-F", "model=" + model]
         for r in spec["references"]: cmd += ["-F", "image[]=@" + os.path.join(root, r["file"])]
         cmd += ["--form-string", "prompt=" + spec["prompt"]]
         for name, value in settings.items(): cmd += ["-F", "%s=%s" % (name, value)]
     else:
         body = dict(model=model, prompt=spec["prompt"], **settings)
-        cmd = ["curl", "-s", url, "-H", "Authorization: Bearer " + k, "-H", "Content-Type: application/json",
+        cmd = ["curl", "-s", url, "-H", "@-", "-H", "Content-Type: application/json",
                "-d", json.dumps(body)]
     sent = {"service": "OpenAI", "url": url, "model": model, "settings": settings,
             "references_sent_as": "image[] in the order listed" if edit else "none"}
-    raw = subprocess.run(cmd, capture_output=True, timeout=900).stdout
+    # the key goes in on stdin, as a header, never on the command line, where any user's ps shows it
+    raw = keyless(cmd, input=("Authorization: Bearer %s\n" % k).encode(), capture_output=True, timeout=900).stdout
     keep(raw, sent)   # the paid reply is on disk before anything else is done with it
     paths, result = decode("openai-image", raw, tmp, ep)
     return paths, sent, result
@@ -1037,7 +1038,13 @@ def resource(fs, name, date=None, inputs=(), command=None, root=None):
     for i in inputs:
         if i.startswith("git:"): git_source(root, i); continue
         if not os.path.exists(i if os.path.isabs(i) else os.path.join(root, i)): sys.exit("input not found: " + i)
-    rid = "%s-%s" % (stamp(date), slug(name))
+    base = rid = "%s-%s" % (stamp(date), slug(name))
+    def taken(r):   # any of the names file_into would give
+        return any(os.path.exists(os.path.join(root, "prompts", "resources", r + (("-%d" % (i + 1)) if len(fs) > 1 else "")
+                                               + os.path.splitext(f)[1].lower())) for i, f in enumerate(fs))
+    k = 2
+    while taken(rid):   # a second filing in the same minute, such as a step run twice: the next free name
+        rid, k = "%s-%d" % (base, k), k + 1
     filed = file_into(root, "prompts/resources", rid, fs)
     for f in filed:
         record_line(root, f, inputs, command, name)
@@ -1054,8 +1061,16 @@ def keyless_env():
     return {k: v for k, v in os.environ.items() if k not in KEY_VARS and not secret.search(k)}
 
 
+def keyless(args, **kw):
+    """subprocess.run with no key in the environment. git, ffmpeg, ffprobe, and curl need none, and git in a project
+    runs that project's hooks and config commands, such as core.fsmonitor."""
+    return subprocess.run(args, env=keyless_env(), **kw)
+
+
 def build(command, outputs, name, inputs=(), root=None):
     root = root or project_root()
+    for o in outputs:   # a folder git never holds, such as .build/ in a fresh clone, is made for the builder
+        os.makedirs(os.path.dirname(os.path.join(root, o)) or root, exist_ok=True)
     sys.stdout.flush()
     p = subprocess.run(command, shell=True, cwd=root, stdout=sys.stderr, timeout=3600,   # live, onto stderr, so stdout
                        env=keyless_env())   # the builder is the project's code, not Skills': it gets no key
@@ -1161,7 +1176,7 @@ def check():
             if f.endswith(".html") and folder == "sources": continue
             if rel not in owned: problems.append("no report made " + rel)
     logs = ("agent/index.md", "prompts/resources/records.jsonl")
-    g = subprocess.run(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "agent", "working"]
+    g = keyless(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "agent", "working"]
                        + [":!" + l for l in logs], cwd=root, capture_output=True, text=True)
     for line in g.stdout.splitlines():
         code, path = line[:2], line[3:]
@@ -1172,7 +1187,7 @@ def check():
             continue
         if set(code) & set("MDR"): problems.append("changed or removed in a folder that only grows: " + path)
     for l in logs:   # these are only added to: a change may add lines, never remove one
-        d = subprocess.run(["git", "diff", "HEAD", "--numstat", "--", l], cwd=root, capture_output=True, text=True).stdout.split()
+        d = keyless(["git", "diff", "HEAD", "--numstat", "--", l], cwd=root, capture_output=True, text=True).stdout.split()
         if len(d) >= 2 and d[1] not in ("0", "-"): problems.append("lines removed from a log that only grows: " + l)
     for f in sorted(os.listdir(os.path.join(root, "requests"))) if os.path.isdir(os.path.join(root, "requests")) else []:
         if f.endswith(".pending.json"):

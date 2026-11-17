@@ -38,12 +38,19 @@ filters.append("".join(labels) + f"amix=inputs={len(labels)}:normalize=0:duratio
 mix = os.path.join(tmp, "mix.wav")
 subprocess.run(["ffmpeg", "-y", "-v", "error", *inputs, "-filter_complex", ";".join(filters), "-map", "[mix]", "-ar", "48000", mix], check=True)
 
-# video: each frame held for its length
+# video: each frame held for its length. Every frame is first made plain RGB, a transparent one laid on white, since
+# the concat stops early at a frame whose pixel format differs from the first's (an RGBA board among RGB keyframes)
+plain = []
+for i, f in enumerate(frames):
+    p = os.path.join(tmp, f"f{i:05d}.png")
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", f["image"], "-filter_complex",
+                    "[0]split[a][b];[a]drawbox=c=white@1:t=fill[w];[w][b]overlay=format=auto,format=rgb24", "-frames:v", "1", p], check=True)
+    plain.append(p)
 lst = os.path.join(tmp, "frames.txt")
 with open(lst, "w") as fh:
-    for f in frames:
-        fh.write(f"file '{os.path.abspath(f['image'])}'\nduration {f['out'] - f['in']:.3f}\n")
-    fh.write(f"file '{os.path.abspath(frames[-1]['image'])}'\n")
+    for f, p in zip(frames, plain):
+        fh.write(f"file '{p}'\nduration {f['out'] - f['in']:.3f}\n")
+    fh.write(f"file '{plain[-1]}'\n")
 subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", lst, "-i", mix,
                 "-vf", f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:white,fps={fps},format=yuv420p",
                 "-c:v", "libx264", "-crf", "18", "-c:a", "aac", "-b:a", "192k", "-t", str(L), "-shortest", out], check=True)

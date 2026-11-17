@@ -130,6 +130,16 @@ Once a shot's line-art animation is approved, lay it over the layout drawings of
 
 Once a final shot is rendered, lay its animatic over it with [scripts/overlay.py](scripts/overlay.py): the line-art animation's lines in white, and the pre-vis's edges, the place and anything moving in it, such as a door, in a second colour. It shows at a glance whether the render keeps the animatic's acting and timing, and whether the two share a camera. It is a comparison, embedded in the final shot's report.
 
+## The mix
+
+The finished film's sound is laid over the approved take by [the mix script](scripts/mix.py), never by hand, by an agent and a setup such as Spumcake Studio alike. It takes the take and its sound layers, each a file with its gain in dB and the time it starts in the take, and writes the film as H.264 with AAC, filed into `prompts/resources/` with `request.py build`, whose record names the take and every sound heard:
+
+```text
+python3 <build-animatic>/scripts/mix.py --take <video> --sound <audio> <gain_db> <start> [muted] ... --name "<the film>: mixed"
+```
+
+The take's own sound, such as the sound a joint audio-video model made, is left out unless `--take-sound <gain_db>` keeps it; Last order's mixes left it out. A layer marked `muted` stays in the command, so the record shows it, but is not heard. A sound lands at its start to the sample, so a cue placed at a time, such as a door's click at 3.00 s, is heard there; place a sound by its onset, not its file's start. The picture is copied untouched when it is H.264 already. The same inputs make the same bytes. The mixed film is a take of the finished film: the user approves it, and `project-pipeline` publishes it before `project-output` delivers it.
+
 ## Hand back
 
 Hand back to [project-requests](../project-requests/SKILL.md):

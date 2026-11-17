@@ -2,6 +2,6 @@
  {
   "service": "fal",
   "model": "bytedance/seed-audio-1.0",
-  "name": "Seed Audio 1.0"
+  "name": "Bytedance Seed Audio 1.0"
  }
 ]
