@@ -1,0 +1,7 @@
+[
+ {
+  "service": "openrouter",
+  "model": "openai/gpt-image-2.5-sunburst",
+  "name": "OpenAI: GPT Image 2.5 Sunburst"
+ }
+]

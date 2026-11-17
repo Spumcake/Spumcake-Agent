@@ -1,0 +1,12 @@
+[
+ {
+  "service": "openai",
+  "model": "gpt-image-2.6-sunburst",
+  "name": "GPT-Image-2.6 Sunburst"
+ },
+ {
+  "service": "openrouter",
+  "model": "openai/gpt-image-2.5-sunburst",
+  "name": "OpenAI: GPT Image 2.5 Sunburst"
+ }
+]

@@ -1,0 +1,77 @@
+[
+ {
+  "service": "fal",
+  "model": "bytedance/seed-audio-1.0",
+  "name": "Seed Audio 1.0"
+ },
+ {
+  "service": "fal",
+  "model": "fal-ai/ltx-2.3-22b/reference-video-to-video",
+  "name": "LTX-2.3 22B"
+ },
+ {
+  "service": "fal",
+  "model": "fal-ai/qwen-image",
+  "name": "Qwen Image"
+ },
+ {
+  "service": "fal",
+  "model": "fal-ai/qwen-image-edit-2511",
+  "name": "Qwen Image Edit 2511"
+ },
+ {
+  "service": "fal",
+  "model": "ideogram/v4/image-to-image",
+  "name": "Ideogram V4.0q"
+ },
+ {
+  "service": "fal",
+  "model": "krea/v3/edit",
+  "name": "Krea 3 Edit"
+ },
+ {
+  "service": "fal",
+  "model": "minimax/h3-max/reference-to-video",
+  "name": "H3 Max Reference to Video"
+ },
+ {
+  "service": "fal",
+  "model": "minimax/h3/image-to-video",
+  "name": "MiniMax H3"
+ },
+ {
+  "service": "fal",
+  "model": "openai/gpt-image-2.5/flare/edit",
+  "name": "GPT Image 2.5 Flare Edit"
+ },
+ {
+  "service": "fal",
+  "model": "topaz/interpolate/video",
+  "name": "Topaz Interpolate Video"
+ },
+ {
+  "service": "fal",
+  "model": "topaz/upscale/video/precision",
+  "name": "Topaz Upscale Video Precision"
+ },
+ {
+  "service": "openai",
+  "model": "gpt-5.5",
+  "name": "GPT-5.5"
+ },
+ {
+  "service": "openai",
+  "model": "gpt-image-2",
+  "name": "GPT-Image-2"
+ },
+ {
+  "service": "openai",
+  "model": "gpt-image-2.6-sunburst",
+  "name": "GPT-Image-2.6 Sunburst"
+ },
+ {
+  "service": "openrouter",
+  "model": "openai/gpt-image-2.5-sunburst",
+  "name": "OpenAI: GPT Image 2.5 Sunburst"
+ }
+]
