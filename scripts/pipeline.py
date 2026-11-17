@@ -12,7 +12,9 @@ Usage:
   pipeline.py sql <n> "<query>" [--read-only] [--as-of <time>]
                                               query the table; --read-only refuses a write; --as-of reads canon as it
                                               stood at a time, from canon.sql's git history
-  pipeline.py history <n> [<name>]            the run log's events, and canon.sql's commits, for one name or all
+  pipeline.py history <n> [<name>] [--json]   the run log's events, and canon.sql's commits, for one name or all;
+                                              for an artifact with --json, its versions newest first: each file, when
+                                              it was published, its note, its request, and whether it is canon now
   pipeline.py mark <n> "<label>"              name a moment in the run log, such as "final look settled"
   pipeline.py element <n> <name> --kind K     add a canonical element: a place, character, prop, look, story, sound
   pipeline.py publish <n> "<element>: <role>" --file <file> [--request <id>] --chain <chain>
@@ -361,6 +363,39 @@ def touches(root, n, fact=None, artifact=None):
     return (sorted(arts), sorted(steps, key=lambda cs: (order.get(cs[0], 99), sord.get(cs, 99))))
 
 
+def versions(root, n, art):
+    """An artifact's versions, newest first, worked out from the run log and canon.sql's git history: each file, when
+    it was published, its note and request, and whether it is canon now. The same file published twice is one version,
+    at its latest publish."""
+    db = load(root, n)
+    now_row = db.execute("SELECT file, published FROM artifact WHERE id=?", (art,)).fetchone()
+    seen = {}
+    def add(f, at, note, req, source):
+        if not f: return
+        v = seen.get(f)
+        if not v or (at or "") > (v["published"] or ""):
+            seen[f] = {"file": f, "published": at, "note": note, "request": req, "from": source}
+    for ev in events(root, n):   # the run log: every publish since it began
+        if ev.get("event") == "publish" and ev.get("artifact") == art:
+            add(ev.get("file"), ev.get("at"), ev.get("note"), ev.get("request"), "the run log")
+    rel = os.path.relpath(os.path.join(folder(root, n), "canon.sql"), root)   # older: canon.sql as each commit held it
+    log = subprocess.run(["git", "log", "--format=%H", "--", rel], cwd=root, capture_output=True, text=True).stdout.split()
+    for c in log:
+        src = subprocess.run(["git", "show", "%s:./%s" % (c, rel)], cwd=root, capture_output=True, text=True)   # ./: from root
+        if src.returncode: continue
+        old = sqlite3.connect(":memory:")
+        try:
+            old.executescript(src.stdout)
+            row = old.execute("SELECT file, published, note, request FROM artifact WHERE id=?", (art,)).fetchone()
+        except sqlite3.Error:
+            continue
+        if row and row[1]: add(row[0], row[1], row[2], row[3], "canon.sql at %s" % c[:7])
+    out = sorted(seen.values(), key=lambda v: v["published"] or "", reverse=True)
+    for v in out: v["canon_now"] = bool(now_row and now_row[1] and now_row[0] == v["file"])
+    if not out and not now_row: sys.exit("no artifact %s in pipeline %03d" % (art, int(n)))
+    return out
+
+
 def check_take(root, n, db, art, o):
     """Refuse to publish a take whose inputs are no longer what is published, whose step was edited since, or, for a
     file made without a model, whose record does not hold each source it is said to be made from."""
@@ -603,7 +638,7 @@ if __name__ == "__main__":
                                capture_output=True, text=True).stdout.strip()
             if not c: sys.exit("canon.sql has no commit before " + o["as_of"])
             db = sqlite3.connect(":memory:")
-            db.executescript(subprocess.run(["git", "show", "%s:%s" % (c, rel)], cwd=root, capture_output=True, text=True).stdout)
+            db.executescript(subprocess.run(["git", "show", "%s:./%s" % (c, rel)], cwd=root, capture_output=True, text=True).stdout)
             for row in db.execute(q): print(" | ".join("" if x is None else str(x) for x in row))
         else:
             db = load(root, n)
@@ -705,6 +740,8 @@ if __name__ == "__main__":
             print("kept: " + art)
     elif cmd == "rerun":
         rerun(root, n, o.get("fact"), o.get("artifact"), o.get("stand_in", False), o.get("plan") is True, o.get("json", False), o.get("expect"))
+    elif cmd == "history" and o.get("json") and len(rest) > 1:
+        print(json.dumps(versions(root, n, rest[1]), indent=1, ensure_ascii=False))
     elif cmd == "history":
         name = rest[1] if len(rest) > 1 else None
         for ev in events(root, n):

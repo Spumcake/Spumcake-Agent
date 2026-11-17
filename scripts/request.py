@@ -502,7 +502,7 @@ def decode(kind, raw, tmp, ep):
             p = os.path.join(tmp, "out-%d.png" % i)
             open(p, "wb").write(base64.b64decode(d["b64_json"]))
             paths.append(p)
-        return paths, {"usage": r.get("usage"), "cost": "unknown: not returned by the endpoint"}
+        return paths, {"usage": r.get("usage"), "cost": token_cost("openai", ep.get("model", "gpt-image-2.6-sunburst"), r.get("usage"))}
     if kind == "openrouter-image":
         items = r.get("data") or []
         if len(items) != 1 or not items[0].get("b64_json"):
@@ -539,6 +539,23 @@ def keep(raw, sent):
         pend = json.load(open(pp)); pend.update(sent=sent, reply_file=_keep.get("file")); json.dump(pend, open(pp, "w"), indent=1)
     except OSError as e:
         print("could not note the reply in the pending record: %s; it is at %s" % (e, _keep.get("file")), file=sys.stderr)
+
+
+def token_cost(service, model, usage):
+    """A cost worked out from the token usage an endpoint returned and the setup's per-token prices for its model,
+    marked as computed, never a bill; unknown when either is missing, never zero."""
+    if not usage: return "unknown: not returned by the endpoint"
+    per = (((setup().get("prices") or {}).get(service) or {}).get(model) or {}).get("per_million_tokens")
+    total = usage.get("total_tokens") or ((usage.get("input_tokens") or 0) + (usage.get("output_tokens") or 0))
+    if not per: return "unknown: %s tokens used; no token prices for %s in the setup" % (total, model)
+    d = usage.get("input_tokens_details") or {}
+    text_in = d.get("text_tokens", usage.get("input_tokens", 0) if "image_tokens" not in d else 0)
+    image_in = d.get("image_tokens", 0)
+    out = usage.get("output_tokens", 0)
+    cost = (text_in * per.get("input_text", 0) + image_in * per.get("input_image", 0) + out * per.get("output_image", per.get("output", 0))) / 1e6
+    missing = [k for k, n in (("input_text", text_in), ("input_image", image_in), ("output_image", out)) if n and k not in per and not (k == "output_image" and "output" in per)]
+    if missing: return "unknown: no %s price for %s in the setup" % (", ".join(missing), model)
+    return "about %s, computed from the token usage and the setup's prices, not a bill" % money(cost)
 
 
 def _billed(usage):

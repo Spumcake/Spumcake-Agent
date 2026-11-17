@@ -39,7 +39,7 @@ A tool reads only the keys it needs, and ignores the rest, so one setup file ser
 
 When none holds it, the request stops before anything is sent, and names the variable to set.
 
-**Prices** are by service, `fal`, `openai`, or `openrouter`, then by the model's ID, each with `per_minute` (for a video, times its length) or `per_request`. `request.py plan` shows the estimate from them, then from the endpoint's own price in the spec. A missing price shows as unknown, never as zero, and a small price is printed with enough places that it never reads as zero.
+**Prices** are by service, `fal`, `openai`, or `openrouter`, then by the model's ID, each with `per_minute` (for a video, times its length), `per_request`, or `per_million_tokens`, as `{"input_text": …, "input_image": …, "output_image": …}` in dollars a million tokens, copied from the service's published prices. For a model priced by tokens, such as OpenAI's image models, the report records the token usage the endpoint returned and a cost computed from it and these prices, marked as computed, never a bill. `request.py plan` shows the estimate from them, then from the endpoint's own price in the spec. A missing price shows as unknown, never as zero, and a small price is printed with enough places that it never reads as zero.
 
 ## One computer's fallback
 
