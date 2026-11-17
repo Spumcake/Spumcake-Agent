@@ -93,7 +93,15 @@ The clip is assembled by [the assembly script](scripts/assemble.py), which needs
 python3 <build-animatic>/scripts/assemble.py <assembly.json> <animatic>.mp4
 ```
 
-Write its assembly JSON from the timing reference, as the script's usage gives it:
+Its assembly JSON is written only by [the assembly writer](scripts/write-assembly.py), never by hand, by an agent and a setup such as Spumcake Studio alike. The writer checks it, files it in `prompts/resources/` with `request.py`'s record, every frame and sound as an input, and prints its path:
+
+```text
+python3 <build-animatic>/scripts/write-assembly.py --length <s> --fps <n> --size <w>x<h> --frame <image> <in> <out> ... --bed <audio> [<gain_db>] --clip <audio> <from> <to> <at> [<gain_db>] ... --from <the timing reference>
+```
+
+The step's script names the assembly it assembles, and that file is the current one, never the newest. A retime files a new assembly and points the step at it with `pipeline.py step`, with the times in the frame references' roles changed to match.
+
+Give the writer, from the timing reference:
 
 - **the frames:** each approved keyframe with its in and out, running on from zero to the film's length;
 - **the bed:** the sound bed, under everything;
@@ -127,6 +135,6 @@ Once a final shot is rendered, lay its animatic over it with [scripts/overlay.py
 Hand back to [project-requests](../project-requests/SKILL.md):
 
 - **the check request,** when the setup offers a language model: its endpoint, the prompt as built from the timing check template, naming canon, and the timing sheet and the script it carries;
-- **the assembly,** a build that `project-library` runs with `request.py build`, filing the video into `prompts/resources/`: the command above; its assembly JSON; each frame, the bed, and each take by its canonical artifact, with its role in the cut, in the order listed; and the file it makes, the animatic's video;
+- **the assembly,** a build that `project-library` runs with `request.py build`, filing the video into `prompts/resources/`: the command above; its assembly JSON, as the writer filed it; each frame, the bed, and each take by its canonical artifact, with its role in the cut, in the order listed; and the file it makes, the animatic's video;
 - the timing sheet, with its cue list and counted notes, for the user's approval;
 - each shot whose length now differs from the approved shot list.

@@ -3,6 +3,8 @@
 
 Usage: python3 assemble.py <assembly.json> <out.mp4>
 
+The assembly is written and filed by write-assembly.py, never by hand.
+
 assembly.json:
 {
   "length": 8.0, "fps": 24, "size": [1536, 864],

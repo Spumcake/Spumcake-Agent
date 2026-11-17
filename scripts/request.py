@@ -1045,10 +1045,20 @@ def resource(fs, name, date=None, inputs=(), command=None, root=None):
     return filed
 
 
+KEY_VARS = ("OPENAI_API_KEY", "OPENROUTER_API_KEY", "FAL_KEY", "FAL_KEY_ID", "FAL_KEY_SECRET")
+
+
+def keyless_env():
+    """The environment without a key: the variables key() reads, and any named like a secret. A builder needs none."""
+    secret = re.compile(r"(KEY|KEY_ID|SECRET|TOKEN|PASSWORD|CREDENTIALS)$", re.I)
+    return {k: v for k, v in os.environ.items() if k not in KEY_VARS and not secret.search(k)}
+
+
 def build(command, outputs, name, inputs=(), root=None):
     root = root or project_root()
     sys.stdout.flush()
-    p = subprocess.run(command, shell=True, cwd=root, stdout=sys.stderr, timeout=3600)   # live, onto stderr, so stdout
+    p = subprocess.run(command, shell=True, cwd=root, stdout=sys.stderr, timeout=3600,   # live, onto stderr, so stdout
+                       env=keyless_env())   # the builder is the project's code, not Skills': it gets no key
     if p.returncode: sys.exit("the builder failed (exit %d); its output is above" % p.returncode)   # stays the filed paths
     missing = [o for o in outputs if not os.path.exists(os.path.join(root, o))]
     if missing: sys.exit("the builder made no " + ", ".join(missing))
