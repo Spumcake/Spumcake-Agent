@@ -1,0 +1,12 @@
+[
+ {
+  "service": "fal",
+  "model": "topaz/interpolate/video",
+  "name": "Topaz Interpolate Video"
+ },
+ {
+  "service": "fal",
+  "model": "topaz/upscale/video/precision",
+  "name": "Topaz Upscale Video Precision"
+ }
+]

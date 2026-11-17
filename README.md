@@ -25,6 +25,7 @@ Each skill belongs to one category, the first word of its name, which says what 
 |  | [generate-concept-design](skills/generate-concept-design/SKILL.md) | explores what a subject or place could look like, with a brief, directions, candidates, and refinements, before it is canonical; a character is designed by hand first |
 |  | [generate-concept-reference](skills/generate-concept-reference/SKILL.md) | turns a canonical reference into its concept art reference: a character's study, a place's view in each mood |
 |  | [generate-detail-sheet](skills/generate-detail-sheet/SKILL.md) | makes a character's or prop's level-of-detail sheet: the subject at four distances, painted for concept artwork or in line for the animatic, fewer strokes the further it is |
+|  | [generate-finished-shot](skills/generate-finished-shot/SKILL.md) | finishes an approved final shot for delivery: retimes it to the film's frame rate and upscales it to its delivery size, each checked frame by frame |
 |  | [generate-keyframe](skills/generate-keyframe/SKILL.md) | makes each camera's animatic layout drawing, then an on-model keyframe in line for each shot of an approved shot list, for the animatic |
 |  | [generate-model-sheet](skills/generate-model-sheet/SKILL.md) | makes a subject's expression sheet, pose sheet, mouth chart, and colour model, and a character's animatic expression sheet, acting sheet, and turnaround |
 |  | [generate-sound](skills/generate-sound/SKILL.md) | makes a scene's sound effects and music as one bed with no voices |
