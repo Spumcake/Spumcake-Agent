@@ -88,7 +88,7 @@ Make the rest a scene at a time, in shot order.
 - From the user's sketch, keep every figure's place, size, pose, and the framing exactly as drawn. If the model takes a strength for its structure, set it so the composition does not move, as its workflow skill says. Where a sketch leaves something unclear, ask; do not invent it.
 - Inspect each frame as in the test, and report drift honestly. A new take is a new paid request, and needs the user's yes.
 
-The user chooses which take of each frame is the board; never choose for them. The chosen frame is published by `project-pipeline`, as `<shot>: board frame`, or `<shot>: board end frame`. A rejected take is never used as an input again.
+The user chooses which take of each frame is the board; never choose for them. The chosen frame is published by `project-pipeline`, as `<film>: rough board, <shot>`, or `<film>: end rough board, <shot>`, under the film, as Last order's keyframes are. A rejected take is never used as an input again.
 
 ## 4. Revisions
 

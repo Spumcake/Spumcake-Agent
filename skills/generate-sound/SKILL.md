@@ -40,4 +40,4 @@ Hand back to `project-requests`:
 
 and, for the user to approve:
 
-- the take, with its measured length and each cue's measured onset against its time; once approved, `project-pipeline` publishes it as the scene's bed, `<scene>: sound bed`, which the mix lays the voices over, made from the sound design brief, the beat sheet or script, and the place's floor plan (`--from`), so a change to the story or to an event's place or time reaches the bed, as it reaches the frames. A rejected take is never used as an input again.
+- the take, with its measured length and each cue's measured onset against its time; once approved, `project-pipeline` publishes it as the film's bed, `<film>: sound bed`, as Last order's is, which the mix lays the voices over, made from the sound design brief, the beat sheet or script, and the place's floor plan (`--from`), so a change to the story or to an event's place or time reaches the bed, as it reaches the frames. A rejected take is never used as an input again.

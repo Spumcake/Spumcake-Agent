@@ -35,4 +35,4 @@ Hand back to `project-requests`, one request per line or run of lines, in the ti
 
 and, for the user to approve:
 
-- each take, with where each line and voice sound starts and ends inside it; once approved, `project-pipeline` publishes it, such as `<line>: voice take`, and its measured length as a fact, `<line>: length`, which replaces the timing reference's estimate. A rejected take is never used as an input again.
+- each take, with where each line and voice sound starts and ends inside it; once approved, `project-pipeline` publishes it under its speaker, as `<character>: <line>, voice take`, such as Last order's `Otis: the line, voice take`, and its measured length as a fact, `<line>: length`, which replaces the timing reference's estimate. A rejected take is never used as an input again.

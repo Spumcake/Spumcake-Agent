@@ -3,6 +3,9 @@
 See docs/projects.md.
 
 Usage:
+  request.py init [<folder>] [--json]  start a project in the folder, the current one when none is named: every folder
+                                      docs/projects.md names, agent/index.md, and pipeline 001; git init when the folder
+                                      is in no repository. It refuses a folder that holds a project or is inside one
   request.py plan <spec.json> [--json]  what run would send, offline: the endpoint and its settings, the prompt, every
                                       reference in order with its role and path, the canon read, and the estimate,
                                       unknown and never zero; with the plan's hash, which run --expect checks
@@ -61,7 +64,7 @@ Every image or video a request files carries its record inside it (request.py re
 sha256 of the file as the endpoint returned it and as filed. Names use local time.
 The agent writes the spec; everything else in the report comes from what this script sent and received.
 """
-import sys, os, re, json, base64, hashlib, html, shutil, subprocess, urllib.request, mimetypes, wave, datetime, struct, zlib, tempfile
+import sys, os, re, json, base64, hashlib, html, shutil, subprocess, urllib.request, mimetypes, wave, datetime, struct, zlib, tempfile, contextlib, io
 
 MEDIA_IMAGE = (".png", ".jpg", ".jpeg", ".webp", ".gif")
 MEDIA_AUDIO = (".wav", ".mp3", ".flac", ".aif", ".aiff")
@@ -1154,6 +1157,48 @@ def listing(skill=None, pipeline=None):
         print(d["id"], d.get("skill") or "", " ".join(d.get("outputs", [])))
 
 
+LAYOUT = ("requests", "library", "prompts", "prompts/resources", "sources", "brief", "pipeline", "output", "agent", "work")
+IGNORED = ".build/\n.stand-in/\n"   # Skills' own scratch: a build's output before it is filed, and stand-ins in the making
+
+
+def init(folder=None, as_json=False):
+    """Start a project: its folders, agent/index.md, and pipeline 001, as docs/projects.md lays them out; a setup adds
+    its own dot-folder after. An empty folder holds a .gitkeep, so a clone keeps it."""
+    root = os.path.abspath(folder or ".")
+    if os.path.exists(root) and not os.path.isdir(root): sys.exit("not a folder: " + root)
+    held = [d for d in LAYOUT if os.path.exists(os.path.join(root, d))]
+    if held: sys.exit("refused: %s already holds a project's folders (%s)" % (root, ", ".join(held)))
+    p = os.path.dirname(root)
+    while p != os.path.dirname(p):
+        if os.path.isdir(os.path.join(p, "library")) and os.path.isdir(os.path.join(p, "requests")):
+            sys.exit("refused: %s is inside the project %s" % (root, p))
+        p = os.path.dirname(p)
+    os.makedirs(root, exist_ok=True)
+    top = keyless(["git", "rev-parse", "--show-toplevel"], cwd=root, capture_output=True, text=True)
+    if top.returncode:
+        r = keyless(["git", "init", "-q"], cwd=root, capture_output=True, text=True)
+        if r.returncode: sys.exit("git init failed: " + r.stderr.strip())
+        git = "initialised"
+    else:
+        git = "in the repository at " + top.stdout.strip()
+    for d in LAYOUT: os.makedirs(os.path.join(root, d))
+    with open(os.path.join(root, "agent", "index.md"), "w") as fh:
+        fh.write("# agent/\n\nEverything the agent makes for the project that is not a model's output, a request's report, or "
+                 "a resource: checks, comparisons, frame strips, overlays, specs, test builds, and scripts. One line for each "
+                 "file, added as it is made; none is ever removed.\n\n| File | What it is |\n|---|---|\n")
+    with open(os.path.join(root, ".gitignore"), "a") as fh: fh.write(IGNORED)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import pipeline
+    with contextlib.redirect_stdout(io.StringIO()): pipeline.new(root, 1)
+    for d in LAYOUT:   # git keeps no empty folder
+        if not os.listdir(os.path.join(root, d)): open(os.path.join(root, d, ".gitkeep"), "w").close()
+    made = list(LAYOUT) + ["agent/index.md", "pipeline/001/canon.sql", ".gitignore"]
+    if as_json: print(json.dumps({"root": root, "made": made, "git": git}))
+    else:
+        print("started a project at %s, %s" % (root, git))
+        for m in made: print("  " + m)
+
+
 def check():
     root = project_root()
     guard(root, write=False)
@@ -1173,7 +1218,7 @@ def check():
     for folder in ("library", "sources"):
         for f in sorted(os.listdir(os.path.join(root, folder))) if os.path.isdir(os.path.join(root, folder)) else []:
             rel = folder + "/" + f
-            if f.endswith(".html") and folder == "sources": continue
+            if f.endswith(".html") and folder == "sources" or f.startswith("."): continue   # .gitkeep
             if rel not in owned: problems.append("no report made " + rel)
     logs = ("agent/index.md", "prompts/resources/records.jsonl")
     g = keyless(["git", "status", "--porcelain", "--", "library", "sources", "prompts", "agent"]
@@ -1215,7 +1260,8 @@ if __name__ == "__main__":
     cmd = sys.argv[1]
     o, rest = opts(sys.argv[2:])
     if o.get("setup"): _setup["path"] = o["setup"]
-    if cmd == "run": run(rest[0], o.get("stand_in", False), o.get("key_file"), o.get("expect"))
+    if cmd == "init": init(rest[0] if rest else None, o.get("json", False))
+    elif cmd == "run": run(rest[0], o.get("stand_in", False), o.get("key_file"), o.get("expect"))
     elif cmd == "plan": plan_cmd(rest[0], "json" in o)
     elif cmd == "version":
         print(json.dumps({"skills_commit": skills_commit(), "spec": SPEC_FORMAT, "report": REPORT_FORMAT, "tell": TELL_FORMAT,

@@ -31,7 +31,7 @@ Each input by its canonical name, from the pipeline's table:
 - each place's floor plan, `<place>: floor plan` (`build-previs`), and the timing reference's blocking, for where each character stands, faces, and looks, as facts such as `<character>: mark in <shot>` and `<character>: looks at in <shot>`, by the plan's names;
 - each character's animatic expression sheet, acting sheet, and turnaround, such as `<character>: animatic expression sheet` (`generate-model-sheet`), and board-style level-of-detail sheet, `<character>: animatic detail sheet` (`generate-detail-sheet`), with their panel labels; the expression sheet holds a panel for each look a shot needs, drawn as that shot needs it;
 - the line-up, `<film>: line-up`, when several characters share a frame;
-- the shot's rough board, `<shot>: board frame`, when there is one, or the user's sketch, `<shot>: sketch`;
+- the shot's rough board, `<film>: rough board, <shot>`, when there is one, or the user's sketch, `<shot>: sketch`;
 - the film's aspect ratio, `<film>: aspect ratio`.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first run on a model new to this film is a short test of a few shots.
@@ -129,7 +129,7 @@ Report it honestly, such as "Tom's jacket came out blue, not green" or "Mira fac
 
 ## 5. The user's approval
 
-The user approves each keyframe, or asks for another take; never choose for them. An approved keyframe is published by `project-pipeline`, as `<shot>: keyframe`, or `<shot>: end frame`; a rejected take is never used as an input again. A keyframe is ready for the animatic only once it is approved; the animatic waits for every keyframe of the shots it holds.
+The user approves each keyframe, or asks for another take; never choose for them. An approved keyframe is published by `project-pipeline`, as `<film>: keyframe, <shot>`, or `<film>: end keyframe, <shot>`, under the film, as Last order's are, such as `Last order: keyframe, wiping`; a rejected take is never used as an input again. A keyframe is ready for the animatic only once it is approved; the animatic waits for every keyframe of the shots it holds.
 
 ## 6. Revisions
 

@@ -28,9 +28,9 @@ Each input by its canonical name, from the pipeline's table:
 
 - the approved timing reference (`<film>: timing reference`, from `write-timing-reference`): each frame's in and out, and each cue's and line's time; the frames and the audio are made to it, and the animatic is assembled on it;
 - the approved shot list (`<film>: shot list`), with each shot's number, length, camera, and lines; with none, one is planned and approved first;
-- the approved board for it: one frame per shot (`<shot>: keyframe`, or `<shot>: rough board`), and an end frame (`<shot>: end keyframe`) for each camera move that has one; with none, the board is made and approved first;
+- the approved board for it: one frame per shot (`<film>: keyframe, <shot>`, or `<film>: rough board, <shot>`), and an end frame (`<film>: end keyframe, <shot>`) for each camera move that has one; with none, the board is made and approved first;
 - the approved script (`<film>: script`), for its lines and any transitions it writes, such as a fade in;
-- the approved voice take of every spoken line (`<line>: voice take`, from `generate-voice`), with where its line starts and ends inside it (`<line>: start in take`, `<line>: end in take`), since voices are made before the animatic, so it is timed to the real lines; a line with no take yet is marked *estimated*;
+- the approved voice take of every spoken line (`<character>: <line>, voice take`, from `generate-voice`), with where its line starts and ends inside it (`<line>: start in take`, `<line>: end in take`), since voices are made before the animatic, so it is timed to the real lines; a line with no take yet is marked *estimated*;
 - the approved sound bed (`<film>: sound bed`, from `generate-sound`): the scene's sound effects and music, with no voices;
 - the film's length, frame rate, and size (`<film>: length`, `<film>: frame rate`, `<film>: size`).
 

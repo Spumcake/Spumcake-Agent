@@ -52,4 +52,4 @@ Canon changes in place, as [projects.md](../../docs/projects.md) describes:
    - **keep it:** `pipeline.py keep <n> "<artifact>"... --reason "<why it still holds>"`, which records what it was accepted against, so the next change flags it again;
    - **revert:** publish the earlier file, or set the earlier value, from `pipeline.py history`.
 
-`pipeline.py new` starts another pipeline only when the user asks to try a whole alternative direction; earlier pipelines, such as Last order's `001`, stay as they were made.
+A new project starts with pipeline `001`, which `request.py init` makes. `pipeline.py new` starts another pipeline only when the user asks to try a whole alternative direction; earlier pipelines, such as Last order's `001`, stay as they were made.

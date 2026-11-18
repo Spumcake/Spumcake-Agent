@@ -29,7 +29,7 @@ All come from the setup, as the [prompt roles](../../docs/prompt-roles.md) descr
 - the published references it must agree with, by canonical name from the pipeline's table, such as `<character>: A-pose front` or `<place>: view <wall>`, as step 1 lists them for its kind, each with what it fixes;
 - what each of those images shows, and the facts the checks need, such as `<character>: mark in <frame>`, from the pipeline's table with `pipeline.py`;
 - for a clip, a lip-synced shot, or a final shot, its length and frame rate (`<film>: frame rate`), and the cuts in it, when it was assembled from several shots;
-- the neighbouring shots' published results, when the result is a shot, such as `<shot>: keyframe`: the last frame of the shot before and the first frame of the shot after, or their sounds.
+- the neighbouring shots' published results, when the result is a shot, such as `<film>: keyframe, <shot>`: the last frame of the shot before and the first frame of the shot after, or their sounds.
 
 Each step waits for the user's yes before the next. Every paid request waits for a yes to its plan: the model, the number of requests, and the cost. A first review on a new model is a short test, one result, before a batch.
 

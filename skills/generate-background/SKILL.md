@@ -28,7 +28,7 @@ The model's specifics come from the setup, as the [prompt roles](../../docs/prom
 Each input by its canonical name, from the pipeline's table:
 
 - the approved shot list, and each shot's facts: `<shot>: framing`, `<shot>: angle`, `<shot>: camera move`, and `<shot>: place`;
-- the approved keyframes: one per shot, `<shot>: keyframe`, and an end frame, `<shot>: end frame`, for each camera move; with none, the keyframes are made and approved first;
+- the approved keyframes: one per shot, `<film>: keyframe, <shot>`, and an end frame, `<film>: end keyframe, <shot>`, for each camera move; with none, the keyframes are made and approved first;
 - each place's primary canonical location, `<place>: primary canonical location`, and its views, `<place>: view <camera>`, with their neutral passes;
 - each place's mood reference from the concept art phase, `<place>: mood reference <mood>`, for each mood its shots are in;
 - the colour script, with its line of colour logic for each beat, `<beat>: colour logic`, and which beat each shot falls in, `<shot>: beat`;
