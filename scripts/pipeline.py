@@ -254,13 +254,13 @@ def out_of_date(root, n):
                     if d: why.append("its step was edited: " + ", ".join(d))
                 elif b["from"] == "keep" and b.get("plan") and b["plan"] != plan_hash(filled):
                     why.append("its step was edited since it was kept")
-            except SystemExit:
-                unknown = True
+            except SystemExit as e:
+                unknown = "its step cannot be filled: %s" % e
         cur_facts = relevant_facts(db, art)
         for k, was in (b.get("facts") or {}).items():
             if k in cur_facts and cur_facts[k] != was: why.append("the fact %s changed" % k)
         if why: stale[art] = why
-        elif unknown: unverified[art] = "its record holds no sha256 for an input"
+        elif unknown: unverified[art] = unknown if isinstance(unknown, str) else "its record holds no sha256 for an input"
     for art in list(stale):
         reached, _ = touches(root, n, artifact=art)
         for a in reached:
@@ -293,7 +293,7 @@ def fill(root, n, chain, step, name=None):
     skill, endpoint, template, refs, script, _ = r
     if skill == "generate-keyframe" and step.startswith("keyframe, "):
         # A moment's staging floor plan comes first: no frame of a moment is made until its plan is approved.
-        moment = step[len("keyframe, "):]
+        moment = re.sub(r" \(\d+\)$", "", step[len("keyframe, "):])   # an alternative, "keyframe, <moment> (2)", is the same moment
         plan = db.execute("SELECT published FROM artifact WHERE id=?", ("%s: staging floor plan" % moment,)).fetchone()
         if not plan or not plan[0]:
             sys.exit("no approved staging floor plan for %s: draw it with build-previs, have the user approve it, "
