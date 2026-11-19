@@ -20,12 +20,14 @@ Usage:
   pipeline.py element <n> <name> --kind K     add a canonical element: a place, character, prop, look, story, sound
   pipeline.py publish <n> "<element>: <role>" --file <file> [--request <id>] --chain <chain>
                      [--from "<element>: <role>" ROLE]... [--with "<element>: <role>=<request id>"]... [--note TEXT]
-                     [--waiting]
+                     [--waiting] [--fixes]
                                               publish an approved result as canon, in place: the file it replaces stays
                                               where it is, and the run log names it. A take is refused when an input it
                                               was made from is no longer what is published, or its step was edited
                                               since; --with publishes it together with the inputs it was made from.
                                               With --waiting, record a result that waits for the user, not canon
+                                              With --fixes, a take of the artifact's own step made again because it
+                                              was out of date: its run-log event names the version it fixes
   pipeline.py fact <n> "<element>: <fact>" <value> --artifact "<element>: <role>"
                                               set a canonical fact and the artifact that settles it
   pipeline.py content <n> "<element>: <role>" <json | @file>
@@ -200,7 +202,8 @@ def baseline(root, n, db, art, evs):
     if not m: return None
     if m["kind"] == "report":
         d = m["data"]
-        inputs = {r["canon"]: {"sha256": r.get("sha256"), "file": r.get("file")} for r in d.get("references", []) if r.get("canon")}
+        inputs = {r["canon"]: {"sha256": r.get("sha256"), "file": r.get("file")} for r in d.get("references", [])
+                  if r.get("canon") and r["canon"] != art}   # an edit of an earlier version is not made from itself
         facts = {k: fact_value_at(evs, *k.split(": ", 1), m["at"], v) for k, v in relevant_facts(db, art).items()}
         return {"from": "report", "request": d["id"], "inputs": inputs, "report": d, "facts": facts}
     line = m["data"]
@@ -209,7 +212,7 @@ def baseline(root, n, db, art, evs):
 
 
 def current_inputs(root, db, art):
-    srcs = [s for (s,) in db.execute("SELECT source FROM made_from WHERE artifact=?", (art,))]
+    srcs = [s for (s,) in db.execute("SELECT source FROM made_from WHERE artifact=?", (art,)) if s != art]
     out = {}
     for s in srcs:
         r = db.execute("SELECT file FROM artifact WHERE id=?", (s,)).fetchone()
@@ -357,7 +360,7 @@ def touches(root, n, fact=None, artifact=None):
     while True:
         size = len(arts) + len(steps)
         for a, s in db.execute("SELECT artifact, source FROM made_from").fetchall():
-            if s in arts and reaches(s, a): arts.add(a)
+            if s != a and s in arts and reaches(s, a): arts.add(a)
         for c, s, refs, a in db.execute("SELECT chain, name, refs, artifact FROM step").fetchall():
             if a and a in arts: steps.add((c, s))
             elif not a and any(r.get("artifact") in arts for r in json.loads(refs or "[]")): steps.add((c, s))
@@ -379,12 +382,14 @@ def versions(root, n, art):
         if not f: return
         v = seen.get(f)
         if not v or (at or "") > (v["published"] or ""):
-            seen[f] = {"file": f, "published": at, "note": note, "request": req, "from": source, "made_from": made_from}
+            seen[f] = {"file": f, "published": at, "note": note, "request": req, "from": source, "made_from": made_from,
+                       "edited_from": None, "fixes": None}
         elif v["made_from"] is None and made_from is not None and (at or "") == (v["published"] or ""):
             v["made_from"] = made_from   # the same publish, its roles from canon.sql when the run log lacks them
     for ev in events(root, n):   # the run log: every publish since it began
         if ev.get("event") == "publish" and ev.get("artifact") == art:
             add(ev.get("file"), ev.get("at"), ev.get("note"), ev.get("request"), "the run log", ev.get("sources"))
+            seen[ev["file"]].update({k: ev.get(k) for k in ("edited_from", "fixes")})
     rel = os.path.relpath(os.path.join(folder(root, n), "canon.sql"), root)   # older: canon.sql as each commit held it
     log = rq.keyless(["git", "log", "--format=%H", "--", rel], cwd=root, capture_output=True, text=True).stdout.split()
     for c in log:
@@ -398,10 +403,48 @@ def versions(root, n, art):
         except sqlite3.Error:
             continue
         if row and row[1]: add(row[0], row[1], row[2], row[3], "canon.sql at %s" % c[:7], srcs)
-    out = sorted(seen.values(), key=lambda v: v["published"] or "", reverse=True)
+    order = {f: i for i, f in enumerate(seen)}   # the order they were last added in, the run log's, for a tie
+    out = sorted(seen.values(), key=lambda v: (v["published"] or "", order[v["file"]]), reverse=True)
     for v in out: v["canon_now"] = bool(now_row and now_row[1] and now_row[0] == v["file"])
     if not out and not now_row: sys.exit("no artifact %s in pipeline %03d" % (art, int(n)))
     return out
+
+
+def published_versions(root, n, art):
+    """Every file the artifact was ever published as, by sha256: what an edit of it may be made from."""
+    try:
+        return {file_sha(root, v["file"]): v["file"] for v in versions(root, n, art)
+                if os.path.exists(os.path.join(root, v["file"]))}
+    except SystemExit:
+        return {}
+
+
+def edited_from(root, n, art, o):
+    """The published version of art this take was made from, when it is an edit of the artifact itself."""
+    shas = []
+    if o.get("request"):
+        d = rq.read_data(rq.find_report(root, o["request"]))
+        shas = [r.get("sha256") for r in d.get("references", []) if r.get("canon") == art]
+    elif any(s == art for s, _ in o.get("from", [])):
+        lines = [l for l in rq.resource_records(root) if l["file"] == o["file"]]
+        shas = [i["sha256"] for i in lines[-1].get("inputs", [])] if lines else []
+    vs = published_versions(root, n, art) if shas else {}
+    return next((vs[h] for h in shas if h in vs), None), bool(shas)
+
+
+def check_fix(root, n, db, art, o, old):
+    """--fixes: the take is the artifact made again from its own step, standing in for a published version."""
+    if not (old and old[1]): sys.exit("refused --fixes: %s has no published version to fix" % art)
+    st = step_of(db, art)
+    if not st: sys.exit("refused --fixes: no step makes %s" % art)
+    if o.get("request"):
+        d = rq.read_data(rq.find_report(root, o["request"]))
+        made = (d.get("chain"), d.get("step"))
+    else:   # a script step's take: the run that filed it
+        runs = [e for e in events(root, n) if e.get("event") == "run" and o["file"] in (e.get("files") or [])]
+        made = (runs[-1]["chain"], runs[-1]["step"]) if runs else (None, None)
+    if tuple(made) != tuple(st):
+        sys.exit("refused --fixes: the take was not made from %s's step, %s / %s" % (art, st[0], st[1]))
 
 
 def check_take(root, n, db, art, o):
@@ -414,6 +457,10 @@ def check_take(root, n, db, art, o):
         for r in d.get("references", []):
             c = r.get("canon")
             if not c or not r.get("sha256"): continue
+            if c == art:   # an edit of the artifact itself: made from any version of it that was published
+                if r["sha256"] not in published_versions(root, n, art):
+                    problems.append("it was made from a version of %s that was never published" % art)
+                continue
             if c in withs:
                 wd = rq.read_data(rq.find_report(root, withs[c]))
                 if file_sha(root, wd["outputs"][0]) != r["sha256"]:
@@ -437,6 +484,10 @@ def check_take(root, n, db, art, o):
         lines = [l for l in rq.resource_records(root) if l["file"] == o["file"]]
         held = {i["sha256"] for i in lines[-1].get("inputs", [])} if lines else set()
         for s, _ in o["from"]:
+            if s == art:   # an edit of the artifact itself: made from any version of it that was published
+                if lines and not held & set(published_versions(root, n, art)):
+                    problems.append("it was made from a version of %s that was never published" % art)
+                continue
             cur = db.execute("SELECT file FROM artifact WHERE id=?", (s,)).fetchone()
             h = file_sha(root, cur[0]) if cur else None
             if not lines: problems.append("%s has no record of what made it: file it with request.py resource or build --from" % o["file"])
@@ -630,7 +681,7 @@ def opts(a):
     while i < len(a):
         if a[i].startswith("--"):
             k = a[i][2:].replace("-", "_")
-            if k in ("stand_in", "next", "deliver", "waiting", "read_only", "json", "show", "plan"): o[k] = True; i += 1
+            if k in ("stand_in", "next", "deliver", "waiting", "read_only", "json", "show", "plan", "fixes"): o[k] = True; i += 1
             elif k == "with": o.setdefault("with", []).append(a[i + 1]); i += 2
             elif k == "from": o["from"].append((a[i + 1], a[i + 2])); i += 3
             elif k == "step": o["step"] = (a[i + 1], a[i + 2]); i += 3
@@ -679,7 +730,9 @@ if __name__ == "__main__":
         db = load(root, n); e, role = split(rest[1])
         if not os.path.exists(os.path.join(root, o["file"])): sys.exit("not found: " + o["file"])
         if not o.get("waiting"): check_take(root, n, db, rest[1], o)
+        edited, is_edit = edited_from(root, n, rest[1], o)
         old = db.execute("SELECT file, published FROM artifact WHERE id=?", (rest[1],)).fetchone()
+        if o.get("fixes"): check_fix(root, n, db, rest[1], o, old)
         for w in o.get("with", []):
             wa, wr = w.split("=", 1)
             wd = rq.read_data(rq.find_report(root, wr))
@@ -691,12 +744,15 @@ if __name__ == "__main__":
                    (rest[1], e, role, o["file"], o.get("request"), o.get("chain"),
                     None if o.get("waiting") else (o.get("published") or now()), o.get("note")))
         db.execute("DELETE FROM made_from WHERE artifact=?", (rest[1],))
-        for s, r in o["from"]: db.execute("INSERT INTO made_from VALUES (?,?,?)", (rest[1], s, r))
+        for s, r in o["from"]:
+            if s != rest[1]: db.execute("INSERT INTO made_from VALUES (?,?,?)", (rest[1], s, r))   # never from itself
         save(root, n, db)
         rq.run_log(root, n, {"event": "waiting" if o.get("waiting") else "publish", "artifact": rest[1], "file": o["file"],
                              "request": o.get("request"), "replaced": old[0] if old and old[1] else None,
-                             "made_from": [s for s, _ in o["from"]], "note": o.get("note"),
-                             "sources": [{"source": s, "role": r} for s, r in o["from"]]})   # roles, for a revert
+                             "made_from": [s for s, _ in o["from"] if s != rest[1]], "note": o.get("note"),
+                             "sources": [{"source": s, "role": r} for s, r in o["from"] if s != rest[1]],   # for a revert
+                             **({"edited_from": edited} if is_edit else {}),   # the version of itself it was made from
+                             **({"fixes": old[0]} if o.get("fixes") else {})})   # made again because it was out of date
     elif cmd == "fact":
         db = load(root, n); e, f = split(rest[1])
         old = db.execute("SELECT value FROM fact WHERE element=? AND name=?", (e, f)).fetchone()

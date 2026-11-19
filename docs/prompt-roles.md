@@ -37,7 +37,7 @@ When one is missing, say which and stop. Never do a step by hand because the set
 The skills assume an agent that can, in any harness:
 
 - read, write, and edit the project's files;
-- run Python 3 scripts, `ffmpeg`, and Pillow, each with the user's approval;
+- run Python 3 scripts and the programs the [setup's prerequisites](setup.md) list, such as `ffmpeg` and `spumcake-render`, each with the user's approval;
 - search and fetch the web, and download a file only after the user's yes;
 - look at images, and at frames taken from a clip; a step that must look and cannot, such as `review-continuity`, stops and says so;
 - answer a saved prompt on its own, as a fresh request, when the setup says so;

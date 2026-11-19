@@ -10,6 +10,19 @@ The skills name no key, price, or computer. A **setup** gives them: one UTF-8 JS
 
 An application such as Spumcake Studio writes its own setup file and passes it as `SKILLS_SETUP` to every script it runs. An agent's harness can do the same, or keep one at the third place.
 
+## Prerequisites
+
+The programs the scripts here run, each with the command that installs it on Debian or Ubuntu, and the command that shows it is there. On another system, install the same programs its own way.
+
+- **Python 3, with Pillow and numpy:** `sudo apt install python3 python3-pil python3-numpy`; check with `python3 -c "import PIL, numpy"`.
+- **git:** `sudo apt install git`; check with `git --version`.
+- **curl,** which sends OpenAI's requests: `sudo apt install curl`; check with `curl --version`.
+- **ffmpeg,** which assembles, mixes, and reads records in video: `sudo apt install ffmpeg`; check with `ffmpeg -version`.
+- **Rust 1.95 or later,** which installs the renderer: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`; check with `cargo --version`. As the user set on 2026-11-18, the renderer is installed from source for now; a downloadable program is for later.
+- **spumcake-render 0.1.0,** which renders a place from its scene file (`build-previs`): `cargo install --locked --git https://github.com/Spumcake/Spumcake-Render --tag v0.1.0 spumcake-render`; check with `spumcake-render --version`, which prints `spumcake-render 0.1.0`.
+- **A graphics device for it:** a GPU with Vulkan, Metal, or DirectX 12; or, with none, Mesa's lavapipe (`sudo apt install mesa-vulkan-drivers`) with `SPUMCAKE_RENDER_ADAPTER=software` set. When it finds neither, it says so and renders nothing.
+- **fal's official client,** only for fal requests: `pip install fal-client`; check with `python3 -c "import fal_client"`.
+
 ## The keys request.py reads
 
 ```json

@@ -296,11 +296,12 @@ def _itxt(keyword, text):
     return keyword + b"\0\0\0\0\0" + text.encode("utf-8")
 
 
-def embed_record(path, record):
+def embed_record(path, record, disclosure=True):
     """Write a request's record inside the image or video it made, so the file says where it came from wherever it
     goes: a PNG gets it as an iTXt chunk, spumcake:record, with the IPTC "made by a trained model" disclosure in its
     XMP; an MP4 or MOV gets it as its comment, its streams copied, not encoded again. Other formats keep their record
-    in the report only. Returns whether it was written."""
+    in the report only. A file no model made, such as a pre-vis render, is embedded without the disclosure
+    (disclosure=False). Returns whether it was written."""
     ext = os.path.splitext(path)[1].lower()
     data = json.dumps(record, separators=(",", ":"), ensure_ascii=False)
     if ext == ".png":
@@ -311,7 +312,7 @@ def embed_record(path, record):
             if typ == b"iTXt" and body.split(b"\0", 1)[0] in (b"spumcake:record", b"XML:com.adobe.xmp"): continue
             if typ == b"IEND":
                 out.append(_png_chunk(b"iTXt", _itxt(b"spumcake:record", data)))
-                out.append(_png_chunk(b"iTXt", _itxt(b"XML:com.adobe.xmp", XMP)))
+                if disclosure: out.append(_png_chunk(b"iTXt", _itxt(b"XML:com.adobe.xmp", XMP)))
             out.append(_png_chunk(typ, body))
         open(path, "wb").write(b"".join(out))
         return True

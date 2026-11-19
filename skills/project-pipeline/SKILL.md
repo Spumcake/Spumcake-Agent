@@ -25,13 +25,19 @@ A step's prompt names each canonical value as `{{<element>: <fact>}}` and each r
 
 Publish only what the user approved, right after their yes:
 
-1. `pipeline.py publish <n> "<element>: <role>" --file library/<file> --request <id> --chain <chain> --from "<source artifact>" <role>...`, in place: the file it replaces stays where it is, and the run log names it. It refuses a take whose inputs or step changed since it was made, and names which; publish the inputs' takes with it (`--with "<artifact>=<request id>"`), or make it again. A file made without a model needs its record to hold each source (`request.py resource` or `build --from`).
+1. `pipeline.py publish <n> "<element>: <role>" --file library/<file> --request <id> --chain <chain> --from "<source artifact>" <role>...`, in place: the file it replaces stays where it is, and the run log names it. It refuses a take whose inputs or step changed since it was made, and names which; publish the inputs' takes with it (`--with "<artifact>=<request id>"`), or make it again. A file made without a model needs its record to hold each source (`request.py resource` or `build --from`). An edit of a published artifact, such as a second pass over a published image, names the artifact itself as what it edited: it is not recorded as made from itself, the run log keeps which version it was made from as `edited_from`, and it may be made from any version of the artifact that was published, never from one that was not.
 2. The facts the result settles, with `pipeline.py fact`, and for an image, what it shows, with `pipeline.py content`, each thing by its canonical name; a door is "the front door", never "the door" where a place has several.
 3. The step that made it, with `pipeline.py step`, its template naming canon.
 4. `pipeline.py render <n>`, which writes the chain pages again from the table.
 5. Offer a commit of what the publish wrote, by path, and make it on the user's yes, so git holds the history.
 
 A result the user has not approved is never published; its step is recorded as waiting.
+
+The user's yes may be an action rather than a word, where the setup they work in says so. For example, putting a result into a step of a chain is the yes to publish it as that step's artifact. Saving an edit of the artifact in use, or a fix of it, is the yes to publish it as the artifact's next version. Whichever it is, the publish is the same command, with the same record. A setup that takes the yes this way publishes the moment the user acts, and an agent working in the same project reads that canon as its own.
+
+A result made again because it was out of date is published with `--fixes`, so its run-log event names the version it fixes. It must be a take of the artifact's own step. Another take put into use is published without it, so the two read differently.
+
+Several steps may share one place in a chain, given the same `--order`. They are alternatives made side by side, each with its own artifact, prompt, and references, such as several takes of one frame kept in use together. Each is made, published, made again, and goes out of date on its own: editing one step's template outlines only its own artifact. A second alternative is a new step at the same order, named for it, such as `"<step>, 2"`, with its own artifact, such as `"<element>: <role>, 2"`.
 
 A keyframe step is named `keyframe, <moment>`, and the moment's staging floor plan is published as `<moment>: staging floor plan`. `pipeline.py fill` refuses a keyframe step until that plan is approved and published, so no frame of a moment is ever made without its staging.
 

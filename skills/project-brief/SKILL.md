@@ -35,3 +35,23 @@ Compare the brief with the pipeline's canon, section by section: each thing the 
 - what canon holds that the brief never asked for.
 
 Each item is a proposed request, taken to the user; nothing changes without their yes.
+
+Keep every audit, as the user set on 2026-11-18, so the user and any setup can read the latest one without making the comparison again. Write it to `agent/<time>-brief-audit-<pipeline>.md`, with its line in `agent/index.md`, in this form:
+
+```text
+# Brief audit, pipeline <n>
+
+brief: brief/<pipeline>-<project>.html <sha256>
+canon: pipeline/<n>/canon.sql <sha256>
+
+## Asked for, not yet shown
+- <brief section>: "<the brief's words>" — none
+
+## Shown differently
+- <brief section>: "<the brief's words>" — <artifact or fact, by its canonical name>
+
+## Not asked for
+- none: "" — <artifact or fact, by its canonical name>
+```
+
+The two hashes are of the files as they stood when the audit read them. Each item is one line, in that form, with `none` where it has no brief section or no canon, and several artifacts or facts separated by semicolons; a section with no items says `- nothing`. The newest audit is the latest one, and an audit is never changed once written. It is current only while both hashes still match the files. Once either has changed, it shows its date and that the brief or canon changed since, and the audit is made again.
