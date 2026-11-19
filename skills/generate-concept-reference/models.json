@@ -2,11 +2,23 @@
  {
   "service": "openai",
   "model": "gpt-image-2.6-sunburst",
-  "name": "OpenAI GPT-Image-2.6 Sunburst"
+  "name": "OpenAI GPT-Image-2.6 Sunburst",
+  "tokens": {
+   "per_image_in": 1296,
+   "per_image_out": {
+    "1536x864 high": 1078,
+    "1344x768 high": 983
+   }
+  }
  },
  {
   "service": "openrouter",
   "model": "openai/gpt-image-2.5-sunburst",
-  "name": "OpenAI GPT-Image-2.5 Sunburst"
+  "name": "OpenAI GPT-Image-2.5 Sunburst",
+  "tokens": {
+   "per_image_out": {
+    "1536x864 high": 1078
+   }
+  }
  }
 ]

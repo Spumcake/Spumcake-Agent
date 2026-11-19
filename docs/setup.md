@@ -18,7 +18,7 @@ The programs the scripts here run, each with the command that installs it on Deb
 - **git:** `sudo apt install git`; check with `git --version`.
 - **curl,** which sends OpenAI's requests: `sudo apt install curl`; check with `curl --version`.
 - **ffmpeg,** which assembles, mixes, and reads records in video: `sudo apt install ffmpeg`; check with `ffmpeg -version`.
-- **Rust 1.95 or later,** which installs the renderer: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`; check with `cargo --version`. As the user set on 2026-11-18, the renderer is installed from source for now; a downloadable program is for later.
+- **Rust 1.95 or later, and a C compiler and linker,** which install the renderer: `sudo apt install build-essential`, then `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`; check with `cargo --version` and `cc --version`. As the user set on 2026-11-18, the renderer is installed from source for now; a downloadable program is for later.
 - **spumcake-render 0.1.0,** which renders a place from its scene file (`build-previs`): `cargo install --locked --git https://github.com/Spumcake/Spumcake-Render --tag v0.1.0 spumcake-render`; check with `spumcake-render --version`, which prints `spumcake-render 0.1.0`.
 - **A graphics device for it:** a GPU with Vulkan, Metal, or DirectX 12; or, with none, Mesa's lavapipe (`sudo apt install mesa-vulkan-drivers`) with `SPUMCAKE_RENDER_ADAPTER=software` set. When it finds neither, it says so and renders nothing.
 - **fal's official client,** only for fal requests: `pip install fal-client`; check with `python3 -c "import fal_client"`.

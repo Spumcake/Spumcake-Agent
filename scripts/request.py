@@ -23,10 +23,12 @@ Usage:
                                       after a full disk or a crash
   request.py attach <id> <file> --as comparison|chart [--caption TEXT]
                                       embed an image the agent made to show the results in the request's report
-  request.py resource <file>... --name NAME [--from <file>]...
+  request.py resource <file>... --name NAME [--from <file>]... [--iterates <file>]
                                       file shared material no model made, such as a canonical document, a pre-vis
                                       render, or a builder, into prompts/resources/ as <time>-<name>.<ext>, with a
-                                      line in prompts/resources/records.jsonl naming each input it was made from
+                                      line in prompts/resources/records.jsonl naming each input it was made from;
+                                      --iterates names the file it is a new iteration of, such as an edit saved from
+                                      a workspace, recorded as "iterates" with its sha256 and counted as an input
   request.py build "<command>" <output>... --name NAME [--from <file> | --from git:<commit>:<path>]...
                                       run a builder, and file each file it makes into prompts/resources/, recorded
                                       with its command and inputs
@@ -351,7 +353,7 @@ def strip_record(src, dst, rid):
         embed_record(dst, small)
 
 
-def record_line(root, f, inputs=(), command=None, name=None):
+def record_line(root, f, inputs=(), command=None, name=None, iterates=None):
     """Append one line to prompts/resources/records.jsonl for a file filed without a model: what it is, its sha256,
     each input it was made from with its sha256, and the command that made it."""
     def rel(x):
@@ -362,6 +364,8 @@ def record_line(root, f, inputs=(), command=None, name=None):
     line = {"at": now().strftime("%Y-%m-%dT%H:%M:%SZ"), "file": rel(f), "sha256": sha(os.path.join(root, f)), "name": name,
             "inputs": [e for e in entries if not e["file"].startswith("work/")],
             "command": command, "skills_commit": skills_commit()}
+    if iterates:   # the file this one is a new iteration of, such as an edit saved from a workspace
+        line["iterates"] = {"file": rel(iterates), "sha256": sha(iterates if os.path.isabs(iterates) else os.path.join(root, iterates))}
     workspace = [e for e in entries if e["file"].startswith("work/")]
     if workspace: line["workspace"] = workspace   # where it was exported from: provenance only, never an input
     with open(os.path.join(root, "prompts", "resources", "records.jsonl"), "a") as fh:
@@ -1036,8 +1040,14 @@ def attach(rid, f, as_, caption=None):
     print("embedded in " + os.path.relpath(path, root))
 
 
-def resource(fs, name, date=None, inputs=(), command=None, root=None):
+def resource(fs, name, date=None, inputs=(), command=None, root=None, iterates=None):
     root = root or project_root()
+    if iterates:
+        a = os.path.abspath(iterates if os.path.isabs(iterates) else os.path.join(root, iterates))
+        if not os.path.exists(a): sys.exit("--iterates: no such file: " + iterates)
+        if os.path.relpath(a, root).startswith("work/"):
+            sys.exit("refused: --iterates %s is in work/, which is never an input; file it first" % iterates)
+        inputs = list(inputs) + ([iterates] if iterates not in inputs else [])
     os.makedirs(os.path.join(root, "prompts", "resources"), exist_ok=True)
     for i in inputs:
         if i.startswith("git:"): git_source(root, i); continue
@@ -1051,7 +1061,7 @@ def resource(fs, name, date=None, inputs=(), command=None, root=None):
         rid, k = "%s-%d" % (base, k), k + 1
     filed = file_into(root, "prompts/resources", rid, fs)
     for f in filed:
-        record_line(root, f, inputs, command, name)
+        record_line(root, f, inputs, command, name, iterates)
         print(f)
     return filed
 
@@ -1276,7 +1286,7 @@ if __name__ == "__main__":
     elif cmd == "note": note(rest[0], asked=o.get("asked"), why=o.get("why"), notes=o.get("notes"))
     elif cmd == "show": show(rest[0])
     elif cmd == "tell": tell(rest[0])
-    elif cmd == "resource": resource(rest, o["name"], inputs=o.get("from", []))
+    elif cmd == "resource": resource(rest, o["name"], inputs=o.get("from", []), iterates=o.get("iterates"))
     elif cmd == "build": build(rest[0], rest[1:], o["name"], inputs=o.get("from", []))
     elif cmd == "record": record(rest[0])
     elif cmd == "list": listing(o.get("skill"), o.get("pipeline"))
