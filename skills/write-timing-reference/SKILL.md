@@ -36,6 +36,6 @@ Fill [the timing reference template](templates/timing-reference.md). Times are i
 ## Hand back
 
 - the draft of the brief page's timing section, for the user's approval and for `project-brief` to place;
-- the facts it settles, by `<element>: <fact>`, for `project-pipeline` to publish: each frame's in and out, such as `<frame>: in`, and each character's blocking in each frame, such as `<character>: mark in <frame>`, `<character>: faces in <frame>`, `<character>: looks at in <frame>`, and `<character>: side of frame in <frame>`, so the steps that make the frames name them as `{{<element>: <fact>}}`;
+- the facts it settles, by `<element>: <fact>`, for `project-pipeline` to publish: each frame's in and out, such as `<frame>: in`, and each character's blocking in each frame, such as `<character>: mark in <frame>`, `<character>: faces in <frame>`, `<character>: looks at in <frame>`, and `<character>: side of frame in <frame>`, and each sound cue's time, `<cue>: start` and `<cue>: end`, so the steps that make the frames and the sound name them as `{{<element>: <fact>}}`. A cue's time is its canon, in seconds from the film's start, as every time here is; a time within one shot is its cue's time less that shot's `<frame>: in`. Nothing else holds it, neither a sound file's own cue points nor where the mix lays a sound;
 - its frame list, for `generate-keyframe`;
 - its cue and line times, for `write-sound-design-brief`, `generate-sound`, `generate-voice`, and `build-animatic`.

@@ -39,7 +39,7 @@ A take with motion blur in it is finished only after saying so: interpolation an
 4. **Check the upscale:** its size, frame rate, and length against the plan; then before-and-after crops, at the same frame, of a face, a hand, a line, and a flat surface, for anything the take did not hold. Show the crops with the retime.
 5. A take that fails is made again, as its own request, with one change, such as another interpolation or precision model.
 
-Each approved step's take is published by `project-pipeline` as the shot's finished picture, such as `<shot>: final shot, 60 fps` and `<shot>: final shot, 60 fps, 4K`, each made from the take before it (`--from`), so a change to the final shot reaches them.
+Each approved step's take is published by `project-pipeline` as the shot's finished picture, such as `<shot>: final shot, 60 fps` and `<shot>: final shot, 60 fps, 4K`, each made from the take before it, `--from "<the take before it>" "the take it finishes"`, so a change to the final shot reaches them.
 
 ## Hand back
 
