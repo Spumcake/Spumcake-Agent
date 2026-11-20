@@ -43,7 +43,7 @@ A keyframe step is named `keyframe, <moment>`, and the moment's staging floor pl
 
 ## What a change touches, and what is out of date
 
-`pipeline.py touches <n> --fact "<element>: <fact>"` or `--artifact "<element>: <role>"` lists every published artifact and step the change would reach: the artifact that settles the fact, every image that shows the element, everything made from those, and every step whose template or references use any of them. Show the user the list before anything is changed or made again.
+`pipeline.py touches <n> --fact "<element>: <fact>"` or `--artifact "<element>: <role>"` lists every published artifact and step the change would reach: the artifact that settles the fact, every image that shows the element, everything made from those, and every step whose template or references use any of them. A new file of an artifact reaches everything made from it, whatever it shows; a changed fact reaches another element's results only where they show the element, or are the film's own shots. Show the user the list before anything is changed or made again.
 
 `pipeline.py touches <n> --json`, with no change named, lists everything out of date now, with why: an input published again, a step edited, or a fact changed since it was made. It also lists what has no record to compare, as unverified. Read it before every step, and tell the user what it lists.
 

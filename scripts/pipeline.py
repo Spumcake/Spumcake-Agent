@@ -353,7 +353,9 @@ def touches(root, n, fact=None, artifact=None):
     for a, nm in db.execute("SELECT artifact, name FROM content"): shows[a].add(nm)
 
     def reaches(src, dst):
-        # a change carries into another element's results only where they show what changed, or are the film's own shots
+        # A new file of an artifact reaches every result made from it, since each was made from that file. A changed
+        # fact carries into another element's results only where they show what changed, or are the film's own shots.
+        if not fact: return True
         return (element.get(dst) == element.get(src) or kind.get(element.get(dst)) in ("film", "moment")
                 or bool(shows[dst] & changed))
 
@@ -363,7 +365,8 @@ def touches(root, n, fact=None, artifact=None):
             if s != a and s in arts and reaches(s, a): arts.add(a)
         for c, s, refs, a in db.execute("SELECT chain, name, refs, artifact FROM step").fetchall():
             if a and a in arts: steps.add((c, s))
-            elif not a and any(r.get("artifact") in arts for r in json.loads(refs or "[]")): steps.add((c, s))
+            elif any(r.get("artifact") in arts for r in json.loads(refs or "[]")) and (not a or not fact):
+                steps.add((c, s))   # a step that sends the changed artifact as a reference is made from it
             if (c, s) in steps and a: arts.add(a)
         if len(arts) + len(steps) == size: break
     order = {c: o for c, o in db.execute("SELECT name, ord FROM chain")}

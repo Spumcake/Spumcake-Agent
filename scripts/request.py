@@ -461,9 +461,26 @@ def file_into(root, folder, rid, sources, suffixes=None):
 
 def stand_in(spec, tmp):
     """A stand-in endpoint for dry runs: returns one plain file of the kind asked, and spends nothing."""
-    ext = spec.get("stand_in_ext") or (".wav" if spec["endpoint"].get("returns") == "audio" else ".png")
+    returns = spec["endpoint"].get("returns")
+    ext = spec.get("stand_in_ext") or {"audio": ".wav", "video": ".mp4"}.get(returns, ".png")
     path = os.path.join(tmp, "stand-in" + ext)
-    if ext == ".wav":
+    if ext in (".mp4", ".mov", ".m4v", ".webm") or returns == "video":
+        # a real short video, 2 s at 24 fps with a silent sound track, at the size the spec asks, else the size of a
+        # video it sends, else 1280x720, so a stand-in take can be finished, mixed, and delivered like a real one
+        size = str((spec["endpoint"].get("settings") or {}).get("size") or "")
+        if not re.fullmatch(r"\d+x\d+", size):
+            size = "1280x720"
+            for r in spec.get("references", []):
+                f = os.path.join(project_root(), r.get("file") or "") if r.get("file") else ""
+                if f.lower().endswith((".mp4", ".mov", ".m4v", ".webm")) and os.path.exists(f):
+                    w = keyless(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                                 "-of", "csv=p=0:s=x", f], capture_output=True, text=True).stdout.strip()
+                    if re.fullmatch(r"\d+x\d+", w): size = w; break
+        r = keyless(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=s=%s:r=24:d=2" % size, "-f", "lavfi", "-i",
+                     "anullsrc=r=48000:cl=stereo", "-t", "2", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac",
+                     "-shortest", path], capture_output=True)
+        if r.returncode: sys.exit("the stand-in video could not be made: ffmpeg is needed (docs/setup.md)")
+    elif ext == ".wav":
         with wave.open(path, "w") as w:
             w.setnchannels(1); w.setsampwidth(2); w.setframerate(8000); w.writeframes(b"\0\0" * 8000)
     else:
